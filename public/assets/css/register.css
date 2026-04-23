@@ -1,0 +1,387 @@
+/* Register Page Styles */
+
+/* Register Section */
+.register-section {
+    padding: 60px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+}
+
+.register-container {
+    background-color: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(134, 87, 73, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.register-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(134, 87, 73, 0.2);
+}
+
+/* Left Side - Image */
+.register-image {
+    height: 100%;
+    min-height: 700px;
+    background-image: linear-gradient(rgba(192, 135, 106, 0.9), rgba(134, 87, 73, 0.9)),
+        url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.register-image-overlay {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+}
+
+.register-image-content {
+    text-align: center;
+    color: var(--white);
+}
+
+.register-image-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 20px;
+    animation: fadeInDown 0.8s ease;
+}
+
+.register-image-content p {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 50px;
+    line-height: 1.8;
+    animation: fadeInUp 0.8s ease 0.2s backwards;
+}
+
+/* Register Benefits */
+.register-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    text-align: left;
+    animation: fadeInUp 0.8s ease 0.4s backwards;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.benefit-item i {
+    font-size: 2rem;
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.2);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.benefit-text {
+    flex: 1;
+}
+
+.benefit-text h6 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 5px;
+}
+
+.benefit-text span {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Right Side - Form */
+.register-form-wrapper {
+    padding: 50px 45px;
+}
+
+.register-form-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.register-form-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 10px;
+}
+
+.register-form-header p {
+    font-size: 0.95rem;
+    color: var(--grey-dark);
+}
+
+/* Form Elements */
+.register-form .form-group {
+    margin-bottom: 20px;
+}
+
+.register-form .form-label {
+    font-weight: 500;
+    color: var(--dark-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 0.9rem;
+}
+
+.register-form .form-label i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+.register-form .form-control {
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.register-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(134, 87, 73, 0.1);
+}
+
+/* Password Input Wrapper */
+.password-input-wrapper {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--grey-light);
+    transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color);
+}
+
+.password-hint {
+    display: block;
+    margin-top: 5px;
+    color: var(--grey-light);
+    font-size: 0.8rem;
+}
+
+/* Terms & Newsletter Checkboxes */
+.terms-check,
+.newsletter-check {
+    margin-bottom: 20px;
+}
+
+.form-check-input {
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    margin-top: 0.15rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: var(--grey-dark);
+    cursor: pointer;
+    line-height: 1.6;
+}
+
+.terms-link {
+    color: var(--primary-color);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.terms-link:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+/* Register Button */
+.register-btn {
+    padding: 14px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 25px;
+}
+
+.register-btn i {
+    margin-right: 8px;
+}
+
+/* Social Divider */
+.social-divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+.social-divider::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background-color: #e9ecef;
+}
+
+.social-divider span {
+    background-color: var(--white);
+    padding: 0 15px;
+    color: var(--grey-light);
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Social Register Buttons */
+.social-register {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.social-btn {
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border: 2px solid #e9ecef;
+    background-color: var(--white);
+    color: var(--dark-color);
+    transition: all 0.3s ease;
+}
+
+.social-btn i {
+    margin-right: 8px;
+}
+
+.google-btn:hover {
+    border-color: #DB4437;
+    background-color: #DB4437;
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(219, 68, 55, 0.3);
+}
+
+.facebook-btn:hover {
+    border-color: #4267B2;
+    background-color: #4267B2;
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(66, 103, 178, 0.3);
+}
+
+/* Login Link */
+.login-link {
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--grey-dark);
+}
+
+.login-link a {
+    color: var(--primary-color);
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+    .register-form-wrapper {
+        padding: 40px 30px;
+    }
+
+    .register-image {
+        min-height: 400px;
+    }
+
+    .register-image-content h2 {
+        font-size: 2rem;
+    }
+
+    .register-benefits {
+        gap: 20px;
+    }
+
+    .benefit-item i {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .register-section {
+        padding: 30px 0;
+    }
+
+    .register-form-wrapper {
+        padding: 30px 20px;
+    }
+
+    .register-form-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .social-register {
+        grid-template-columns: 1fr;
+    }
+}
