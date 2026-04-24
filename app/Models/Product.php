@@ -23,6 +23,7 @@ class Product extends Model
         'description',
         'short_description',
         'category_id',
+        'brand_id',
         'status',
         'featured_image',
         'gallery_images',
@@ -64,6 +65,11 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
     }
 
     /**

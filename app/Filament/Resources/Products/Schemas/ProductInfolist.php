@@ -34,6 +34,9 @@ class ProductInfolist
                             ->label('Product name'),
                         TextEntry::make('slug')
                             ->copyable(),
+                        TextEntry::make('brand.name')
+                            ->label('Brand')
+                            ->placeholder('No brand assigned'),
                         TextEntry::make('status')
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {

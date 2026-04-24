@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -80,6 +81,13 @@ class ProductForm
                                                     ->preload()
                                                     ->native(false)
                                                     ->placeholder('Select a category'),
+                                                Select::make('brand_id')
+                                                    ->label('Brand')
+                                                    ->relationship('brand', 'name', fn (Builder $query): Builder => $query->where('is_active', true)->orderBy('sort_order'))
+                                                    ->searchable()
+                                                    ->preload()
+                                                    ->native(false)
+                                                    ->placeholder('Select a brand'),
                                                 Select::make('status')
                                                     ->required()
                                                     ->native(false)

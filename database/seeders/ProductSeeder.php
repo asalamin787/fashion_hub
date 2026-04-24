@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
@@ -11,6 +12,8 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $category = Category::query()->first();
+        $fashionHubBrand = Brand::query()->where('slug', 'fashionhub-premium')->first();
+        $urbanBrand = Brand::query()->where('slug', 'urban-style')->first();
 
         $variantProduct = Product::query()->updateOrCreate(
             ['slug' => 'classic-crew-tee'],
@@ -19,6 +22,7 @@ class ProductSeeder extends Seeder
                 'short_description' => 'A soft everyday tee with generated size and style variants.',
                 'description' => 'This classic cotton crew tee is set up as a multi-variation product that stores attributes and variants directly in the products table as JSON.',
                 'category_id' => $category?->id,
+                'brand_id' => $fashionHubBrand?->id,
                 'status' => 'active',
                 'has_variants' => true,
                 'base_price' => 1200,
@@ -74,6 +78,7 @@ class ProductSeeder extends Seeder
                 'short_description' => 'Simple product example without variant-level inventory.',
                 'description' => 'A clean simple product record using base price and stock at the product level.',
                 'category_id' => $category?->id,
+                'brand_id' => $urbanBrand?->id,
                 'status' => 'active',
                 'has_variants' => false,
                 'base_price' => 1850,

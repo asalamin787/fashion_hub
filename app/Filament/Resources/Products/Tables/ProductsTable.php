@@ -33,7 +33,12 @@ class ProductsTable
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->description(fn (Product $record): string => $record->slug),
+                    ->description(fn (Product $record): string => collect([$record->category?->name, $record->brand?->name])->filter()->join(' | ') ?: $record->slug),
+                TextColumn::make('brand.name')
+                    ->label('Brand')
+                    ->badge()
+                    ->placeholder('No brand')
+                    ->toggleable(),
                 TextColumn::make('status')
                     ->badge()
                     ->sortable()
@@ -98,6 +103,10 @@ class ProductsTable
                     ]),
                 SelectFilter::make('category')
                     ->relationship('category', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('brand')
+                    ->relationship('brand', 'name')
                     ->searchable()
                     ->preload(),
                 TernaryFilter::make('has_variants')
