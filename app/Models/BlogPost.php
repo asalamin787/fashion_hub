@@ -6,6 +6,7 @@ use Database\Factories\BlogPostFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BlogPost extends Model
 {
@@ -52,6 +53,16 @@ class BlogPost extends Model
                     ->whereNull('publish_date')
                     ->orWhere('publish_date', '<=', now());
             });
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(BlogComment::class);
+    }
+
+    public function approvedComments(): HasMany
+    {
+        return $this->comments()->approved();
     }
 
     public function getFeaturedImageUrlAttribute(): string

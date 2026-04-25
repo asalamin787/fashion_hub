@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBlogCommentRequest;
 use App\Models\AboutPage;
 use App\Models\BlogPost;
 use App\Models\InstagramFeed;
@@ -395,7 +396,15 @@ class PageController extends Controller
             ->values()
             ->take(20);
 
+        $comments = collect();
+
         if ($blogPost instanceof BlogPost) {
+            $blogPost->load([
+                'approvedComments' => fn ($query) => $query->latest()->limit(20),
+            ]);
+
+            $comments = $blogPost->approvedComments;
+
             $relatedPosts = BlogPost::query()
                 ->published()
                 ->whereKeyNot($blogPost->getKey())
@@ -431,11 +440,26 @@ class PageController extends Controller
 
         return view('pages.blog_details', [
             'blogPost' => $blogPost,
+            'comments' => $comments,
             'relatedPosts' => $relatedPosts,
             'recentPosts' => $recentPosts,
             'categoryCounts' => $categoryCounts,
             'popularTags' => $popularTags,
         ]);
+    }
+
+    public function storeBlogComment(StoreBlogCommentRequest $request, BlogPost $blogPost)
+    {
+        $blogPost->comments()->create([
+            ...$request->validated(),
+            'is_approved' => true,
+        ]);
+
+        $blogPost->increment('comments_count');
+
+        return redirect()
+            ->route('blog.details', ['blogPost' => $blogPost->slug])
+            ->with('commentSubmitted', 'Your comment has been posted successfully.');
     }
 
     public function contact()

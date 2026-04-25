@@ -141,58 +141,87 @@
                             </div>
                         </div>
 
-                        <div class="comments-section">
+                        <div class="comments-section" id="comments">
                             <h3><i class="fas fa-comments"></i> Comments ({{ (int) ($blogPost->comments_count ?? 0) }})</h3>
 
-                            <div class="comment">
-                                <div class="comment-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=C0876A&color=fff&size=70" alt="Sarah Johnson">
-                                </div>
-                                <div class="comment-content">
-                                    <div class="comment-header">
-                                        <h5>Sarah Johnson</h5>
-                                        <span class="comment-date"><i class="far fa-clock"></i> 2 days ago</span>
-                                    </div>
-                                    <p>This is such an insightful article! The styling tips are really practical and easy to follow. I've already tried the layering technique and got so many compliments. Thank you for sharing!</p>
-                                    <a href="#" class="reply-btn"><i class="fas fa-reply"></i> Reply</a>
-                                </div>
-                            </div>
+                            @if (session('commentSubmitted'))
+                                <div class="alert alert-success mb-4">{{ session('commentSubmitted') }}</div>
+                            @endif
 
-                            <div class="comment">
-                                <div class="comment-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Emma+Williams&background=A76048&color=fff&size=70" alt="Emma Williams">
-                                </div>
-                                <div class="comment-content">
-                                    <div class="comment-header">
-                                        <h5>Emma Williams</h5>
-                                        <span class="comment-date"><i class="far fa-clock"></i> 5 days ago</span>
+                            @forelse ($comments as $comment)
+                                <div class="comment">
+                                    <div class="comment-avatar">
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($comment->name) }}&background=865749&color=fff&size=70" alt="{{ $comment->name }}">
                                     </div>
-                                    <p>Loved reading this! FashionHub always delivers quality content. Would love to see more articles about sustainable fashion choices and eco-friendly brands.</p>
-                                    <a href="#" class="reply-btn"><i class="fas fa-reply"></i> Reply</a>
+                                    <div class="comment-content">
+                                        <div class="comment-header">
+                                            <h5>{{ $comment->name }}</h5>
+                                            <span class="comment-date"><i class="far fa-clock"></i> {{ $comment->created_at?->diffForHumans() }}</span>
+                                        </div>
+                                        <p>{{ $comment->content }}</p>
+                                        @if ($comment->website)
+                                            <a href="{{ $comment->website }}" target="_blank" rel="noopener noreferrer" class="reply-btn"><i class="fas fa-globe"></i> Visit Website</a>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
+                            @empty
+                                <div class="comment">
+                                    <div class="comment-avatar">
+                                        <img src="https://ui-avatars.com/api/?name=FashionHub+Reader&background=C0876A&color=fff&size=70" alt="FashionHub Reader">
+                                    </div>
+                                    <div class="comment-content">
+                                        <div class="comment-header">
+                                            <h5>No comments yet</h5>
+                                            <span class="comment-date"><i class="far fa-comment"></i> Be the first to join the conversation</span>
+                                        </div>
+                                        <p>Share your thoughts, styling ideas, or feedback about this article using the form below.</p>
+                                    </div>
+                                </div>
+                            @endforelse
 
                             <div class="comment-form">
                                 <h4><i class="fas fa-pen"></i> Leave a Comment</h4>
-                                <form>
+                                @if ($blogPost instanceof \App\Models\BlogPost)
+                                    <form action="{{ route('blog.comments.store', ['blogPost' => $blogPost->slug]) }}" method="POST">
+                                        @csrf
+                                @else
+                                    <form>
+                                @endif
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" placeholder="Your Name *" required>
+                                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Your Name *" value="{{ old('name') }}" {{ $blogPost instanceof \App\Models\BlogPost ? 'required' : 'disabled' }}>
+                                            @error('name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="email" class="form-control" placeholder="Your Email *" required>
+                                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Your Email *" value="{{ old('email') }}" {{ $blogPost instanceof \App\Models\BlogPost ? 'required' : 'disabled' }}>
+                                            @error('email')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-12">
-                                            <input type="url" class="form-control" placeholder="Your Website (optional)">
+                                            <input type="url" class="form-control @error('website') is-invalid @enderror" name="website" placeholder="Your Website (optional)" value="{{ old('website') }}" {{ $blogPost instanceof \App\Models\BlogPost ? '' : 'disabled' }}>
+                                            @error('website')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-12">
-                                            <textarea class="form-control" rows="5" placeholder="Write your comment here..."></textarea>
+                                            <textarea class="form-control @error('content') is-invalid @enderror" name="content" rows="5" placeholder="Write your comment here..." {{ $blogPost instanceof \App\Models\BlogPost ? 'required' : 'disabled' }}>{{ old('content') }}</textarea>
+                                            @error('content')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-12">
-                                            <button type="submit" class="btn-submit">
+                                            <button type="submit" class="btn-submit" {{ $blogPost instanceof \App\Models\BlogPost ? '' : 'disabled' }}>
                                                 <i class="fas fa-paper-plane"></i> Post Comment
                                             </button>
                                         </div>
+                                        @unless ($blogPost instanceof \App\Models\BlogPost)
+                                            <div class="col-12">
+                                                <p class="mb-0 text-muted">Publish a real blog post first to enable comment submissions.</p>
+                                            </div>
+                                        @endunless
                                     </div>
                                 </form>
                             </div>
