@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use App\Models\Bag;
 use App\Models\Product;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -10,6 +11,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -139,6 +142,27 @@ class ProductsTable
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
+                    Action::make('addToBag')
+                        ->label('Add to bag')
+                        ->icon(Heroicon::ShoppingCart)
+                        ->color('info')
+                        ->form([
+                            Select::make('bag_ids')
+                                ->label('Select bags')
+                                ->options(fn (): array => Bag::query()->where('is_active', true)->orderBy('name')->pluck('name', 'id')->all())
+                                ->multiple()
+                                ->searchable()
+                                ->native(false)
+                                ->required(),
+                        ])
+                        ->action(function (Product $record, array $data): void {
+                            $record->bags()->syncWithoutDetaching($data['bag_ids']);
+
+                            Notification::make()
+                                ->title('Product added to bag.')
+                                ->success()
+                                ->send();
+                        }),
                     Action::make('setActive')
                         ->label('Set active')
                         ->icon(Heroicon::CheckCircle)
