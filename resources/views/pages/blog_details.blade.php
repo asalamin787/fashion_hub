@@ -142,7 +142,7 @@
                         </div>
 
                         <div class="comments-section" id="comments">
-                            <h3><i class="fas fa-comments"></i> Comments ({{ (int) ($blogPost->comments_count ?? 0) }})</h3>
+                            <h3><i class="fas fa-comments"></i> Comments ({{ (int) ($approvedCommentsCount ?? 0) }})</h3>
 
                             @if (session('commentSubmitted'))
                                 <div class="alert alert-success mb-4">{{ session('commentSubmitted') }}</div>
@@ -159,6 +159,15 @@
                                             <span class="comment-date"><i class="far fa-clock"></i> {{ $comment->created_at?->diffForHumans() }}</span>
                                         </div>
                                         <p>{{ $comment->content }}</p>
+                                        @if ($comment->admin_reply)
+                                            <div class="comment-admin-reply mt-3 p-3 border rounded bg-light">
+                                                <h6 class="mb-2"><i class="fas fa-reply"></i> FashionHub Reply</h6>
+                                                <p class="mb-1">{{ $comment->admin_reply }}</p>
+                                                @if ($comment->replied_at)
+                                                    <small class="text-muted">{{ $comment->replied_at->diffForHumans() }}</small>
+                                                @endif
+                                            </div>
+                                        @endif
                                         @if ($comment->website)
                                             <a href="{{ $comment->website }}" target="_blank" rel="noopener noreferrer" class="reply-btn"><i class="fas fa-globe"></i> Visit Website</a>
                                         @endif

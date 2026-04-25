@@ -397,6 +397,7 @@ class PageController extends Controller
             ->take(20);
 
         $comments = collect();
+        $approvedCommentsCount = 0;
 
         if ($blogPost instanceof BlogPost) {
             $blogPost->load([
@@ -404,6 +405,7 @@ class PageController extends Controller
             ]);
 
             $comments = $blogPost->approvedComments;
+            $approvedCommentsCount = $blogPost->approvedComments()->count();
 
             $relatedPosts = BlogPost::query()
                 ->published()
@@ -441,6 +443,7 @@ class PageController extends Controller
         return view('pages.blog_details', [
             'blogPost' => $blogPost,
             'comments' => $comments,
+            'approvedCommentsCount' => $approvedCommentsCount,
             'relatedPosts' => $relatedPosts,
             'recentPosts' => $recentPosts,
             'categoryCounts' => $categoryCounts,

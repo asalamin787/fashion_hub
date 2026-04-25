@@ -24,6 +24,8 @@ class BlogCommentFactory extends Factory
             'email' => fake()->safeEmail(),
             'website' => fake()->optional()->url(),
             'content' => fake()->paragraph(),
+            'admin_reply' => null,
+            'replied_at' => null,
             'is_approved' => true,
         ];
     }

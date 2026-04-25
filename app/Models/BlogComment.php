@@ -5,8 +5,8 @@ namespace App\Models;
 use Database\Factories\BlogCommentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BlogComment extends Model
 {
@@ -22,6 +22,8 @@ class BlogComment extends Model
         'email',
         'website',
         'content',
+        'admin_reply',
+        'replied_at',
         'is_approved',
     ];
 
@@ -31,6 +33,7 @@ class BlogComment extends Model
     protected function casts(): array
     {
         return [
+            'replied_at' => 'datetime',
             'is_approved' => 'boolean',
         ];
     }
