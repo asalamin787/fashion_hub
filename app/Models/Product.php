@@ -78,6 +78,11 @@ class Product extends Model
         return $this->belongsToMany(Bag::class);
     }
 
+    public function offers(): BelongsToMany
+    {
+        return $this->belongsToMany(Offer::class);
+    }
+
     /**
      * @return array<string, mixed>|null
      */

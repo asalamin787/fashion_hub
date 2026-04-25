@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Products\Tables;
 
 use App\Models\Bag;
+use App\Models\Offer;
 use App\Models\Product;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -160,6 +161,27 @@ class ProductsTable
 
                             Notification::make()
                                 ->title('Product added to bag.')
+                                ->success()
+                                ->send();
+                        }),
+                    Action::make('applyOffer')
+                        ->label('Apply offer')
+                        ->icon(Heroicon::Tag)
+                        ->color('warning')
+                        ->form([
+                            Select::make('offer_ids')
+                                ->label('Select offers')
+                                ->options(fn (): array => Offer::query()->where('is_active', true)->orderBy('title')->pluck('title', 'id')->all())
+                                ->multiple()
+                                ->searchable()
+                                ->native(false)
+                                ->required(),
+                        ])
+                        ->action(function (Product $record, array $data): void {
+                            $record->offers()->syncWithoutDetaching($data['offer_ids']);
+
+                            Notification::make()
+                                ->title('Offer applied to product.')
                                 ->success()
                                 ->send();
                         }),
