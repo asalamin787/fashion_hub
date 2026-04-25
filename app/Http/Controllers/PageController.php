@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InstagramFeed;
 use App\Models\Slider;
 
 class PageController extends Controller
@@ -49,8 +50,61 @@ class PageController extends Controller
             ]);
         }
 
+        $instagramFeeds = InstagramFeed::query()
+            ->active()
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        if ($instagramFeeds->isEmpty()) {
+            $instagramFeeds = collect([
+                (object) [
+                    'section_title' => 'Follow Us on Instagram',
+                    'instagram_handle' => '@fashionhub',
+                    'image_url' => 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400',
+                    'post_url' => 'https://instagram.com/fashionhub',
+                ],
+                (object) [
+                    'section_title' => 'Follow Us on Instagram',
+                    'instagram_handle' => '@fashionhub',
+                    'image_url' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400',
+                    'post_url' => 'https://instagram.com/fashionhub',
+                ],
+                (object) [
+                    'section_title' => 'Follow Us on Instagram',
+                    'instagram_handle' => '@fashionhub',
+                    'image_url' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400',
+                    'post_url' => 'https://instagram.com/fashionhub',
+                ],
+                (object) [
+                    'section_title' => 'Follow Us on Instagram',
+                    'instagram_handle' => '@fashionhub',
+                    'image_url' => 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400',
+                    'post_url' => 'https://instagram.com/fashionhub',
+                ],
+                (object) [
+                    'section_title' => 'Follow Us on Instagram',
+                    'instagram_handle' => '@fashionhub',
+                    'image_url' => 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=400',
+                    'post_url' => 'https://instagram.com/fashionhub',
+                ],
+                (object) [
+                    'section_title' => 'Follow Us on Instagram',
+                    'instagram_handle' => '@fashionhub',
+                    'image_url' => 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=400',
+                    'post_url' => 'https://instagram.com/fashionhub',
+                ],
+            ]);
+        }
+
+        $instagramSectionTitle = (string) ($instagramFeeds->first()->section_title ?? 'Follow Us on Instagram');
+        $instagramHandle = (string) ($instagramFeeds->first()->instagram_handle ?? '@fashionhub');
+
         return view('pages.home', [
             'sliders' => $sliders,
+            'instagramFeeds' => $instagramFeeds,
+            'instagramSectionTitle' => $instagramSectionTitle,
+            'instagramHandle' => $instagramHandle,
         ]);
     }
 

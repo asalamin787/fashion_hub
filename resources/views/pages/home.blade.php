@@ -1340,158 +1340,43 @@
     <section class="instagram-section">
         <div class="container-fluid px-0">
             <div class="section-title">
-                <h2>Follow Us on Instagram</h2>
-                <p>@fashionhub</p>
+                <h2>{{ $instagramSectionTitle }}</h2>
+                <p>{{ $instagramHandle }}</p>
             </div>
             <div class="instagram-marquee">
                 <div class="instagram-track">
                     <div class="instagram-group">
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400"
-                                    alt="Instagram Post 1">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" aria-label="Open Instagram post 1"
-                                        title="Open Instagram post 1">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
+                        @foreach ($instagramFeeds as $index => $feed)
+                            <div class="instagram-item-wrapper">
+                                <div class="instagram-item">
+                                    <img src="{{ $feed->image_url }}" alt="Instagram Post {{ $index + 1 }}">
+                                    <div class="instagram-overlay">
+                                        <a href="{{ $feed->post_url ?: 'https://instagram.com' }}" class="instagram-link"
+                                            aria-label="Open Instagram post {{ $index + 1 }}"
+                                            title="Open Instagram post {{ $index + 1 }}" target="_blank"
+                                            rel="noopener noreferrer">
+                                            <i class="fab fa-instagram"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400"
-                                    alt="Instagram Post 2">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" aria-label="Open Instagram post 2"
-                                        title="Open Instagram post 2">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400"
-                                    alt="Instagram Post 3">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" aria-label="Open Instagram post 3"
-                                        title="Open Instagram post 3">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400"
-                                    alt="Instagram Post 4">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" aria-label="Open Instagram post 4"
-                                        title="Open Instagram post 4">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=400"
-                                    alt="Instagram Post 5">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" aria-label="Open Instagram post 5"
-                                        title="Open Instagram post 5">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=400"
-                                    alt="Instagram Post 6">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" aria-label="Open Instagram post 6"
-                                        title="Open Instagram post 6">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                     <div class="instagram-group" aria-hidden="true">
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400"
-                                    alt="">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" tabindex="-1" aria-hidden="true"
-                                        title="Instagram post preview">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
+                        @foreach ($instagramFeeds as $feed)
+                            <div class="instagram-item-wrapper">
+                                <div class="instagram-item">
+                                    <img src="{{ $feed->image_url }}" alt="">
+                                    <div class="instagram-overlay">
+                                        <a href="{{ $feed->post_url ?: 'https://instagram.com' }}" class="instagram-link"
+                                            tabindex="-1" aria-hidden="true" title="Instagram post preview"
+                                            target="_blank" rel="noopener noreferrer">
+                                            <i class="fab fa-instagram"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400"
-                                    alt="">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" tabindex="-1" aria-hidden="true"
-                                        title="Instagram post preview">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400"
-                                    alt="">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" tabindex="-1" aria-hidden="true"
-                                        title="Instagram post preview">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400"
-                                    alt="">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" tabindex="-1" aria-hidden="true"
-                                        title="Instagram post preview">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=400"
-                                    alt="">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" tabindex="-1" aria-hidden="true"
-                                        title="Instagram post preview">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="instagram-item-wrapper">
-                            <div class="instagram-item">
-                                <img src="https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=400"
-                                    alt="">
-                                <div class="instagram-overlay">
-                                    <a href="#" class="instagram-link" tabindex="-1" aria-hidden="true"
-                                        title="Instagram post preview">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
