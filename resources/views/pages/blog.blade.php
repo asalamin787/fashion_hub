@@ -72,7 +72,16 @@
                         <div class="blog-post-card">
                             <div class="blog-content">
                                 <h3 class="blog-title">No blog posts found</h3>
-                                <p class="blog-excerpt">Try another keyword or create a post from the admin panel.</p>
+                                <p class="blog-excerpt">
+                                    @if ($searchTerm !== '')
+                                        We could not find any posts for "{{ $searchTerm }}". Try a shorter keyword, category name, author name, or tag.
+                                    @else
+                                        Try another keyword or create a post from the admin panel.
+                                    @endif
+                                </p>
+                                @if ($searchTerm !== '')
+                                    <a href="{{ route('blog') }}" class="blog-read-more">Clear Search <i class="fas fa-arrow-right"></i></a>
+                                @endif
                             </div>
                         </div>
                     @endforelse

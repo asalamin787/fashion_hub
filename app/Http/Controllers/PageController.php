@@ -6,7 +6,9 @@ use App\Models\AboutPage;
 use App\Models\BlogPost;
 use App\Models\InstagramFeed;
 use App\Models\Slider;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
 
 class PageController extends Controller
 {
@@ -228,7 +230,10 @@ class PageController extends Controller
 
     public function blog()
     {
-        $searchTerm = (string) request()->string('q');
+        $searchTerm = Str::of((string) request()->string('q'))->squish()->value();
+        $searchTokens = Str::of($searchTerm)
+            ->explode(' ')
+            ->filter();
 
         $blogQuery = BlogPost::query()
             ->published()
@@ -236,14 +241,19 @@ class PageController extends Controller
             ->orderBy('sort_order')
             ->orderByDesc('id');
 
-        if ($searchTerm !== '') {
-            $blogQuery->where(function ($query) use ($searchTerm): void {
-                $query
-                    ->where('title', 'like', "%{$searchTerm}%")
-                    ->orWhere('excerpt', 'like', "%{$searchTerm}%")
-                    ->orWhere('content', 'like', "%{$searchTerm}%")
-                    ->orWhere('category', 'like', "%{$searchTerm}%")
-                    ->orWhere('author_name', 'like', "%{$searchTerm}%");
+        if ($searchTokens->isNotEmpty()) {
+            $blogQuery->where(function (Builder $query) use ($searchTokens): void {
+                foreach ($searchTokens as $searchToken) {
+                    $query->where(function (Builder $tokenQuery) use ($searchToken): void {
+                        $tokenQuery
+                            ->where('title', 'like', "%{$searchToken}%")
+                            ->orWhere('excerpt', 'like', "%{$searchToken}%")
+                            ->orWhere('content', 'like', "%{$searchToken}%")
+                            ->orWhere('category', 'like', "%{$searchToken}%")
+                            ->orWhere('author_name', 'like', "%{$searchToken}%")
+                            ->orWhere('tags', 'like', "%{$searchToken}%");
+                    });
+                }
             });
         }
 
@@ -276,7 +286,7 @@ class PageController extends Controller
             ->values()
             ->take(20);
 
-        if ($blogPosts->isEmpty()) {
+        if ($blogPosts->isEmpty() && $searchTerm === '') {
             $fallbackPosts = collect([
                 (object) [
                     'title' => '10 Must-Have Fashion Pieces for Winter 2024',
