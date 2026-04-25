@@ -1187,6 +1187,24 @@
     color: #e74c3c;
 }
 
+/* Reading time meta */
+.post-reading-time {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 8px 16px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+}
+
+/* Author role icon color */
+.author-role i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
 /* Responsive Design */
 @media (max-width: 991px) {
     .blog-sidebar {

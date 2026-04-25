@@ -494,6 +494,112 @@
 .footer-bottom {
     text-align: center;
     padding: 25px 0;
+    /* Featured Post Card */
+    .featured-post-card {
+        border: 2px solid rgba(134, 87, 73, 0.2);
+        box-shadow: 0 10px 40px rgba(134, 87, 73, 0.15);
+    }
+
+    .featured-post-card .blog-title {
+        font-size: 1.75rem;
+    }
+
+    .featured-post-card .blog-image {
+        padding-top: 50%;
+    }
+
+    /* Badges */
+    .featured-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #f5a623, #f76b1c);
+        color: var(--white);
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .new-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: var(--white);
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        z-index: 2;
+    }
+
+    /* Blog Card Footer */
+    .blog-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .blog-author-avatar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.88rem;
+        color: var(--grey-dark);
+        font-weight: 500;
+    }
+
+    .blog-author-avatar img {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(134, 87, 73, 0.2);
+    }
+
+    /* Responsive meta wrapping */
+    .blog-meta {
+        flex-wrap: wrap;
+    }
+
+    /* Newsletter Widget */
+    .newsletter-widget {
+        background: linear-gradient(135deg, rgba(134, 87, 73, 0.05), rgba(192, 135, 106, 0.05));
+        border: 2px solid rgba(134, 87, 73, 0.15);
+    }
+
+    .newsletter-text {
+        font-size: 0.93rem;
+        color: var(--grey-dark);
+        line-height: 1.7;
+        margin-bottom: 15px;
+    }
+
+    .newsletter-form .form-control {
+        padding: 12px 15px;
+        border: 2px solid rgba(134, 87, 73, 0.2);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .newsletter-form .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(134, 87, 73, 0.15);
+    }
+
+    .footer-bottom {
+        text-align: center;
+        padding: 25px 0;
+        margin-top: 50px;
     margin-top: 50px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
