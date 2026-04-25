@@ -7,80 +7,45 @@
     <section class="hero-carousel">
         <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+                @foreach ($sliders as $index => $slide)
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ $index }}"
+                        class="{{ $index === 0 ? 'active' : '' }}"></button>
+                @endforeach
             </div>
             <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div class="hero-slide"
-                        style="background-image: linear-gradient(rgba(45, 35, 38, 0.7), rgba(71, 61, 67, 0.7)), url('https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920');">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-7">
-                                    <div class="hero-content">
-                                        <p class="hero-subtitle">New Collection 2025</p>
-                                        <h1 class="hero-title">Discover Your Style</h1>
-                                        <p class="hero-description">Explore our curated collection of premium fashion
-                                            pieces that define elegance and sophistication.</p>
-                                        <div class="hero-buttons">
-                                            <a href="{{ route('shop') }}" class="btn btn-primary">Shop Now</a>
-                                            <a href="{{ route('about') }}" class="btn btn-outline"
-                                                style="border: 2px solid rgba(255, 255, 255, 0.7); color: rgba(255, 255, 255, 0.7);">Learn
-                                                More</a>
+                @foreach ($sliders as $index => $slide)
+                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                        <div class="hero-slide"
+                            style="background-image: linear-gradient(rgba(45, 35, 38, 0.7), rgba(71, 61, 67, 0.7)), url('{{ $slide->background_image_url }}');">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-7">
+                                        <div class="hero-content">
+                                            @if (!empty($slide->subtitle))
+                                                <p class="hero-subtitle">{{ $slide->subtitle }}</p>
+                                            @endif
+                                            <h1 class="hero-title">{{ $slide->title }}</h1>
+                                            @if (!empty($slide->description))
+                                                <p class="hero-description">{{ $slide->description }}</p>
+                                            @endif
+                                            <div class="hero-buttons">
+                                                @if (!empty($slide->primary_button_text))
+                                                    <a href="{{ $slide->primary_button_link ?: route('shop') }}"
+                                                        class="btn btn-primary">{{ $slide->primary_button_text }}</a>
+                                                @endif
+                                                @if (!empty($slide->secondary_button_text))
+                                                    <a href="{{ $slide->secondary_button_link ?: route('shop') }}"
+                                                        class="btn btn-outline"
+                                                        style="border: 2px solid rgba(255, 255, 255, 0.7); color: rgba(255, 255, 255, 0.7);">{{ $slide->secondary_button_text }}</a>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="hero-slide"
-                        style="background-image: linear-gradient(rgba(45, 35, 38, 0.7), rgba(71, 61, 67, 0.7)), url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920');">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-7">
-                                    <div class="hero-content">
-                                        <p class="hero-subtitle">Summer Collection</p>
-                                        <h1 class="hero-title">Up to 50% Off</h1>
-                                        <p class="hero-description">Limited time offer on selected summer fashion items.
-                                            Don't miss out on these amazing deals!</p>
-                                        <div class="hero-buttons">
-                                            <a href="{{ route('shop') }}" class="btn btn-primary">Shop Sale</a>
-                                            <a href="{{ route('shop') }}" class="btn btn-outline"
-                                                style="border: 2px solid rgba(255, 255, 255, 0.7); color: rgba(255, 255, 255, 0.7);">View
-                                                Collection</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="hero-slide"
-                        style="background-image: linear-gradient(rgba(45, 35, 38, 0.7), rgba(71, 61, 67, 0.7)), url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920');">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-7">
-                                    <div class="hero-content">
-                                        <p class="hero-subtitle">Trending Now</p>
-                                        <h1 class="hero-title">Fashion Forward</h1>
-                                        <p class="hero-description">Stay ahead with the latest trends in fashion.
-                                            Express yourself with our exclusive designs.</p>
-                                        <div class="hero-buttons">
-                                            <a href="{{ route('shop') }}" class="btn btn-primary">Explore Trends</a>
-                                            <a href="{{ route('blog') }}" class="btn btn-outline"
-                                                style="border: 2px solid rgba(255, 255, 255, 0.7); color: rgba(255, 255, 255, 0.7);">Fashion
-                                                Tips</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon"></span>
