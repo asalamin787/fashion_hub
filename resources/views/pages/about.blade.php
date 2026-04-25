@@ -1,4 +1,16 @@
 <x-app>
+    @push('meta')
+        <title>{{ $aboutPage->hero_title ?: 'About Us' }} | FashionHub</title>
+        <meta name="description" content="{{ \Illuminate\Support\Str::limit((string) ($aboutPage->hero_subtitle ?? 'Learn more about FashionHub, our story, values, and team.'), 160) }}">
+        <meta name="keywords" content="about fashionhub, fashion brand story, fashion team, fashion values">
+        <meta property="og:title" content="{{ $aboutPage->hero_title ?: 'About Us' }} | FashionHub">
+        <meta property="og:description" content="{{ \Illuminate\Support\Str::limit((string) ($aboutPage->hero_subtitle ?? 'Learn more about FashionHub, our story, values, and team.'), 160) }}">
+        <meta property="og:url" content="{{ request()->fullUrl() }}">
+        <meta property="og:type" content="website">
+        <meta name="twitter:title" content="{{ $aboutPage->hero_title ?: 'About Us' }} | FashionHub">
+        <meta name="twitter:description" content="{{ \Illuminate\Support\Str::limit((string) ($aboutPage->hero_subtitle ?? 'Learn more about FashionHub, our story, values, and team.'), 160) }}">
+    @endpush
+
     @push('css')
         <link rel="stylesheet" href="{{ asset('assets/css/about.css') }}">
     @endpush

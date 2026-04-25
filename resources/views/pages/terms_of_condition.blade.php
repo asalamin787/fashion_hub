@@ -1,4 +1,16 @@
 <x-app>
+    @push('meta')
+        <title>Terms & Conditions | FashionHub</title>
+        <meta name="description" content="Review FashionHub's Terms & Conditions for website usage, orders, payments, shipping, returns, and legal policies.">
+        <meta name="keywords" content="terms and conditions, website terms, fashionhub legal, user agreement">
+        <meta property="og:title" content="Terms & Conditions | FashionHub">
+        <meta property="og:description" content="Review FashionHub's Terms & Conditions for website usage, orders, payments, shipping, returns, and legal policies.">
+        <meta property="og:url" content="{{ request()->fullUrl() }}">
+        <meta property="og:type" content="website">
+        <meta name="twitter:title" content="Terms & Conditions | FashionHub">
+        <meta name="twitter:description" content="Review FashionHub's Terms & Conditions for website usage, orders, payments, shipping, returns, and legal policies.">
+    @endpush
+
     @push('css')
         <link rel="stylesheet" href="{{ asset('assets/css/terms.css') }}">
     @endpush

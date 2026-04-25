@@ -1,4 +1,16 @@
 <x-app>
+    @push('meta')
+        <title>Privacy Policy | FashionHub</title>
+        <meta name="description" content="Read FashionHub's Privacy Policy to understand how we collect, use, and protect your personal information.">
+        <meta name="keywords" content="privacy policy, data protection, user privacy, fashionhub policy">
+        <meta property="og:title" content="Privacy Policy | FashionHub">
+        <meta property="og:description" content="Read FashionHub's Privacy Policy to understand how we collect, use, and protect your personal information.">
+        <meta property="og:url" content="{{ request()->fullUrl() }}">
+        <meta property="og:type" content="website">
+        <meta name="twitter:title" content="Privacy Policy | FashionHub">
+        <meta name="twitter:description" content="Read FashionHub's Privacy Policy to understand how we collect, use, and protect your personal information.">
+    @endpush
+
     @push('css')
         <link rel="stylesheet" href="{{ asset('assets/css/privacy.css') }}">
     @endpush

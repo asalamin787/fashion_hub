@@ -1,4 +1,16 @@
 <x-app>
+    @push('meta')
+        <title>Contact Us | FashionHub</title>
+        <meta name="description" content="Get in touch with FashionHub for support, order help, partnership inquiries, or general questions.">
+        <meta name="keywords" content="contact fashionhub, customer support, fashion store contact, help center">
+        <meta property="og:title" content="Contact Us | FashionHub">
+        <meta property="og:description" content="Get in touch with FashionHub for support, order help, partnership inquiries, or general questions.">
+        <meta property="og:url" content="{{ request()->fullUrl() }}">
+        <meta property="og:type" content="website">
+        <meta name="twitter:title" content="Contact Us | FashionHub">
+        <meta name="twitter:description" content="Get in touch with FashionHub for support, order help, partnership inquiries, or general questions.">
+    @endpush
+
     @push('css')
         <link rel="stylesheet" href="{{ asset('assets/css/contact.css') }}">
     @endpush

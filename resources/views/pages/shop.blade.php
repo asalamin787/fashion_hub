@@ -1,4 +1,16 @@
 <x-app>
+    @push('meta')
+        <title>Shop Collection | FashionHub</title>
+        <meta name="description" content="Browse FashionHub's curated collection of premium clothing, accessories, bags, and shoes for every style.">
+        <meta name="keywords" content="fashion shop, premium clothing, fashion accessories, bags, shoes">
+        <meta property="og:title" content="Shop Collection | FashionHub">
+        <meta property="og:description" content="Browse FashionHub's curated collection of premium clothing, accessories, bags, and shoes for every style.">
+        <meta property="og:url" content="{{ request()->fullUrl() }}">
+        <meta property="og:type" content="website">
+        <meta name="twitter:title" content="Shop Collection | FashionHub">
+        <meta name="twitter:description" content="Browse FashionHub's curated collection of premium clothing, accessories, bags, and shoes for every style.">
+    @endpush
+
     @push('css')
         <link rel="stylesheet" href="{{ asset('assets/css/products.css') }}">
     @endpush

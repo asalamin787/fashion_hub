@@ -4,7 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Store - Premium Fashion for Everyone</title>
+    <title>FashionHub - Premium Fashion for Everyone</title>
+    <meta name="description" content="FashionHub brings curated fashion trends, style guides, and premium wardrobe inspiration for modern shoppers.">
+    <meta name="keywords" content="fashion, style, fashion blog, trends, wardrobe, shopping">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="FashionHub">
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="FashionHub">
+    <meta property="og:title" content="FashionHub - Premium Fashion for Everyone">
+    <meta property="og:description" content="FashionHub brings curated fashion trends, style guides, and premium wardrobe inspiration for modern shoppers.">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ asset('assets/images/logo/logo.png') }}">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FashionHub - Premium Fashion for Everyone">
+    <meta name="twitter:description" content="FashionHub brings curated fashion trends, style guides, and premium wardrobe inspiration for modern shoppers.">
+    <meta name="twitter:image" content="{{ asset('assets/images/logo/logo.png') }}">
+
+    @stack('meta')
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
