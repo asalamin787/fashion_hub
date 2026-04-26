@@ -48,7 +48,23 @@ class BlogPostInfolist
                             ->placeholder('No content')
                             ->columnSpanFull(),
                         TextEntry::make('tags')
-                            ->formatStateUsing(fn (?array $state): string => implode(', ', $state ?? []))
+                            ->formatStateUsing(function (mixed $state): string {
+                                if (is_array($state)) {
+                                    return implode(', ', array_filter($state, fn ($item): bool => filled($item)));
+                                }
+
+                                if (is_string($state) && filled($state)) {
+                                    $decoded = json_decode($state, true);
+
+                                    if (is_array($decoded)) {
+                                        return implode(', ', array_filter($decoded, fn ($item): bool => filled($item)));
+                                    }
+
+                                    return $state;
+                                }
+
+                                return '';
+                            })
                             ->placeholder('No tags')
                             ->columnSpanFull(),
                         TextEntry::make('views_count')
