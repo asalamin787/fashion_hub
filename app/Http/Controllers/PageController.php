@@ -106,11 +106,51 @@ class PageController extends Controller
         $instagramSectionTitle = (string) ($instagramFeeds->first()->section_title ?? 'Follow Us on Instagram');
         $instagramHandle = (string) ($instagramFeeds->first()->instagram_handle ?? '@fashionhub');
 
+        $blogHighlights = BlogPost::query()
+            ->published()
+            ->orderByDesc('publish_date')
+            ->orderByDesc('id')
+            ->limit(3)
+            ->get();
+
+        if ($blogHighlights->isEmpty()) {
+            $blogHighlights = collect([
+                (object) [
+                    'title' => '10 Must-Have Pieces for Your Winter Wardrobe',
+                    'slug' => null,
+                    'category' => 'Fashion Tips',
+                    'excerpt' => 'Discover the essential fashion items you need to stay stylish and warm this winter season.',
+                    'featured_image_url' => 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920',
+                    'publish_date' => now()->subDays(5),
+                    'comments_count' => 24,
+                ],
+                (object) [
+                    'title' => 'How to Mix and Match Patterns Like a Pro',
+                    'slug' => null,
+                    'category' => 'Style Guide',
+                    'excerpt' => 'Learn the art of combining different patterns to create stunning and unique outfits.',
+                    'featured_image_url' => 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500',
+                    'publish_date' => now()->subDays(8),
+                    'comments_count' => 18,
+                ],
+                (object) [
+                    'title' => '2025 Fashion Trends You Need to Know',
+                    'slug' => null,
+                    'category' => 'Trends',
+                    'excerpt' => 'Stay ahead of the curve with these upcoming fashion trends that will dominate 2025.',
+                    'featured_image_url' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500',
+                    'publish_date' => now()->subDays(10),
+                    'comments_count' => 32,
+                ],
+            ]);
+        }
+
         return view('pages.home', [
             'sliders' => $sliders,
             'instagramFeeds' => $instagramFeeds,
             'instagramSectionTitle' => $instagramSectionTitle,
             'instagramHandle' => $instagramHandle,
+            'blogHighlights' => $blogHighlights,
         ]);
     }
 

@@ -1222,67 +1222,28 @@
                 <p>Latest from our blog</p>
             </div>
             <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <article class="blog-highlight-card">
-                        <div class="blog-highlight-image">
-                            <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920"
-                                alt="Blog Post">
-                            <span class="blog-highlight-category">Fashion Tips</span>
-                        </div>
-                        <div class="blog-highlight-content">
-                            <div class="blog-highlight-meta">
-                                <span><i class="far fa-calendar"></i> Nov 25, 2025</span>
-                                <span><i class="far fa-comment"></i> 24 Comments</span>
+                @foreach ($blogHighlights as $post)
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <article class="blog-highlight-card">
+                            <div class="blog-highlight-image">
+                                <img src="{{ $post->featured_image_url ?? 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500' }}"
+                                    alt="{{ $post->title }}">
+                                <span class="blog-highlight-category">{{ $post->category ?: 'Fashion' }}</span>
                             </div>
-                            <h4 class="blog-highlight-title">10 Must-Have Pieces for Your Winter Wardrobe</h4>
-                            <p class="blog-highlight-excerpt">Discover the essential fashion items you need to stay
-                                stylish and warm this winter season.</p>
-                            <a href="{{ route('blog.details', ['id' => 1]) }}" class="blog-highlight-link">Read More <i
-                                    class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </article>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <article class="blog-highlight-card">
-                        <div class="blog-highlight-image">
-                            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500"
-                                alt="Blog Post">
-                            <span class="blog-highlight-category">Style Guide</span>
-                        </div>
-                        <div class="blog-highlight-content">
-                            <div class="blog-highlight-meta">
-                                <span><i class="far fa-calendar"></i> Nov 22, 2025</span>
-                                <span><i class="far fa-comment"></i> 18 Comments</span>
+                            <div class="blog-highlight-content">
+                                <div class="blog-highlight-meta">
+                                    <span><i class="far fa-calendar"></i>
+                                        {{ optional($post->publish_date)->format('M d, Y') ?? 'Recently' }}</span>
+                                    <span><i class="far fa-comment"></i> {{ (int) ($post->comments_count ?? 0) }} Comments</span>
+                                </div>
+                                <h4 class="blog-highlight-title">{{ \Illuminate\Support\Str::limit($post->title, 58) }}</h4>
+                                <p class="blog-highlight-excerpt">{{ $post->excerpt ? \Illuminate\Support\Str::limit((string) $post->excerpt, 120) : \Illuminate\Support\Str::limit((string) ($post->content ?? ''), 120) }}</p>
+                                <a href="{{ filled($post->slug ?? null) ? route('blog.details', ['blogPost' => $post->slug]) : route('blog') }}"
+                                    class="blog-highlight-link">Read More <i class="fas fa-arrow-right"></i></a>
                             </div>
-                            <h4 class="blog-highlight-title">How to Mix and Match Patterns Like a Pro</h4>
-                            <p class="blog-highlight-excerpt">Learn the art of combining different patterns to create
-                                stunning and unique outfits.</p>
-                            <a href="{{ route('blog.details', ['id' => 2]) }}" class="blog-highlight-link">Read More <i
-                                    class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </article>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <article class="blog-highlight-card">
-                        <div class="blog-highlight-image">
-                            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500"
-                                alt="Blog Post">
-                            <span class="blog-highlight-category">Trends</span>
-                        </div>
-                        <div class="blog-highlight-content">
-                            <div class="blog-highlight-meta">
-                                <span><i class="far fa-calendar"></i> Nov 20, 2025</span>
-                                <span><i class="far fa-comment"></i> 32 Comments</span>
-                            </div>
-                            <h4 class="blog-highlight-title">2025 Fashion Trends You Need to Know</h4>
-                            <p class="blog-highlight-excerpt">Stay ahead of the curve with these upcoming fashion
-                                trends
-                                that will dominate 2025.</p>
-                            <a href="{{ route('blog.details', ['id' => 3]) }}" class="blog-highlight-link">Read More <i
-                                    class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </article>
-                </div>
+                        </article>
+                    </div>
+                @endforeach
             </div>
         </div>
     </section>
