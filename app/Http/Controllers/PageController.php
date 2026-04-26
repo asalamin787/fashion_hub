@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBlogCommentRequest;
 use App\Models\AboutPage;
 use App\Models\BlogPost;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\InstagramFeed;
 use App\Models\Offer;
@@ -456,7 +457,74 @@ class PageController extends Controller
 
     public function shop()
     {
-        return view('pages.shop');
+        $perPage = 20;
+
+        // Get filter parameters from request
+        $categoryIds = request()->query('categories');
+        $categoryIds = $categoryIds ? explode(',', $categoryIds) : null;
+        $categoryIds = $categoryIds ? array_map('intval', array_filter($categoryIds)) : null;
+
+        $brandIds = request()->query('brands');
+        $brandIds = $brandIds ? explode(',', $brandIds) : null;
+        $brandIds = $brandIds ? array_map('intval', array_filter($brandIds)) : null;
+
+        $minPrice = request()->query('min_price');
+        $minPrice = $minPrice ? (float) $minPrice : null;
+
+        $maxPrice = request()->query('max_price');
+        $maxPrice = $maxPrice ? (float) $maxPrice : null;
+
+        $badges = request()->query('badges');
+        $badges = $badges ? explode(',', $badges) : null;
+        $badges = $badges ? array_filter($badges) : null;
+
+        $sortBy = request()->query('sort_by', 'featured');
+
+        // Build query with scopes
+        $products = Product::query()
+            ->active()
+            ->byCategory($categoryIds)
+            ->byBrand($brandIds)
+            ->byBadge($badges)
+            ->byPriceRange($minPrice, $maxPrice)
+            ->sort($sortBy)
+            ->with(['category', 'brand'])
+            ->select(['id', 'name', 'slug', 'featured_image', 'base_price', 'sale_price', 'badge', 'category_id', 'brand_id', 'created_at', 'is_featured', 'sales_count', 'rating'])
+            ->paginate($perPage)
+            ->withQueryString();
+
+        // Get available filter options from database
+        $categories = Category::query()
+            ->where('is_active', true)
+            ->withCount('products')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        $brands = Brand::query()
+            ->orderBy('name')
+            ->get();
+
+        $availableBadges = Product::query()
+            ->active()
+            ->distinct()
+            ->whereNotNull('badge')
+            ->pluck('badge')
+            ->values();
+
+        return view('pages.shop', [
+            'products' => $products,
+            'categories' => $categories,
+            'brands' => $brands,
+            'availableBadges' => $availableBadges,
+            'selectedCategories' => $categoryIds ?? [],
+            'selectedBrands' => $brandIds ?? [],
+            'selectedBadges' => $badges ?? [],
+            'selectedMinPrice' => $minPrice,
+            'selectedMaxPrice' => $maxPrice,
+            'sortBy' => $sortBy,
+            'totalProducts' => Product::active()->count(),
+        ]);
     }
 
     public function productDetails()

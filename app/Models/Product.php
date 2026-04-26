@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -514,5 +515,80 @@ class Product extends Model
         }
 
         return asset('storage/'.ltrim($image, '/'));
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeByCategory(Builder $query, int|array|null $categoryId): Builder
+    {
+        if ($categoryId === null) {
+            return $query;
+        }
+
+        if (is_array($categoryId)) {
+            return $query->whereIn('category_id', $categoryId);
+        }
+
+        return $query->where('category_id', $categoryId);
+    }
+
+    public function scopeByBrand(Builder $query, int|array|null $brandId): Builder
+    {
+        if ($brandId === null) {
+            return $query;
+        }
+
+        if (is_array($brandId)) {
+            return $query->whereIn('brand_id', $brandId);
+        }
+
+        return $query->where('brand_id', $brandId);
+    }
+
+    public function scopeByBadge(Builder $query, string|array|null $badge): Builder
+    {
+        if ($badge === null) {
+            return $query;
+        }
+
+        if (is_array($badge)) {
+            return $query->whereIn('badge', $badge);
+        }
+
+        return $query->where('badge', $badge);
+    }
+
+    public function scopeByPriceRange(Builder $query, ?float $minPrice = null, ?float $maxPrice = null): Builder
+    {
+        if ($minPrice !== null) {
+            $query->where(function (Builder $q) use ($minPrice): void {
+                $q->whereRaw('COALESCE(sale_price, base_price) >= ?', [$minPrice])
+                    ->orWhereRaw('base_price >= ?', [$minPrice]);
+            });
+        }
+
+        if ($maxPrice !== null) {
+            $query->where(function (Builder $q) use ($maxPrice): void {
+                $q->whereRaw('COALESCE(sale_price, base_price) <= ?', [$maxPrice])
+                    ->orWhereRaw('base_price <= ?', [$maxPrice]);
+            });
+        }
+
+        return $query;
+    }
+
+    public function scopeSort(Builder $query, ?string $sortBy = 'featured'): Builder
+    {
+        return match ($sortBy) {
+            'price_low' => $query->orderByRaw('COALESCE(sale_price, base_price)')->orderBy('id'),
+            'price_high' => $query->orderByRaw('COALESCE(sale_price, base_price) DESC')->orderBy('id', 'desc'),
+            'newest' => $query->orderByDesc('created_at')->orderByDesc('id'),
+            'best_selling' => $query->orderByDesc('sales_count')->orderByDesc('id'),
+            'top_rated' => $query->orderByDesc('rating')->orderByDesc('id'),
+            default => $query->orderByDesc('is_featured')->orderByDesc('sales_count')->orderByDesc('id'),
+        };
     }
 }

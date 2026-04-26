@@ -43,96 +43,64 @@
                     <div class="filter-sidebar">
                         <h4 class="filter-title">Filters</h4>
 
-                        <!-- Category Filter -->
-                        <div class="filter-section">
-                            <h6>Category</h6>
-                            <div class="filter-option">
-                                <input type="checkbox" id="cat1">
-                                <label for="cat1">Women's Clothing</label>
+                        <form id="filterForm" method="GET" action="{{ route('shop') }}">
+                            <!-- Category Filter -->
+                            <div class="filter-section">
+                                <h6>Category</h6>
+                                @forelse ($categories as $category)
+                                    <div class="filter-option">
+                                        <input type="checkbox" id="cat{{ $category->id }}" name="categories" value="{{ $category->id }}" 
+                                            {{ in_array($category->id, $selectedCategories) ? 'checked' : '' }}>
+                                        <label for="cat{{ $category->id }}">{{ $category->name }} ({{ $category->products_count }})</label>
+                                    </div>
+                                @empty
+                                    <p class="text-muted small">No categories available</p>
+                                @endforelse
                             </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="cat2">
-                                <label for="cat2">Men's Clothing</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="cat3">
-                                <label for="cat3">Accessories</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="cat4">
-                                <label for="cat4">Shoes</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="cat5">
-                                <label for="cat5">Bags</label>
-                            </div>
-                        </div>
 
-                        <!-- Price Filter -->
-                        <div class="filter-section">
-                            <h6>Price Range</h6>
-                            <div class="price-range">
-                                <input type="number" placeholder="Min" value="0">
-                                <span>-</span>
-                                <input type="number" placeholder="Max" value="500">
-                            </div>
-                        </div>
-
-                        <!-- Size Filter -->
-                        <div class="filter-section">
-                            <h6>Size</h6>
-                            <div class="size-options">
-                                <div class="size-option">XS</div>
-                                <div class="size-option">S</div>
-                                <div class="size-option active">M</div>
-                                <div class="size-option">L</div>
-                                <div class="size-option">XL</div>
-                                <div class="size-option">XXL</div>
-                            </div>
-                        </div>
-
-                        <!-- Color Filter -->
-                        <div class="filter-section">
-                            <h6>Color</h6>
-                            <div class="color-options">
-                                <div class="color-option" style="background-color: #000000;" title="Black"></div>
-                                <div class="color-option" style="background-color: #FFFFFF; border: 1px solid #ddd;"
-                                    title="White"></div>
-                                <div class="color-option active" style="background-color: #865749;" title="Brown">
+                            <!-- Price Filter -->
+                            <div class="filter-section">
+                                <h6>Price Range</h6>
+                                <div class="price-range">
+                                    <input type="number" name="min_price" placeholder="Min" value="{{ $selectedMinPrice ?? 0 }}" min="0">
+                                    <span>-</span>
+                                    <input type="number" name="max_price" placeholder="Max" value="{{ $selectedMaxPrice ?? 500 }}" min="0">
                                 </div>
-                                <div class="color-option" style="background-color: #C0876A;" title="Tan"></div>
-                                <div class="color-option" style="background-color: #4169E1;" title="Blue"></div>
-                                <div class="color-option" style="background-color: #DC143C;" title="Red"></div>
-                                <div class="color-option" style="background-color: #228B22;" title="Green"></div>
-                                <div class="color-option" style="background-color: #FFD700;" title="Gold"></div>
                             </div>
-                        </div>
 
-                        <!-- Brand Filter -->
-                        <div class="filter-section">
-                            <h6>Brand</h6>
-                            <div class="filter-option">
-                                <input type="checkbox" id="brand1">
-                                <label for="brand1">FashionHub Premium</label>
+                            <!-- Badge Filter -->
+                            <div class="filter-section">
+                                <h6>Product Type</h6>
+                                @forelse ($availableBadges as $badge)
+                                    <div class="filter-option">
+                                        <input type="checkbox" id="badge{{ $loop->index }}" name="badges" value="{{ $badge }}"
+                                            {{ in_array($badge, $selectedBadges) ? 'checked' : '' }}>
+                                        <label for="badge{{ $loop->index }}">{{ $badge }}</label>
+                                    </div>
+                                @empty
+                                    <p class="text-muted small">No badges available</p>
+                                @endforelse
                             </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="brand2">
-                                <label for="brand2">Urban Style</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="brand3">
-                                <label for="brand3">Elegant Wear</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="brand4">
-                                <label for="brand4">Casual Chic</label>
-                            </div>
-                        </div>
 
-                        <div class="filter-apply">
-                            <button class="btn btn-primary">Apply Filters</button>
-                            <button class="filter-reset">Reset All</button>
-                        </div>
+                            <!-- Brand Filter -->
+                            <div class="filter-section">
+                                <h6>Brand</h6>
+                                @forelse ($brands as $brand)
+                                    <div class="filter-option">
+                                        <input type="checkbox" id="brand{{ $brand->id }}" name="brands" value="{{ $brand->id }}"
+                                            {{ in_array($brand->id, $selectedBrands) ? 'checked' : '' }}>
+                                        <label for="brand{{ $brand->id }}">{{ $brand->name }}</label>
+                                    </div>
+                                @empty
+                                    <p class="text-muted small">No brands available</p>
+                                @endforelse
+                            </div>
+
+                            <div class="filter-apply">
+                                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                                <a href="{{ route('shop') }}" class="btn btn-light filter-reset">Reset All</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -141,415 +109,76 @@
                     <!-- Products Header -->
                     <div class="products-header">
                         <div class="products-count">
-                            Showing <strong>1-12</strong> of <strong>48</strong> products
+                            Showing <strong>{{ ($products->currentPage() - 1) * $products->perPage() + 1 }}</strong>-<strong>{{ min($products->currentPage() * $products->perPage(), $products->total()) }}</strong> of <strong>{{ $products->total() }}</strong> products
                         </div>
                         <div class="products-sort">
                             <label>Sort by:</label>
-                            <select>
-                                <option>Featured</option>
-                                <option>Price: Low to High</option>
-                                <option>Price: High to Low</option>
-                                <option>Newest</option>
-                                <option>Best Selling</option>
-                                <option>Top Rated</option>
+                            <select onchange="window.location = '{{ route('shop') }}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), sort_by: this.value}).toString()">
+                                <option value="featured" {{ $sortBy === 'featured' ? 'selected' : '' }}>Featured</option>
+                                <option value="price_low" {{ $sortBy === 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
+                                <option value="price_high" {{ $sortBy === 'price_high' ? 'selected' : '' }}>Price: High to Low</option>
+                                <option value="newest" {{ $sortBy === 'newest' ? 'selected' : '' }}>Newest</option>
+                                <option value="best_selling" {{ $sortBy === 'best_selling' ? 'selected' : '' }}>Best Selling</option>
+                                <option value="top_rated" {{ $sortBy === 'top_rated' ? 'selected' : '' }}>Top Rated</option>
                             </select>
                         </div>
                     </div>
 
                     <!-- Products Grid -->
                     <div class="products-grid">
-                        <!-- Product 1 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400"
-                                    alt="Product">
-                                <span class="product-badge">New</span>
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 1]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
+                        @forelse ($products as $product)
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="{{ $product->featured_image_url }}" alt="{{ $product->name }}">
+                                    @if (filled($product->badge))
+                                        <span class="product-badge">{{ $product->badge }}</span>
+                                    @endif
+                                    <div class="product-overlay">
+                                        <a href="{{ route('product.details', ['id' => $product->slug]) }}"
+                                            class="btn btn-sm btn-primary product-action-btn"
+                                            aria-label="Quick view">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('cart') }}"
+                                            class="btn btn-sm btn-secondary product-action-btn"
+                                            aria-label="Add to cart">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </a>
+                                        <a href="#"
+                                            class="btn btn-sm btn-secondary product-action-btn"
+                                            aria-label="Add to wishlist">
+                                            <i class="fas fa-heart"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h5 class="product-title">{{ $product->name }}</h5>
+                                    <div class="product-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <div class="product-price">
+                                        ${{ number_format((float) ($product->sale_price ?? $product->base_price ?? 0), 2) }}
+                                        @if ((float) ($product->sale_price ?? 0) > 0 && (float) ($product->base_price ?? 0) > (float) ($product->sale_price ?? 0))
+                                            <span class="product-price-old">${{ number_format((float) $product->base_price, 2) }}</span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Elegant Summer Dress</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <div class="product-price">
-                                    $129.99
-                                    <span class="product-price-old">$159.99</span>
-                                </div>
+                        @empty
+                            <div style="grid-column: 1 / -1;">
+                                <p class="text-center text-muted py-5">No products found matching your filters.</p>
                             </div>
-                        </div>
-
-                        <!-- Product 2 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400"
-                                    alt="Product">
-                                <span class="product-badge">Sale</span>
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Casual Denim Jacket</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                                <div class="product-price">$89.99</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 3 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400"
-                                    alt="Product">
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Classic White Sneakers</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <div class="product-price">$79.99</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 4 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=400"
-                                    alt="Product">
-                                <span class="product-badge">Hot</span>
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 4]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Designer Handbag</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <div class="product-price">$199.99</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 5 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400"
-                                    alt="Product">
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 5]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Slim Fit Blazer</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                                <div class="product-price">$149.99</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 6 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1617019114583-affb34d1b3cd?w=400"
-                                    alt="Product">
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 6]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Leather Boots</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <div class="product-price">$169.99</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 7 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400"
-                                    alt="Product">
-                                <span class="product-badge">New</span>
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 7]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Casual T-Shirt</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <div class="product-price">$39.99</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 8 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400"
-                                    alt="Product">
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 8]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Stylish Sunglasses</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                                <div class="product-price">$59.99</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 9 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400"
-                                    alt="Product">
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 9]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Leather Wallet</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <div class="product-price">$49.99</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 10 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?w=400"
-                                    alt="Product">
-                                <span class="product-badge">Sale</span>
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 10]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Striped Sweater</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                                <div class="product-price">
-                                    $69.99
-                                    <span class="product-price-old">$99.99</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Product 11 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400"
-                                    alt="Product">
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 11]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Vintage Watch</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <div class="product-price">$249.99</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 12 -->
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=400"
-                                    alt="Product">
-                                <span class="product-badge">Hot</span>
-                                <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => 12]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title">Formal Trousers</h5>
-                                <div class="product-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                                <div class="product-price">$99.99</div>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
 
                     <!-- Pagination -->
                     <div class="pagination-wrapper">
                         <nav aria-label="Page navigation">
-                            <ul class="pagination">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
+                            {{ $products->links('pagination::bootstrap-5') }}
                         </nav>
                     </div>
                 </div>
@@ -569,20 +198,17 @@
                 overlay.classList.toggle('active');
             }
 
-            // Size option toggle
-            document.querySelectorAll('.size-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-
-            // Color option toggle
-            document.querySelectorAll('.color-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                });
+            // Handle filter form auto-submit on checkbox change
+            document.addEventListener('DOMContentLoaded', function() {
+                const filterForm = document.getElementById('filterForm');
+                if (filterForm) {
+                    const filterInputs = filterForm.querySelectorAll('input[type="checkbox"], input[type="number"]');
+                    filterInputs.forEach(input => {
+                        input.addEventListener('change', function() {
+                            filterForm.submit();
+                        });
+                    });
+                }
             });
         </script>
     @endpush
