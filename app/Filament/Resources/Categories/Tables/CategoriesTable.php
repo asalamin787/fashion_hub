@@ -37,13 +37,18 @@ class CategoriesTable
                 IconColumn::make('icon')
                     ->label('Icon')
                     ->icon(fn (?string $state): Heroicon => match ($state) {
-                        'heroicon-o-tag' => Heroicon::Tag,
-                        'heroicon-o-squares-2x2' => Heroicon::Squares2x2,
-                        'heroicon-o-shirt' => Heroicon::ShoppingBag,
+                        'fas fa-male' => Heroicon::User,
+                        'fas fa-female' => Heroicon::User,
+                        'fas fa-gem' => Heroicon::Sparkles,
+                        'fas fa-shoe-prints' => Heroicon::Tag,
+                        'fas fa-shopping-bag' => Heroicon::ShoppingBag,
+                        'fas fa-glasses' => Heroicon::Eye,
+                        'fas fa-watch' => Heroicon::Clock,
+                        'fas fa-ring' => Heroicon::Sparkles,
                         default => Heroicon::Tag,
                     })
                     ->color('warning')
-                    ->tooltip(fn (?string $state): string => $state ?: 'heroicon-o-tag'),
+                    ->tooltip(fn (?string $state): string => $state ?: 'fas fa-male'),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable()
@@ -84,9 +89,14 @@ class CategoriesTable
                 SelectFilter::make('icon')
                     ->label('Category icon')
                     ->options([
-                        'heroicon-o-tag' => 'Tag icon',
-                        'heroicon-o-squares-2x2' => 'Squares icon',
-                        'heroicon-o-shirt' => 'Shirt icon',
+                        'fas fa-male' => 'Male icon',
+                        'fas fa-female' => 'Female icon',
+                        'fas fa-gem' => 'Gem icon',
+                        'fas fa-shoe-prints' => 'Footwear icon',
+                        'fas fa-shopping-bag' => 'Bag icon',
+                        'fas fa-glasses' => 'Eyewear icon',
+                        'fas fa-watch' => 'Watch icon',
+                        'fas fa-ring' => 'Jewelry icon',
                     ]),
                 TernaryFilter::make('is_active')
                     ->label('Active status'),

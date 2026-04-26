@@ -65,165 +65,60 @@
                 <h2>Shop by Category</h2>
                 <p>Explore our fashion collections</p>
             </div>
+            @php($categorySlides = $homeCategories->chunk(4))
             <div id="categoriesCarousel" class="carousel slide category-carousel" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    <!-- Slide 1 -->
-                    <div class="carousel-item active">
-                        <div class="row">
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <a href="{{ route('shop') }}" class="category-item-card">
-                                    <div class="category-item-image"
-                                        style="background-image: url('https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=600');">
-                                        <div class="category-item-overlay">
-                                            <div class="category-item-content">
-                                                <i class="fas fa-male category-item-icon"></i>
-                                                <h3 class="category-item-title">Men's Fashion</h3>
-                                                <p class="category-item-count">180+ Products</p>
-                                                <span class="category-item-btn">Shop Now <i
-                                                        class="fas fa-arrow-right"></i></span>
+                    @foreach ($categorySlides as $slide)
+                        <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                            <div class="row">
+                                @foreach ($slide as $category)
+                                    <div class="col-lg-3 col-md-6 mb-4">
+                                        <a href="{{ route('shop', ['category' => $category->slug]) }}" class="category-item-card">
+                                            <div class="category-item-image"
+                                                style="background-image: url('{{ $category->image_url }}');">
+                                                <div class="category-item-overlay">
+                                                    <div class="category-item-content">
+                                                        <i class="{{ $category->icon ?: 'fas fa-tag' }} category-item-icon"></i>
+                                                        <h3 class="category-item-title">{{ $category->name }}</h3>
+                                                        <p class="category-item-count">
+                                                            {{ number_format((int) $category->products_count) }}
+                                                            {{ (int) $category->products_count === 1 ? 'Product' : 'Products' }}
+                                                        </p>
+                                                        <span class="category-item-btn">Shop Now <i
+                                                                class="fas fa-arrow-right"></i></span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <a href="{{ route('shop') }}" class="category-item-card">
-                                    <div class="category-item-image"
-                                        style="background-image: url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600');">
-                                        <div class="category-item-overlay">
-                                            <div class="category-item-content">
-                                                <i class="fas fa-female category-item-icon"></i>
-                                                <h3 class="category-item-title">Women's Fashion</h3>
-                                                <p class="category-item-count">250+ Products</p>
-                                                <span class="category-item-btn">Shop Now <i
-                                                        class="fas fa-arrow-right"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <a href="{{ route('shop') }}" class="category-item-card">
-                                    <div class="category-item-image"
-                                        style="background-image: url('https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=600');">
-                                        <div class="category-item-overlay">
-                                            <div class="category-item-content">
-                                                <i class="fas fa-gem category-item-icon"></i>
-                                                <h3 class="category-item-title">Accessories</h3>
-                                                <p class="category-item-count">120+ Products</p>
-                                                <span class="category-item-btn">Shop Now <i
-                                                        class="fas fa-arrow-right"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <a href="{{ route('shop') }}" class="category-item-card">
-                                    <div class="category-item-image"
-                                        style="background-image: url('https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600');">
-                                        <div class="category-item-overlay">
-                                            <div class="category-item-content">
-                                                <i class="fas fa-shoe-prints category-item-icon"></i>
-                                                <h3 class="category-item-title">Footwear</h3>
-                                                <p class="category-item-count">95+ Products</p>
-                                                <span class="category-item-btn">Shop Now <i
-                                                        class="fas fa-arrow-right"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
+                                @endforeach
                             </div>
                         </div>
-                    </div>
-                    <!-- Slide 2 -->
-                    <div class="carousel-item">
-                        <div class="row">
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <a href="{{ route('shop') }}" class="category-item-card">
-                                    <div class="category-item-image"
-                                        style="background-image: url('https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600');">
-                                        <div class="category-item-overlay">
-                                            <div class="category-item-content">
-                                                <i class="fas fa-shopping-bag category-item-icon"></i>
-                                                <h3 class="category-item-title">Bags & Purses</h3>
-                                                <p class="category-item-count">75+ Products</p>
-                                                <span class="category-item-btn">Shop Now <i
-                                                        class="fas fa-arrow-right"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <a href="{{ route('shop') }}" class="category-item-card">
-                                    <div class="category-item-image"
-                                        style="background-image: url('https://images.unsplash.com/photo-1509319117443-4b901b5414cc?w=600');">
-                                        <div class="category-item-overlay">
-                                            <div class="category-item-content">
-                                                <i class="fas fa-glasses category-item-icon"></i>
-                                                <h3 class="category-item-title">Eyewear</h3>
-                                                <p class="category-item-count">45+ Products</p>
-                                                <span class="category-item-btn">Shop Now <i
-                                                        class="fas fa-arrow-right"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <a href="{{ route('shop') }}" class="category-item-card">
-                                    <div class="category-item-image"
-                                        style="background-image: url('https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=600');">
-                                        <div class="category-item-overlay">
-                                            <div class="category-item-content">
-                                                <i class="fas fa-watch category-item-icon"></i>
-                                                <h3 class="category-item-title">Watches</h3>
-                                                <p class="category-item-count">60+ Products</p>
-                                                <span class="category-item-btn">Shop Now <i
-                                                        class="fas fa-arrow-right"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <a href="{{ route('shop') }}" class="category-item-card">
-                                    <div class="category-item-image"
-                                        style="background-image: url('https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=600');">
-                                        <div class="category-item-overlay">
-                                            <div class="category-item-content">
-                                                <i class="fas fa-ring category-item-icon"></i>
-                                                <h3 class="category-item-title">Jewelry</h3>
-                                                <p class="category-item-count">85+ Products</p>
-                                                <span class="category-item-btn">Shop Now <i
-                                                        class="fas fa-arrow-right"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
                 <!-- Carousel Controls -->
-                <button class="carousel-control-prev category-carousel-control-prev" type="button"
-                    data-bs-target="#categoriesCarousel" data-bs-slide="prev">
-                    <i class="fas fa-chevron-left"></i>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next category-carousel-control-next" type="button"
-                    data-bs-target="#categoriesCarousel" data-bs-slide="next">
-                    <i class="fas fa-chevron-right"></i>
-                    <span class="visually-hidden">Next</span>
-                </button>
+                @if ($categorySlides->count() > 1)
+                    <button class="carousel-control-prev category-carousel-control-prev" type="button"
+                        data-bs-target="#categoriesCarousel" data-bs-slide="prev">
+                        <i class="fas fa-chevron-left"></i>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next category-carousel-control-next" type="button"
+                        data-bs-target="#categoriesCarousel" data-bs-slide="next">
+                        <i class="fas fa-chevron-right"></i>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                @endif
 
                 <!-- Carousel Indicators -->
-                <div class="carousel-indicators category-carousel-indicators">
-                    <button type="button" data-bs-target="#categoriesCarousel" data-bs-slide-to="0"
-                        class="active"></button>
-                    <button type="button" data-bs-target="#categoriesCarousel" data-bs-slide-to="1"></button>
-                </div>
+                @if ($categorySlides->count() > 1)
+                    <div class="carousel-indicators category-carousel-indicators">
+                        @foreach ($categorySlides as $slide)
+                            <button type="button" data-bs-target="#categoriesCarousel"
+                                data-bs-slide-to="{{ $loop->index }}" class="{{ $loop->first ? 'active' : '' }}"></button>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </section>

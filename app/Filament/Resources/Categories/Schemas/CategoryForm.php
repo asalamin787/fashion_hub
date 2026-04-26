@@ -50,8 +50,8 @@ class CategoryForm
                         TextInput::make('icon')
                             ->label('Icon')
                             ->maxLength(255)
-                            ->placeholder('heroicon-o-tag')
-                            ->helperText('Use a Heroicon name, for example: heroicon-o-tag.'),
+                            ->placeholder('fas fa-male')
+                            ->helperText('Use a Font Awesome class, for example: fas fa-male.'),
                         TextInput::make('sort_order')
                             ->label('Sort order')
                             ->numeric()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBlogCommentRequest;
 use App\Models\AboutPage;
 use App\Models\BlogPost;
+use App\Models\Category;
 use App\Models\InstagramFeed;
 use App\Models\Slider;
 use Illuminate\Database\Eloquent\Builder;
@@ -113,6 +114,76 @@ class PageController extends Controller
             ->limit(3)
             ->get();
 
+        $homeCategories = Category::query()
+            ->select(['id', 'name', 'slug', 'icon', 'image', 'sort_order'])
+            ->withCount('products')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->limit(8)
+            ->get();
+
+        if ($homeCategories->isEmpty()) {
+            $homeCategories = collect([
+                (object) [
+                    'name' => "Men's Fashion",
+                    'slug' => 'mens-fashion',
+                    'icon' => 'fas fa-male',
+                    'image_url' => 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=600',
+                    'products_count' => 180,
+                ],
+                (object) [
+                    'name' => "Women's Fashion",
+                    'slug' => 'womens-fashion',
+                    'icon' => 'fas fa-female',
+                    'image_url' => 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600',
+                    'products_count' => 250,
+                ],
+                (object) [
+                    'name' => 'Accessories',
+                    'slug' => 'accessories',
+                    'icon' => 'fas fa-gem',
+                    'image_url' => 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=600',
+                    'products_count' => 120,
+                ],
+                (object) [
+                    'name' => 'Footwear',
+                    'slug' => 'footwear',
+                    'icon' => 'fas fa-shoe-prints',
+                    'image_url' => 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600',
+                    'products_count' => 95,
+                ],
+                (object) [
+                    'name' => 'Bags & Purses',
+                    'slug' => 'bags-purses',
+                    'icon' => 'fas fa-shopping-bag',
+                    'image_url' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600',
+                    'products_count' => 75,
+                ],
+                (object) [
+                    'name' => 'Eyewear',
+                    'slug' => 'eyewear',
+                    'icon' => 'fas fa-glasses',
+                    'image_url' => 'https://images.unsplash.com/photo-1509319117443-4b901b5414cc?w=600',
+                    'products_count' => 45,
+                ],
+                (object) [
+                    'name' => 'Watches',
+                    'slug' => 'watches',
+                    'icon' => 'fas fa-watch',
+                    'image_url' => 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=600',
+                    'products_count' => 60,
+                ],
+                (object) [
+                    'name' => 'Jewelry',
+                    'slug' => 'jewelry',
+                    'icon' => 'fas fa-ring',
+                    'image_url' => 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=600',
+                    'products_count' => 85,
+                ],
+            ]);
+        }
+
         if ($blogHighlights->isEmpty()) {
             $blogHighlights = collect([
                 (object) [
@@ -150,6 +221,7 @@ class PageController extends Controller
             'instagramFeeds' => $instagramFeeds,
             'instagramSectionTitle' => $instagramSectionTitle,
             'instagramHandle' => $instagramHandle,
+            'homeCategories' => $homeCategories,
             'blogHighlights' => $blogHighlights,
         ]);
     }
