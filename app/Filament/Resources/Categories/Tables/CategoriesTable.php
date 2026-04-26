@@ -49,11 +49,17 @@ class CategoriesTable
                     ->sortable()
                     ->icon(Heroicon::Tag)
                     ->iconColor('warning'),
-                TextColumn::make('slug')
-                    ->searchable()
-                    ->copyable()
+                TextColumn::make('products_count')
+                    ->label('Products')
+                    ->counts('products')
                     ->badge()
-                    ->color('gray'),
+                    ->color('primary')
+                    ->sortable(),
+                // TextColumn::make('slug')
+                //     ->searchable()
+                //     ->copyable()
+                //     ->badge()
+                //     ->color('gray'),
                 TextColumn::make('description')
                     ->limit(50)
                     ->placeholder('No description')
