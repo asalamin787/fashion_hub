@@ -400,6 +400,9 @@ class PageController extends Controller
         $approvedCommentsCount = 0;
 
         if ($blogPost instanceof BlogPost) {
+            $blogPost->increment('views_count');
+            $blogPost->refresh();
+
             $blogPost->load([
                 'approvedComments' => fn ($query) => $query->latest()->limit(20),
             ]);
