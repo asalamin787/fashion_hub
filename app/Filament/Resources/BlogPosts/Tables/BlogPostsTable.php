@@ -32,6 +32,7 @@ class BlogPostsTable
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()
+                    ->wrap()
                     ->description(fn (BlogPost $record): string => $record->excerpt ? str((string) $record->excerpt)->limit(80)->toString() : 'No excerpt'),
                 TextColumn::make('category')
                     ->badge()
@@ -41,6 +42,7 @@ class BlogPostsTable
                 TextColumn::make('author_name')
                     ->label('Author')
                     ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('publish_date')
                     ->label('Published at')
@@ -58,15 +60,18 @@ class BlogPostsTable
                     ->label('Views')
                     ->badge()
                     ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->color('gray'),
                 TextColumn::make('comments_count')
                     ->label('Comments')
                     ->badge()
                     ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->color('primary'),
                 TextColumn::make('sort_order')
                     ->badge()
                     ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->color('gray'),
                 TextColumn::make('updated_at')
                     ->label('Updated')
