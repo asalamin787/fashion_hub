@@ -73,12 +73,14 @@
                             <div class="row">
                                 @foreach ($slide as $category)
                                     <div class="col-lg-3 col-md-6 mb-4">
-                                        <a href="{{ route('shop', ['category' => $category->slug]) }}" class="category-item-card">
+                                        <a href="{{ route('shop', ['category' => $category->slug]) }}"
+                                            class="category-item-card">
                                             <div class="category-item-image"
                                                 style="background-image: url('{{ $category->image_url }}');">
                                                 <div class="category-item-overlay">
                                                     <div class="category-item-content">
-                                                        <i class="{{ $category->icon ?: 'fas fa-tag' }} category-item-icon"></i>
+                                                        <i
+                                                            class="{{ $category->icon ?: 'fas fa-tag' }} category-item-icon"></i>
                                                         <h3 class="category-item-title">{{ $category->name }}</h3>
                                                         <p class="category-item-count">
                                                             {{ number_format((int) $category->products_count) }}
@@ -115,7 +117,8 @@
                     <div class="carousel-indicators category-carousel-indicators">
                         @foreach ($categorySlides as $slide)
                             <button type="button" data-bs-target="#categoriesCarousel"
-                                data-bs-slide-to="{{ $loop->index }}" class="{{ $loop->first ? 'active' : '' }}"></button>
+                                data-bs-slide-to="{{ $loop->index }}"
+                                class="{{ $loop->first ? 'active' : '' }}"></button>
                         @endforeach
                     </div>
                 @endif
@@ -138,15 +141,18 @@
                                 alt="Product">
                             <span class="product-badge">New</span>
                             <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 1]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                <a href="{{ route('product.details', ['id' => 1]) }}"
+                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -172,15 +178,18 @@
                                 alt="Product">
                             <span class="product-badge">Sale</span>
                             <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                <a href="{{ route('product.details', ['id' => 2]) }}"
+                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -202,15 +211,18 @@
                             <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400"
                                 alt="Product">
                             <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                <a href="{{ route('product.details', ['id' => 3]) }}"
+                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -233,15 +245,18 @@
                                 alt="Product">
                             <span class="product-badge">Hot</span>
                             <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                <a href="{{ route('product.details', ['id' => 3]) }}"
+                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -263,15 +278,18 @@
                             <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400"
                                 alt="Product">
                             <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                <a href="{{ route('product.details', ['id' => 3]) }}"
+                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -293,15 +311,18 @@
                             <img src="https://images.unsplash.com/photo-1617019114583-affb34d1b3cd?w=400"
                                 alt="Product">
                             <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                <a href="{{ route('product.details', ['id' => 3]) }}"
+                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -324,15 +345,18 @@
                                 alt="Product">
                             <span class="product-badge">New</span>
                             <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                <a href="{{ route('product.details', ['id' => 3]) }}"
+                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -354,15 +378,18 @@
                             <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400"
                                 alt="Product">
                             <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                <a href="{{ route('product.details', ['id' => 3]) }}"
+                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                    aria-label="Add to wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -400,15 +427,20 @@
                                             alt="Product">
                                         <span class="product-badge">New</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 1]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 1]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -429,15 +461,20 @@
                                             alt="Product">
                                         <span class="product-badge">New</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 2]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -458,15 +495,20 @@
                                             alt="Product">
                                         <span class="product-badge">New</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 3]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -487,15 +529,20 @@
                                             alt="Product">
                                         <span class="product-badge">New</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 4]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 4]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -520,15 +567,20 @@
                                             alt="Product">
                                         <span class="product-badge">New</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 2]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -549,15 +601,20 @@
                                             alt="Product">
                                         <span class="product-badge">New</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 2]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -578,15 +635,20 @@
                                             alt="Product">
                                         <span class="product-badge">New</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 3]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -607,15 +669,20 @@
                                             alt="Product">
                                         <span class="product-badge">New</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 4]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 4]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -690,35 +757,22 @@
     <section class="promo-section">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 mb-4">
-                    <div class="promo-banner">
-                        <div class="promo-content">
-                            <h3 class="promo-title">Summer Sale</h3>
-                            <p class="promo-text">Up to 50% off on selected items</p>
-                            <a href="{{ route('shop') }}" class="btn btn-outline"
-                                style="border: 2px solid rgba(255, 255, 255, 0.7); color: rgba(255, 255, 255, 0.7);">Shop
-                                Now</a>
-                        </div>
-                        <div class="promo-image">
-                            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600"
-                                alt="Summer Sale">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                    <div class="promo-banner" style="background-color: var(--accent-color);">
-                        <div class="promo-content">
-                            <h3 class="promo-title">New Arrivals</h3>
-                            <p class="promo-text">Discover the latest trends in fashion</p>
-                            <a href="{{ route('shop') }}" class="btn btn-outline"
-                                style="border: 2px solid rgba(255, 255, 255, 0.7); color: rgba(255, 255, 255, 0.7);">Explore</a>
-                        </div>
-                        <div class="promo-image">
-                            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600"
-                                alt="New Arrivals">
+                @foreach ($promoOffers as $offer)
+                    <div class="col-lg-6 mb-4">
+                        <div class="promo-banner {{ $loop->index === 1 ? 'promo-banner-accent' : '' }}"
+                            @if ($loop->index === 1) style="background-color: var(--accent-color);" @endif>
+                            <div class="promo-content">
+                                <h3 class="promo-title">{{ $offer->title }}</h3>
+                                <p class="promo-text">{{ $offer->description }}</p>
+                                <a href="{{ route('shop') }}" class="btn btn-outline"
+                                    style="border: 2px solid rgba(255, 255, 255, 0.7); color: rgba(255, 255, 255, 0.7);">{{ $loop->first ? 'Shop Now' : 'Explore' }}</a>
+                            </div>
+                            <div class="promo-image">
+                                <img src="{{ $offer->image_url }}" alt="{{ $offer->title }}">
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
@@ -741,15 +795,20 @@
                                             alt="Product">
                                         <span class="product-badge best-seller-badge">Best Seller</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 1]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 1]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -771,15 +830,20 @@
                                             alt="Product">
                                         <span class="product-badge best-seller-badge">Best Seller</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 2]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -801,15 +865,20 @@
                                             alt="Product">
                                         <span class="product-badge best-seller-badge">Best Seller</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 4]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 4]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -831,15 +900,20 @@
                                             alt="Product">
                                         <span class="product-badge best-seller-badge">Best Seller</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 2]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -865,16 +939,21 @@
                                             alt="Product">
                                         <span class="product-badge best-seller-badge">Best Seller</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 1]) }}" class="btn btn-sm btn-primary product-action-btn product-action-btn-label" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-    <span>Quick View</span>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 1]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn product-action-btn-label"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                                <span>Quick View</span>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -896,16 +975,21 @@
                                             alt="Product">
                                         <span class="product-badge best-seller-badge">Best Seller</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn product-action-btn-label" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-    <span>Quick View</span>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 2]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn product-action-btn-label"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                                <span>Quick View</span>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -927,16 +1011,21 @@
                                             alt="Product">
                                         <span class="product-badge best-seller-badge">Best Seller</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 4]) }}" class="btn btn-sm btn-primary product-action-btn product-action-btn-label" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-    <span>Quick View</span>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 4]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn product-action-btn-label"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                                <span>Quick View</span>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -958,16 +1047,21 @@
                                             alt="Product">
                                         <span class="product-badge best-seller-badge">Best Seller</span>
                                         <div class="product-overlay">
-                                            <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn product-action-btn-label" aria-label="Quick view">
-    <i class="fas fa-eye"></i>
-    <span>Quick View</span>
-</a>
-<a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-    <i class="fas fa-cart-plus"></i>
-</a>
-<a href="#" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to wishlist">
-    <i class="fas fa-heart"></i>
-</a>
+                                            <a href="{{ route('product.details', ['id' => 2]) }}"
+                                                class="btn btn-sm btn-primary product-action-btn product-action-btn-label"
+                                                aria-label="Quick view">
+                                                <i class="fas fa-eye"></i>
+                                                <span>Quick View</span>
+                                            </a>
+                                            <a href="{{ route('cart') }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to wishlist">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -1129,10 +1223,14 @@
                                 <div class="blog-highlight-meta">
                                     <span><i class="far fa-calendar"></i>
                                         {{ optional($post->publish_date)->format('M d, Y') ?? 'Recently' }}</span>
-                                    <span><i class="far fa-comment"></i> {{ (int) ($post->comments_count ?? 0) }} Comments</span>
+                                    <span><i class="far fa-comment"></i> {{ (int) ($post->comments_count ?? 0) }}
+                                        Comments</span>
                                 </div>
-                                <h4 class="blog-highlight-title">{{ \Illuminate\Support\Str::limit($post->title, 58) }}</h4>
-                                <p class="blog-highlight-excerpt">{{ $post->excerpt ? \Illuminate\Support\Str::limit((string) $post->excerpt, 120) : \Illuminate\Support\Str::limit((string) ($post->content ?? ''), 120) }}</p>
+                                <h4 class="blog-highlight-title">
+                                    {{ \Illuminate\Support\Str::limit($post->title, 58) }}</h4>
+                                <p class="blog-highlight-excerpt">
+                                    {{ $post->excerpt ? \Illuminate\Support\Str::limit((string) $post->excerpt, 120) : \Illuminate\Support\Str::limit((string) ($post->content ?? ''), 120) }}
+                                </p>
                                 <a href="{{ filled($post->slug ?? null) ? route('blog.details', ['blogPost' => $post->slug]) : route('blog') }}"
                                     class="blog-highlight-link">Read More <i class="fas fa-arrow-right"></i></a>
                             </div>
@@ -1207,7 +1305,8 @@
                                 <div class="instagram-item">
                                     <img src="{{ $feed->image_url }}" alt="Instagram Post {{ $index + 1 }}">
                                     <div class="instagram-overlay">
-                                        <a href="{{ $feed->post_url ?: 'https://instagram.com' }}" class="instagram-link"
+                                        <a href="{{ $feed->post_url ?: 'https://instagram.com' }}"
+                                            class="instagram-link"
                                             aria-label="Open Instagram post {{ $index + 1 }}"
                                             title="Open Instagram post {{ $index + 1 }}" target="_blank"
                                             rel="noopener noreferrer">
@@ -1224,9 +1323,10 @@
                                 <div class="instagram-item">
                                     <img src="{{ $feed->image_url }}" alt="">
                                     <div class="instagram-overlay">
-                                        <a href="{{ $feed->post_url ?: 'https://instagram.com' }}" class="instagram-link"
-                                            tabindex="-1" aria-hidden="true" title="Instagram post preview"
-                                            target="_blank" rel="noopener noreferrer">
+                                        <a href="{{ $feed->post_url ?: 'https://instagram.com' }}"
+                                            class="instagram-link" tabindex="-1" aria-hidden="true"
+                                            title="Instagram post preview" target="_blank"
+                                            rel="noopener noreferrer">
                                             <i class="fab fa-instagram"></i>
                                         </a>
                                     </div>

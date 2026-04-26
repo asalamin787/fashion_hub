@@ -92,11 +92,11 @@ class ProductsTable
 
                         return $stock > 0 ? 'success' : 'danger';
                     }),
-                TextColumn::make('updated_at')
-                    ->label('Updated')
-                    ->since()
-                    ->sortable()
-                    ->tooltip(fn (Product $record): string => $record->updated_at?->format('d M Y, h:i A') ?? '-'),
+                // TextColumn::make('updated_at')
+                //     ->label('Updated')
+                //     ->since()
+                //     ->sortable()
+                //     ->tooltip(fn (Product $record): string => $record->updated_at?->format('d M Y, h:i A') ?? '-'),
             ])
             ->filters([
                 SelectFilter::make('status')

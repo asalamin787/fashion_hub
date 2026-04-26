@@ -23,6 +23,7 @@ class OfferFactory extends Factory
             'title' => fake()->words(3, true),
             'code' => strtoupper(fake()->unique()->lexify('OFFER-????')),
             'description' => fake()->optional()->sentence(),
+            'image' => fake()->imageUrl(1200, 600, 'fashion', true),
             'type' => $type,
             'value' => $type === 'percentage' ? fake()->numberBetween(5, 50) : fake()->numberBetween(50, 500),
             'min_order_amount' => fake()->optional()->numberBetween(200, 1000),

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Offers\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -44,6 +45,16 @@ class OfferForm
                         Textarea::make('description')
                             ->rows(3)
                             ->placeholder('Short description of the offer.')
+                            ->columnSpanFull(),
+                        FileUpload::make('image')
+                            ->label('Offer banner image')
+                            ->image()
+                            ->imageEditor()
+                            ->disk('public')
+                            ->directory('offers')
+                            ->visibility('public')
+                            ->maxSize(2048)
+                            ->helperText('Upload banner image for homepage promotional blocks.')
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),

@@ -7,6 +7,7 @@ use App\Models\AboutPage;
 use App\Models\BlogPost;
 use App\Models\Category;
 use App\Models\InstagramFeed;
+use App\Models\Offer;
 use App\Models\Slider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -216,6 +217,34 @@ class PageController extends Controller
             ]);
         }
 
+        $promoOffers = Offer::query()
+            ->where('is_active', true)
+            ->where(function (Builder $query): void {
+                $query->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+            })
+            ->where(function (Builder $query): void {
+                $query->whereNull('expires_at')->orWhere('expires_at', '>=', now());
+            })
+            ->orderBy('starts_at')
+            ->orderBy('id')
+            ->limit(2)
+            ->get();
+
+        if ($promoOffers->isEmpty()) {
+            $promoOffers = collect([
+                (object) [
+                    'title' => 'Summer Sale',
+                    'description' => 'Up to 50% off on selected items',
+                    'image_url' => 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600',
+                ],
+                (object) [
+                    'title' => 'New Arrivals',
+                    'description' => 'Discover the latest trends in fashion',
+                    'image_url' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600',
+                ],
+            ]);
+        }
+
         return view('pages.home', [
             'sliders' => $sliders,
             'instagramFeeds' => $instagramFeeds,
@@ -223,6 +252,7 @@ class PageController extends Controller
             'instagramHandle' => $instagramHandle,
             'homeCategories' => $homeCategories,
             'blogHighlights' => $blogHighlights,
+            'promoOffers' => $promoOffers,
         ]);
     }
 

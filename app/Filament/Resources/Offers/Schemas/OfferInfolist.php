@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Offers\Schemas;
 
 use App\Models\Offer;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -22,6 +23,11 @@ class OfferInfolist
                         'md' => 2,
                     ])
                     ->components([
+                        ImageEntry::make('image_url')
+                            ->label('Banner image')
+                            ->height(180)
+                            ->defaultImageUrl('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600')
+                            ->columnSpanFull(),
                         TextEntry::make('title')
                             ->label('Offer title'),
                         TextEntry::make('code')

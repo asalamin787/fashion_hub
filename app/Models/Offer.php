@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Offer extends Model
 {
@@ -20,6 +21,7 @@ class Offer extends Model
         'title',
         'code',
         'description',
+        'image',
         'type',
         'value',
         'min_order_amount',
@@ -73,5 +75,20 @@ class Offer extends Model
         return $this->type === 'percentage'
             ? "{$this->value}%"
             : number_format((float) $this->value, 2);
+    }
+
+    public function getImageUrlAttribute(): string
+    {
+        $image = (string) ($this->image ?? '');
+
+        if ($image === '') {
+            return 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600';
+        }
+
+        if (Str::startsWith($image, ['http://', 'https://'])) {
+            return $image;
+        }
+
+        return asset('storage/'.ltrim($image, '/'));
     }
 }

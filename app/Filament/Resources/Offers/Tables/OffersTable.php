@@ -12,6 +12,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -24,6 +25,11 @@ class OffersTable
     {
         return $table
             ->columns([
+                ImageColumn::make('image_url')
+                    ->label('Image')
+                    ->square()
+                    ->imageSize(60)
+                    ->defaultImageUrl('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600'),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()
