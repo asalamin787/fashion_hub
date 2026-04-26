@@ -14,6 +14,7 @@ use App\Models\Slider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class PageController extends Controller
 {
@@ -527,9 +528,27 @@ class PageController extends Controller
         ]);
     }
 
-    public function productDetails()
+    public function productDetails(Product $product): View
     {
-        return view('pages.single_product');
+        abort_if($product->status !== 'active', 404);
+
+        $product->load(['category', 'brand']);
+
+        $relatedProducts = Product::query()
+            ->active()
+            ->where('id', '!=', $product->id)
+            ->when($product->category_id !== null, fn ($q) => $q->where('category_id', $product->category_id))
+            ->with(['category'])
+            ->select(['id', 'name', 'slug', 'featured_image', 'base_price', 'sale_price', 'badge', 'category_id', 'has_variants', 'variants', 'rating'])
+            ->orderByDesc('is_featured')
+            ->orderByDesc('sales_count')
+            ->limit(4)
+            ->get();
+
+        return view('pages.single_product', [
+            'product' => $product,
+            'relatedProducts' => $relatedProducts,
+        ]);
     }
 
     public function wishlist()

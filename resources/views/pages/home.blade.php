@@ -143,7 +143,7 @@
                                     <span class="product-badge">{{ $product->badge }}</span>
                                 @endif
                                 <div class="product-overlay">
-                                    <a href="{{ route('product.details', ['id' => $product->slug]) }}"
+                                                <a href="{{ route('product.details', $product) }}"
                                         class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
                                         <i class="fas fa-eye"></i>
                                     </a>
@@ -202,7 +202,7 @@
                                                     <span class="product-badge">{{ filled($product->badge) ? $product->badge : '' }}</span>
                                                 @endif
                                                 <div class="product-overlay">
-                                                    <a href="{{ route('product.details', ['id' => $product->slug]) }}"
+                                                    <a href="{{ route('product.details', $product->slug) }}"
                                                         class="btn btn-sm btn-primary product-action-btn"
                                                         aria-label="Quick view">
                                                         <i class="fas fa-eye"></i>
@@ -341,7 +341,7 @@
                                                     <span class="product-badge best-seller-badge">{{ filled($product->badge) ? $product->badge : '' }}</span>
                                                 @endif
                                                 <div class="product-overlay">
-                                                    <a href="{{ route('product.details', ['id' => $product->slug]) }}"
+                                                    <a href="{{ route('product.details', $product->slug) }}"
                                                         class="btn btn-sm btn-primary product-action-btn"
                                                         aria-label="Quick view">
                                                         <i class="fas fa-eye"></i>
