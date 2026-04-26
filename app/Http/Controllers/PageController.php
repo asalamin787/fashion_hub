@@ -8,6 +8,7 @@ use App\Models\BlogPost;
 use App\Models\Category;
 use App\Models\InstagramFeed;
 use App\Models\Offer;
+use App\Models\Product;
 use App\Models\Slider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -113,6 +114,13 @@ class PageController extends Controller
             ->orderByDesc('publish_date')
             ->orderByDesc('id')
             ->limit(3)
+            ->get();
+
+        $featuredProducts = Product::query()
+            ->where('status', 'active')
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
+            ->limit(8)
             ->get();
 
         $homeCategories = Category::query()
@@ -245,6 +253,39 @@ class PageController extends Controller
             ]);
         }
 
+        if ($featuredProducts->isEmpty()) {
+            $featuredProducts = collect([
+                (object) [
+                    'id' => 1,
+                    'name' => 'Elegant Summer Dress',
+                    'featured_image_url' => 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400',
+                    'base_price' => 159.99,
+                    'sale_price' => 129.99,
+                ],
+                (object) [
+                    'id' => 2,
+                    'name' => 'Casual Denim Jacket',
+                    'featured_image_url' => 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400',
+                    'base_price' => 89.99,
+                    'sale_price' => null,
+                ],
+                (object) [
+                    'id' => 3,
+                    'name' => 'Classic White Sneakers',
+                    'featured_image_url' => 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400',
+                    'base_price' => 79.99,
+                    'sale_price' => null,
+                ],
+                (object) [
+                    'id' => 4,
+                    'name' => 'Designer Handbag',
+                    'featured_image_url' => 'https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=400',
+                    'base_price' => 199.99,
+                    'sale_price' => null,
+                ],
+            ]);
+        }
+
         return view('pages.home', [
             'sliders' => $sliders,
             'instagramFeeds' => $instagramFeeds,
@@ -253,6 +294,7 @@ class PageController extends Controller
             'homeCategories' => $homeCategories,
             'blogHighlights' => $blogHighlights,
             'promoOffers' => $promoOffers,
+            'featuredProducts' => $featuredProducts,
         ]);
     }
 

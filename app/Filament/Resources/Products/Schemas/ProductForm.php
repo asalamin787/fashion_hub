@@ -98,6 +98,17 @@ class ProductForm
                                                         'inactive' => 'Inactive',
                                                     ])
                                                     ->helperText('Draft keeps the product editable without exposing it to the storefront.'),
+                                                Select::make('badge')
+                                                    ->label('Product badge')
+                                                    ->native(false)
+                                                    ->placeholder('Auto (Sale/New)')
+                                                    ->options([
+                                                        'New' => 'New',
+                                                        'Sale' => 'Sale',
+                                                        'Best Seller' => 'Best Seller',
+                                                        'Hot' => 'Hot',
+                                                    ])
+                                                    ->helperText('Optional storefront badge. Leave empty to use automatic badge logic.'),
                                                 Toggle::make('has_variants')
                                                     ->label('This product has variants')
                                                     ->default(false)

@@ -134,277 +134,48 @@
                 <p>Handpicked items just for you</p>
             </div>
             <div class="row">
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400"
-                                alt="Product">
-                            <span class="product-badge">New</span>
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 1]) }}"
-                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to wishlist">
-                                    <i class="fas fa-heart"></i>
-                                </a>
+                @foreach ($featuredProducts as $product)
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="{{ $product->featured_image_url }}" alt="{{ $product->name }}">
+                                @if (filled($product->badge))
+                                    <span class="product-badge">{{ $product->badge }}</span>
+                                @endif
+                                <div class="product-overlay">
+                                    <a href="{{ route('product.details', ['id' => $product->slug]) }}"
+                                        class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
+                                        aria-label="Add to cart">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                        aria-label="Add to wishlist">
+                                        <i class="fas fa-heart"></i>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="product-info">
-                            <h5 class="product-title">Elegant Summer Dress</h5>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
-                            <div class="product-price">
-                                $129.99
-                                <span class="product-price-old">$159.99</span>
+                            <div class="product-info">
+                                <h5 class="product-title">{{ $product->name }}</h5>
+                                <div class="product-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="product-price">
+                                    ${{ number_format((float) ($product->sale_price ?? $product->base_price ?? 0), 2) }}
+                                    @if ((float) ($product->sale_price ?? 0) > 0 && (float) ($product->base_price ?? 0) > (float) ($product->sale_price ?? 0))
+                                        <span class="product-price-old">${{ number_format((float) $product->base_price, 2) }}</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400"
-                                alt="Product">
-                            <span class="product-badge">Sale</span>
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 2]) }}"
-                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to wishlist">
-                                    <i class="fas fa-heart"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h5 class="product-title">Casual Denim Jacket</h5>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                            <div class="product-price">$89.99</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400"
-                                alt="Product">
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}"
-                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to wishlist">
-                                    <i class="fas fa-heart"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h5 class="product-title">Classic White Sneakers</h5>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="product-price">$79.99</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=400"
-                                alt="Product">
-                            <span class="product-badge">Hot</span>
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}"
-                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to wishlist">
-                                    <i class="fas fa-heart"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h5 class="product-title">Designer Handbag</h5>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
-                            <div class="product-price">$199.99</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400"
-                                alt="Product">
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}"
-                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to wishlist">
-                                    <i class="fas fa-heart"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h5 class="product-title">Slim Fit Blazer</h5>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                            <div class="product-price">$149.99</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1617019114583-affb34d1b3cd?w=400"
-                                alt="Product">
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}"
-                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to wishlist">
-                                    <i class="fas fa-heart"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h5 class="product-title">Leather Boots</h5>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="product-price">$169.99</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400"
-                                alt="Product">
-                            <span class="product-badge">New</span>
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}"
-                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to wishlist">
-                                    <i class="fas fa-heart"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h5 class="product-title">Casual T-Shirt</h5>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
-                            <div class="product-price">$39.99</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400"
-                                alt="Product">
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}"
-                                    class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-secondary product-action-btn"
-                                    aria-label="Add to wishlist">
-                                    <i class="fas fa-heart"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h5 class="product-title">Stylish Sunglasses</h5>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                            <div class="product-price">$59.99</div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>

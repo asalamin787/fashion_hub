@@ -26,6 +26,7 @@ class Product extends Model
         'category_id',
         'brand_id',
         'status',
+        'badge',
         'featured_image',
         'gallery_images',
         'has_variants',
@@ -498,5 +499,20 @@ class Product extends Model
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    public function getFeaturedImageUrlAttribute(): string
+    {
+        $image = (string) ($this->featured_image ?? '');
+
+        if ($image === '') {
+            return 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400';
+        }
+
+        if (Str::startsWith($image, ['http://', 'https://'])) {
+            return $image;
+        }
+
+        return asset('storage/'.ltrim($image, '/'));
     }
 }

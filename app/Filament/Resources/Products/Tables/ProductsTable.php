@@ -51,6 +51,17 @@ class ProductsTable
                         'inactive' => 'danger',
                         default => 'warning',
                     }),
+                // TextColumn::make('badge')
+                //     ->label('Badge')
+                //     ->badge()
+                //     ->placeholder('Auto')
+                //     ->color(fn (?string $state): string => match ($state) {
+                //         'Sale' => 'danger',
+                //         'Best Seller' => 'warning',
+                //         'Hot' => 'primary',
+                //         default => 'success',
+                //     })
+                //     ->toggleable(),
                 IconColumn::make('has_variants')
                     ->label('Variants')
                     ->boolean()
@@ -143,27 +154,27 @@ class ProductsTable
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
-                    Action::make('addToBag')
-                        ->label('Add to bag')
-                        ->icon(Heroicon::ShoppingCart)
-                        ->color('info')
-                        ->form([
-                            Select::make('bag_ids')
-                                ->label('Select bags')
-                                ->options(fn (): array => Bag::query()->where('is_active', true)->orderBy('name')->pluck('name', 'id')->all())
-                                ->multiple()
-                                ->searchable()
-                                ->native(false)
-                                ->required(),
-                        ])
-                        ->action(function (Product $record, array $data): void {
-                            $record->bags()->syncWithoutDetaching($data['bag_ids']);
+                    // Action::make('addToBag')
+                    //     ->label('Add to bag')
+                    //     ->icon(Heroicon::ShoppingCart)
+                    //     ->color('info')
+                    //     ->form([
+                    //         Select::make('bag_ids')
+                    //             ->label('Select bags')
+                    //             ->options(fn (): array => Bag::query()->where('is_active', true)->orderBy('name')->pluck('name', 'id')->all())
+                    //             ->multiple()
+                    //             ->searchable()
+                    //             ->native(false)
+                    //             ->required(),
+                    //     ])
+                    //     ->action(function (Product $record, array $data): void {
+                    //         $record->bags()->syncWithoutDetaching($data['bag_ids']);
 
-                            Notification::make()
-                                ->title('Product added to bag.')
-                                ->success()
-                                ->send();
-                        }),
+                    //         Notification::make()
+                    //             ->title('Product added to bag.')
+                    //             ->success()
+                    //             ->send();
+                    //     }),
                     Action::make('applyOffer')
                         ->label('Apply offer')
                         ->icon(Heroicon::Tag)
