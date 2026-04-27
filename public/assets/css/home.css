@@ -344,6 +344,13 @@
     padding: 40px 0;
 }
 
+@media (min-width: 768px) {
+    .col-md-5th {
+        flex: 0 0 20%;
+        max-width: 20%;
+    }
+}
+
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

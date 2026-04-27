@@ -308,7 +308,8 @@
                             <button class="btn btn-outline btn-wishlist wishlist-toggle-btn"
                                 data-toggle-url="{{ route('wishlist.toggle', $product) }}"
                                 aria-label="Add to wishlist">
-                                <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                <i
+                                    class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
                             </button>
                         </div>
 
@@ -486,16 +487,32 @@
                                                 aria-label="Quick view">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('cart') }}"
-                                                class="btn btn-sm btn-secondary product-action-btn"
-                                                aria-label="Add to cart">
-                                                <i class="fas fa-cart-plus"></i>
-                                            </a>
+                                            @if ($product->has_variants)
+                                                <a href="{{ route('product.details', $product) }}"
+                                                    class="btn btn-sm btn-secondary product-action-btn"
+                                                    aria-label="Select options">
+                                                    <i class="fas fa-cart-plus"></i>
+                                                </a>
+                                            @else
+                                                <form action="{{ route('cart.add') }}" method="POST"
+                                                    class="d-inline-block">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id"
+                                                        value="{{ $product->id }}">
+                                                    <input type="hidden" name="quantity" value="1">
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-secondary product-action-btn"
+                                                        aria-label="Add to cart">
+                                                        <i class="fas fa-cart-plus"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                             <button type="button"
                                                 class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
                                                 data-toggle-url="{{ route('wishlist.toggle', $related) }}"
                                                 aria-label="Add to wishlist">
-                                                <i class="{{ in_array($related->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                                <i
+                                                    class="{{ in_array($related->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -724,11 +741,11 @@
             })();
 
             // Wishlist toggle
-            (function () {
+            (function() {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 document.querySelectorAll('.wishlist-toggle-btn').forEach(btn => {
-                    btn.addEventListener('click', async function () {
+                    btn.addEventListener('click', async function() {
                         const icon = this.querySelector('i');
                         try {
                             const res = await fetch(this.dataset.toggleUrl, {

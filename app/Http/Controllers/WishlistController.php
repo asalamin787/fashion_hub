@@ -18,7 +18,7 @@ class WishlistController extends Controller
             $products = Product::active()
                 ->whereIn('id', $ids)
                 ->with('category:id,name,slug')
-                ->select(['id', 'name', 'slug', 'featured_image', 'base_price', 'sale_price', 'badge', 'category_id'])
+                ->select(['id', 'name', 'slug', 'featured_image', 'base_price', 'sale_price', 'badge', 'category_id', 'brand_id', 'created_at', 'is_featured', 'sales_count', 'rating', 'stock', 'has_variants'])
                 ->get();
         }
 

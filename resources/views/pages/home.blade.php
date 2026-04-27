@@ -135,7 +135,7 @@
             </div>
             <div class="row">
                 @foreach ($featuredProducts as $product)
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="col-6 col-md-5th mb-4">
                         <div class="product-card">
                             <div class="product-image">
                                 <img src="{{ $product->featured_image_url }}" alt="{{ $product->name }}">
@@ -143,19 +143,32 @@
                                     <span class="product-badge">{{ $product->badge }}</span>
                                 @endif
                                 <div class="product-overlay">
-                                                <a href="{{ route('product.details', $product) }}"
+                                    <a href="{{ route('product.details', $product) }}"
                                         class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn"
-                                        aria-label="Add to cart">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </a>
+                                    @if ($product->has_variants)
+                                        <a href="{{ route('product.details', $product) }}"
+                                            class="btn btn-sm btn-secondary product-action-btn"
+                                            aria-label="Select options">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </a>
+                                    @else
+                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                     <button type="button"
                                         class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
                                         data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
                                         aria-label="Add to wishlist">
-                                        <i class="{{ in_array($product->id ?? null, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                        <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
                                     </button>
                                 </div>
                             </div>
@@ -189,14 +202,14 @@
                 <h2>New Arrivals</h2>
                 <p>Fresh styles just landed</p>
             </div>
-            @php($newArrivalSlides = $newArrivalsProducts->chunk(4))
+            @php($newArrivalSlides = $newArrivalsProducts->chunk(5))
             <div id="newArrivalsCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @foreach ($newArrivalSlides as $slide)
                         <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
                             <div class="row">
                                 @foreach ($slide as $product)
-                                    <div class="col-lg-3 col-md-6 mb-4">
+                                    <div class="col-6 col-md-5th mb-4">
                                         <div class="product-card">
                                             <div class="product-image">
                                                 <img src="{{ $product->featured_image_url }}" alt="{{ $product->name }}">
@@ -209,16 +222,28 @@
                                                         aria-label="Quick view">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a href="{{ route('cart') }}"
-                                                        class="btn btn-sm btn-secondary product-action-btn"
-                                                        aria-label="Add to cart">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </a>
+                                                    @if ($product->has_variants)
+                                                        <a href="{{ route('product.details', $product->slug) }}"
+                                                            class="btn btn-sm btn-secondary product-action-btn"
+                                                            aria-label="Select options">
+                                                            <i class="fas fa-cart-plus"></i>
+                                                        </a>
+                                                    @else
+                                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block">
+                                                            @csrf
+                                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                            <input type="hidden" name="quantity" value="1">
+                                                            <button type="submit" class="btn btn-sm btn-secondary product-action-btn"
+                                                                aria-label="Add to cart">
+                                                                <i class="fas fa-cart-plus"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                     <button type="button"
                                                         class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
                                                         data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
                                                         aria-label="Add to wishlist">
-                                                        <i class="{{ in_array($product->id ?? null, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                                        <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -315,14 +340,14 @@
                 <h2>Best Sellers</h2>
                 <p>Our customers' top picks</p>
             </div>
-            @php($bestSellerSlides = $bestSellersProducts->chunk(4))
+            @php($bestSellerSlides = $bestSellersProducts->chunk(5))
             <div id="bestSellersCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @foreach ($bestSellerSlides as $slide)
                         <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
                             <div class="row">
                                 @foreach ($slide as $product)
-                                    <div class="col-lg-3 col-md-6 mb-4">
+                                    <div class="col-6 col-md-5th mb-4">
                                         <div class="product-card">
                                             <div class="product-image">
                                                 <img src="{{ $product->featured_image_url }}" alt="{{ $product->name }}">
@@ -335,16 +360,28 @@
                                                         aria-label="Quick view">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a href="{{ route('cart') }}"
-                                                        class="btn btn-sm btn-secondary product-action-btn"
-                                                        aria-label="Add to cart">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </a>
+                                                    @if ($product->has_variants)
+                                                        <a href="{{ route('product.details', $product->slug) }}"
+                                                            class="btn btn-sm btn-secondary product-action-btn"
+                                                            aria-label="Select options">
+                                                            <i class="fas fa-cart-plus"></i>
+                                                        </a>
+                                                    @else
+                                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block">
+                                                            @csrf
+                                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                            <input type="hidden" name="quantity" value="1">
+                                                            <button type="submit" class="btn btn-sm btn-secondary product-action-btn"
+                                                                aria-label="Add to cart">
+                                                                <i class="fas fa-cart-plus"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                     <button type="button"
                                                         class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
                                                         data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
                                                         aria-label="Add to wishlist">
-                                                        <i class="{{ in_array($product->id ?? null, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                                        <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
                                                     </button>
                                                 </div>
                                             </div>

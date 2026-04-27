@@ -120,17 +120,19 @@ class PageController extends Controller
 
         $featuredProducts = Product::query()
             ->where('status', 'active')
+            ->where('is_featured', 1)
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(8)
+            ->limit(12)
             ->get();
+        // dd($featuredProducts);
 
         $newArrivalsProducts = Product::query()
             ->where('status', 'active')
             ->where('badge', 'New')
             ->orderByDesc('created_at')
             ->orderByDesc('id')
-            ->limit(8)
+            ->limit(10)
             ->get();
 
         $bestSellersProducts = Product::query()
@@ -138,7 +140,7 @@ class PageController extends Controller
             ->where('badge', 'Best Seller')
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(8)
+            ->limit(10)
             ->get();
 
         $homeCategories = Category::query()
@@ -295,177 +297,6 @@ class PageController extends Controller
             ]);
         }
 
-        if ($featuredProducts->isEmpty()) {
-            $featuredProducts = collect([
-                (object) [
-                    'id' => 1,
-                    'name' => 'Elegant Summer Dress',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400',
-                    'base_price' => 159.99,
-                    'sale_price' => 129.99,
-                ],
-                (object) [
-                    'id' => 2,
-                    'name' => 'Casual Denim Jacket',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400',
-                    'base_price' => 89.99,
-                    'sale_price' => null,
-                ],
-                (object) [
-                    'id' => 3,
-                    'name' => 'Classic White Sneakers',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400',
-                    'base_price' => 79.99,
-                    'sale_price' => null,
-                ],
-                (object) [
-                    'id' => 4,
-                    'name' => 'Designer Handbag',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=400',
-                    'base_price' => 199.99,
-                    'sale_price' => null,
-                ],
-            ]);
-        }
-
-        if ($newArrivalsProducts->isEmpty()) {
-            $newArrivalsProducts = collect([
-                (object) [
-                    'name' => 'Floral Maxi Dress',
-                    'slug' => 'floral-maxi-dress',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400',
-                    'base_price' => 159.99,
-                    'sale_price' => null,
-                    'badge' => 'New',
-                ],
-                (object) [
-                    'name' => 'Striped Polo Shirt',
-                    'slug' => 'striped-polo-shirt',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=400',
-                    'base_price' => 69.99,
-                    'sale_price' => null,
-                    'badge' => 'New',
-                ],
-                (object) [
-                    'name' => 'Leather Crossbody',
-                    'slug' => 'leather-crossbody',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400',
-                    'base_price' => 189.99,
-                    'sale_price' => null,
-                    'badge' => 'New',
-                ],
-                (object) [
-                    'name' => 'Athletic Sneakers',
-                    'slug' => 'athletic-sneakers',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400',
-                    'base_price' => 119.99,
-                    'sale_price' => null,
-                    'badge' => 'New',
-                ],
-                (object) [
-                    'name' => 'Wool Overcoat',
-                    'slug' => 'wool-overcoat',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400',
-                    'base_price' => 249.99,
-                    'sale_price' => null,
-                    'badge' => 'New',
-                ],
-                (object) [
-                    'name' => 'Graphic Hoodie',
-                    'slug' => 'graphic-hoodie',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400',
-                    'base_price' => 89.99,
-                    'sale_price' => null,
-                    'badge' => 'New',
-                ],
-                (object) [
-                    'name' => 'Smart Watch',
-                    'slug' => 'smart-watch',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',
-                    'base_price' => 299.99,
-                    'sale_price' => null,
-                    'badge' => 'New',
-                ],
-                (object) [
-                    'name' => 'Aviator Sunglasses',
-                    'slug' => 'aviator-sunglasses',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400',
-                    'base_price' => 99.99,
-                    'sale_price' => null,
-                    'badge' => 'New',
-                ],
-            ]);
-        }
-
-        if ($bestSellersProducts->isEmpty()) {
-            $bestSellersProducts = collect([
-                (object) [
-                    'name' => 'Elegant Summer Dress',
-                    'slug' => 'elegant-summer-dress',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400',
-                    'base_price' => 159.99,
-                    'sale_price' => 129.99,
-                    'badge' => 'Best Seller',
-                ],
-                (object) [
-                    'name' => 'Classic White Sneakers',
-                    'slug' => 'classic-white-sneakers',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400',
-                    'base_price' => 99.99,
-                    'sale_price' => 79.99,
-                    'badge' => 'Best Seller',
-                ],
-                (object) [
-                    'name' => 'Designer Handbag',
-                    'slug' => 'designer-handbag',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=400',
-                    'base_price' => 249.99,
-                    'sale_price' => 199.99,
-                    'badge' => 'Best Seller',
-                ],
-                (object) [
-                    'name' => 'Leather Boots',
-                    'slug' => 'leather-boots',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1617019114583-affb34d1b3cd?w=400',
-                    'base_price' => 189.99,
-                    'sale_price' => 169.99,
-                    'badge' => 'Best Seller',
-                ],
-                (object) [
-                    'name' => 'Wool Overcoat',
-                    'slug' => 'wool-overcoat',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400',
-                    'base_price' => 299.99,
-                    'sale_price' => 249.99,
-                    'badge' => 'Best Seller',
-                ],
-                (object) [
-                    'name' => 'Graphic Hoodie',
-                    'slug' => 'graphic-hoodie',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400',
-                    'base_price' => 109.99,
-                    'sale_price' => 89.99,
-                    'badge' => 'Best Seller',
-                ],
-                (object) [
-                    'name' => 'Smart Watch',
-                    'slug' => 'smart-watch',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',
-                    'base_price' => 349.99,
-                    'sale_price' => 299.99,
-                    'badge' => 'Best Seller',
-                ],
-                (object) [
-                    'name' => 'Aviator Sunglasses',
-                    'slug' => 'aviator-sunglasses',
-                    'featured_image_url' => 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400',
-                    'base_price' => 149.99,
-                    'sale_price' => 99.99,
-                    'badge' => 'Best Seller',
-                ],
-            ]);
-        }
-
         return view('pages.home', [
             'sliders' => $sliders,
             'instagramFeeds' => $instagramFeeds,
@@ -558,7 +389,7 @@ class PageController extends Controller
             ->byPriceRange($minPrice, $maxPrice)
             ->sort($sortBy)
             ->with(['category', 'brand'])
-            ->select(['id', 'name', 'slug', 'featured_image', 'base_price', 'sale_price', 'badge', 'category_id', 'brand_id', 'created_at', 'is_featured', 'sales_count', 'rating'])
+            ->select(['id', 'name', 'slug', 'featured_image', 'base_price', 'sale_price', 'badge', 'category_id', 'brand_id', 'created_at', 'is_featured', 'sales_count', 'rating', 'stock', 'has_variants', ])
             ->paginate($perPage)
             ->withQueryString();
 

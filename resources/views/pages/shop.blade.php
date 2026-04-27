@@ -1,14 +1,17 @@
 <x-app>
     @push('meta')
         <title>Shop Collection | FashionHub</title>
-        <meta name="description" content="Browse FashionHub's curated collection of premium clothing, accessories, bags, and shoes for every style.">
+        <meta name="description"
+            content="Browse FashionHub's curated collection of premium clothing, accessories, bags, and shoes for every style.">
         <meta name="keywords" content="fashion shop, premium clothing, fashion accessories, bags, shoes">
         <meta property="og:title" content="Shop Collection | FashionHub">
-        <meta property="og:description" content="Browse FashionHub's curated collection of premium clothing, accessories, bags, and shoes for every style.">
+        <meta property="og:description"
+            content="Browse FashionHub's curated collection of premium clothing, accessories, bags, and shoes for every style.">
         <meta property="og:url" content="{{ request()->fullUrl() }}">
         <meta property="og:type" content="website">
         <meta name="twitter:title" content="Shop Collection | FashionHub">
-        <meta name="twitter:description" content="Browse FashionHub's curated collection of premium clothing, accessories, bags, and shoes for every style.">
+        <meta name="twitter:description"
+            content="Browse FashionHub's curated collection of premium clothing, accessories, bags, and shoes for every style.">
     @endpush
 
     @push('css')
@@ -49,9 +52,11 @@
                                 <h6>Category</h6>
                                 @forelse ($categories as $category)
                                     <div class="filter-option">
-                                        <input type="checkbox" id="cat{{ $category->id }}" name="categories[]" value="{{ $category->slug }}"
+                                        <input type="checkbox" id="cat{{ $category->id }}" name="categories[]"
+                                            value="{{ $category->slug }}"
                                             {{ in_array($category->slug, $selectedCategories, true) ? 'checked' : '' }}>
-                                        <label for="cat{{ $category->id }}">{{ $category->name }} ({{ $category->products_count }})</label>
+                                        <label for="cat{{ $category->id }}">{{ $category->name }}
+                                            ({{ $category->products_count }})</label>
                                     </div>
                                 @empty
                                     <p class="text-muted small">No categories available</p>
@@ -62,9 +67,11 @@
                             <div class="filter-section">
                                 <h6>Price Range</h6>
                                 <div class="price-range">
-                                    <input type="number" name="min_price" placeholder="Min" value="{{ $selectedMinPrice ?? '' }}" min="0">
+                                    <input type="number" name="min_price" placeholder="Min"
+                                        value="{{ $selectedMinPrice ?? '' }}" min="0">
                                     <span>-</span>
-                                    <input type="number" name="max_price" placeholder="Max" value="{{ $selectedMaxPrice ?? '' }}" min="0">
+                                    <input type="number" name="max_price" placeholder="Max"
+                                        value="{{ $selectedMaxPrice ?? '' }}" min="0">
                                 </div>
                             </div>
 
@@ -73,7 +80,8 @@
                                 <h6>Product Type</h6>
                                 @forelse ($availableBadges as $badge)
                                     <div class="filter-option">
-                                        <input type="checkbox" id="badge{{ $loop->index }}" name="badges[]" value="{{ $badge }}"
+                                        <input type="checkbox" id="badge{{ $loop->index }}" name="badges[]"
+                                            value="{{ $badge }}"
                                             {{ in_array($badge, $selectedBadges) ? 'checked' : '' }}>
                                         <label for="badge{{ $loop->index }}">{{ $badge }}</label>
                                     </div>
@@ -87,7 +95,8 @@
                                 <h6>Brand</h6>
                                 @forelse ($brands as $brand)
                                     <div class="filter-option">
-                                        <input type="checkbox" id="brand{{ $brand->id }}" name="brands[]" value="{{ $brand->id }}"
+                                        <input type="checkbox" id="brand{{ $brand->id }}" name="brands[]"
+                                            value="{{ $brand->id }}"
                                             {{ in_array($brand->id, $selectedBrands) ? 'checked' : '' }}>
                                         <label for="brand{{ $brand->id }}">{{ $brand->name }}</label>
                                     </div>
@@ -109,17 +118,25 @@
                     <!-- Products Header -->
                     <div class="products-header">
                         <div class="products-count">
-                            Showing <strong>{{ ($products->currentPage() - 1) * $products->perPage() + 1 }}</strong>-<strong>{{ min($products->currentPage() * $products->perPage(), $products->total()) }}</strong> of <strong>{{ $products->total() }}</strong> products
+                            Showing
+                            <strong>{{ ($products->currentPage() - 1) * $products->perPage() + 1 }}</strong>-<strong>{{ min($products->currentPage() * $products->perPage(), $products->total()) }}</strong>
+                            of <strong>{{ $products->total() }}</strong> products
                         </div>
                         <div class="products-sort">
                             <label>Sort by:</label>
-                            <select onchange="const params = new URLSearchParams(window.location.search); params.set('sort_by', this.value); window.location = '{{ route('shop') }}?' + params.toString();">
-                                <option value="featured" {{ $sortBy === 'featured' ? 'selected' : '' }}>Featured</option>
-                                <option value="price_low" {{ $sortBy === 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
-                                <option value="price_high" {{ $sortBy === 'price_high' ? 'selected' : '' }}>Price: High to Low</option>
+                            <select
+                                onchange="const params = new URLSearchParams(window.location.search); params.set('sort_by', this.value); window.location = '{{ route('shop') }}?' + params.toString();">
+                                <option value="featured" {{ $sortBy === 'featured' ? 'selected' : '' }}>Featured
+                                </option>
+                                <option value="price_low" {{ $sortBy === 'price_low' ? 'selected' : '' }}>Price: Low to
+                                    High</option>
+                                <option value="price_high" {{ $sortBy === 'price_high' ? 'selected' : '' }}>Price: High
+                                    to Low</option>
                                 <option value="newest" {{ $sortBy === 'newest' ? 'selected' : '' }}>Newest</option>
-                                <option value="best_selling" {{ $sortBy === 'best_selling' ? 'selected' : '' }}>Best Selling</option>
-                                <option value="top_rated" {{ $sortBy === 'top_rated' ? 'selected' : '' }}>Top Rated</option>
+                                <option value="best_selling" {{ $sortBy === 'best_selling' ? 'selected' : '' }}>Best
+                                    Selling</option>
+                                <option value="top_rated" {{ $sortBy === 'top_rated' ? 'selected' : '' }}>Top Rated
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -135,20 +152,34 @@
                                     @endif
                                     <div class="product-overlay">
                                         <a href="{{ route('product.details', $product) }}"
-                                            class="btn btn-sm btn-primary product-action-btn"
-                                            aria-label="Quick view">
+                                            class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('cart') }}"
-                                            class="btn btn-sm btn-secondary product-action-btn"
-                                            aria-label="Add to cart">
-                                            <i class="fas fa-cart-plus"></i>
-                                        </a>
+                                        @if ($product->has_variants)
+                                            <a href="{{ route('product.details', $product) }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Select options">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                        @else
+                                            <form action="{{ route('cart.add') }}" method="POST"
+                                                class="d-inline-block">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit"
+                                                    class="btn btn-sm btn-secondary product-action-btn"
+                                                    aria-label="Add to cart">
+                                                    <i class="fas fa-cart-plus"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                         <button type="button"
                                             class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
                                             data-toggle-url="{{ route('wishlist.toggle', $product) }}"
                                             aria-label="Add to wishlist">
-                                            <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                            <i
+                                                class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -162,9 +193,12 @@
                                         <i class="fas fa-star-half-alt"></i>
                                     </div>
                                     <div class="product-price">
-                                        ${{ number_format((float) ($product->sale_price ?? $product->base_price ?? 0), 2) }}
-                                        @if ((float) ($product->sale_price ?? 0) > 0 && (float) ($product->base_price ?? 0) > (float) ($product->sale_price ?? 0))
-                                            <span class="product-price-old">${{ number_format((float) $product->base_price, 2) }}</span>
+                                        ${{ number_format((float) ($product->sale_price ?? ($product->base_price ?? 0)), 2) }}
+                                        @if (
+                                            (float) ($product->sale_price ?? 0) > 0 &&
+                                                (float) ($product->base_price ?? 0) > (float) ($product->sale_price ?? 0))
+                                            <span
+                                                class="product-price-old">${{ number_format((float) $product->base_price, 2) }}</span>
                                         @endif
                                     </div>
                                 </div>
@@ -175,7 +209,8 @@
                                     <i class="fas fa-box-open"></i>
                                 </div>
                                 <h4>No Products Found</h4>
-                                <p>Your selected filters did not match any products. Try resetting filters or broadening your search.</p>
+                                <p>Your selected filters did not match any products. Try resetting filters or broadening
+                                    your search.</p>
                                 <a href="{{ route('shop') }}" class="btn btn-primary">Reset Filters</a>
                             </div>
                         @endforelse
@@ -220,7 +255,7 @@
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 document.querySelectorAll('.wishlist-toggle-btn').forEach(btn => {
-                    btn.addEventListener('click', async function (e) {
+                    btn.addEventListener('click', async function(e) {
                         e.preventDefault();
                         const icon = this.querySelector('i');
                         try {

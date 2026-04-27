@@ -32,9 +32,9 @@
                     </button>
                 </div>
 
-                <div class="row g-4" id="wishlistGrid">
+                <div class="wishlist-products-grid" id="wishlistGrid">
                     @foreach ($products as $product)
-                        <div class="col-lg-3 col-md-4 col-sm-6 wishlist-item" data-product-id="{{ $product->id }}">
+                        <div class="wishlist-item" data-product-id="{{ $product->id }}">
                             <div class="wishlist-card product-card">
                                 <button class="remove-btn wishlist-toggle-btn"
                                     data-toggle-url="{{ route('wishlist.toggle', $product) }}"
@@ -56,11 +56,23 @@
                                             aria-label="Quick view">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('cart') }}"
-                                            class="btn btn-sm btn-secondary product-action-btn"
-                                            aria-label="Add to cart">
-                                            <i class="fas fa-cart-plus"></i>
-                                        </a>
+                                        @if ($product->has_variants)
+                                            <a href="{{ route('product.details', $product) }}"
+                                                class="btn btn-sm btn-secondary product-action-btn"
+                                                aria-label="Select options">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </a>
+                                        @else
+                                            <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="btn btn-sm btn-secondary product-action-btn"
+                                                    aria-label="Add to cart">
+                                                    <i class="fas fa-cart-plus"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
 
