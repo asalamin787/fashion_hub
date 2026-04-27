@@ -295,9 +295,16 @@
                         @endif
 
                         <div class="action-buttons">
-                            <button class="btn btn-primary btn-add-cart">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </button>
+                            <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <input type="hidden" name="product_variant_id" id="cartVariantId"
+                                    value="{{ $product->default_variant['sku'] ?? '' }}">
+                                <input type="hidden" name="quantity" id="cartQuantity" value="1">
+                                <button class="btn btn-primary btn-add-cart" type="submit">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                            </form>
                             <button class="btn btn-outline btn-wishlist wishlist-toggle-btn"
                                 data-toggle-url="{{ route('wishlist.toggle', $product) }}"
                                 aria-label="Add to wishlist">
@@ -550,7 +557,14 @@
 
             function updateQty(delta) {
                 const el = document.getElementById('quantity');
-                el.textContent = Math.max(1, (parseInt(el.textContent) || 1) + delta);
+                const nextValue = Math.max(1, (parseInt(el.textContent) || 1) + delta);
+                el.textContent = nextValue;
+
+                const qtyInput = document.getElementById('cartQuantity');
+
+                if (qtyInput) {
+                    qtyInput.value = String(nextValue);
+                }
             }
 
             (function() {
@@ -614,6 +628,7 @@
                     const variant = findMatchingVariant();
                     const priceEl = document.getElementById('productPrice');
                     const stockBadge = document.getElementById('stockBadge');
+                    const variantInput = document.getElementById('cartVariantId');
 
                     if (!variant) {
                         if (priceEl) priceEl.innerHTML = '<span class="text-muted">Select all options</span>';
@@ -621,7 +636,16 @@
                             stockBadge.textContent = 'Select options';
                             stockBadge.className = 'availability-badge';
                         }
+
+                        if (variantInput) {
+                            variantInput.value = '';
+                        }
+
                         return;
+                    }
+
+                    if (variantInput) {
+                        variantInput.value = variant.sku || '';
                     }
 
                     if (priceEl) {
@@ -690,6 +714,12 @@
                             '"][data-value="' + value + '"]');
                         if (btn) btn.click();
                     });
+                } else {
+                    const variantInput = document.getElementById('cartVariantId');
+
+                    if (variantInput) {
+                        variantInput.value = '';
+                    }
                 }
             })();
 

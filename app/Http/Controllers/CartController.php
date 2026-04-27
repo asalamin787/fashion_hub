@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\AddToCartRequest;
+use App\Http\Requests\UpdateCartItemRequest;
+use App\Services\CartService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+
+class CartController extends Controller
+{
+    public function __construct(private readonly CartService $cartService) {}
+
+    public function index(): View
+    {
+        $cart = $this->cartService->getCart()->load('items.product');
+
+        return view('pages.cart', [
+            'cart' => $cart,
+            'subtotal' => $this->cartService->getSubtotal(),
+            'totalItems' => $this->cartService->getTotalItems(),
+        ]);
+    }
+
+    public function add(AddToCartRequest $request): RedirectResponse
+    {
+        try {
+            $validated = $request->validated();
+
+            $this->cartService->addToCart(
+                productId: (int) $validated['product_id'],
+                variantId: $validated['product_variant_id'] ?? null,
+                quantity: (int) ($validated['quantity'] ?? 1),
+            );
+
+            return back()->with('success', 'Product added to cart.');
+        } catch (\RuntimeException $exception) {
+            return back()->withInput()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function update(UpdateCartItemRequest $request, int $id): RedirectResponse
+    {
+        try {
+            $this->cartService->updateQuantity($id, (int) $request->validated('quantity'));
+
+            return back()->with('success', 'Cart quantity updated.');
+        } catch (\Throwable $exception) {
+            return back()->withInput()->with('error', 'Unable to update cart item.');
+        }
+    }
+
+    public function remove(int $id): RedirectResponse
+    {
+        try {
+            $this->cartService->removeItem($id);
+
+            return back()->with('success', 'Item removed from cart.');
+        } catch (\Throwable) {
+            return back()->with('error', 'Unable to remove cart item.');
+        }
+    }
+
+    public function clear(): RedirectResponse
+    {
+        $this->cartService->clearCart();
+
+        return back()->with('success', 'Cart cleared.');
+    }
+}

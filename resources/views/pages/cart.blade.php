@@ -17,6 +17,24 @@
 
     <section class="cart-section">
         <div class="container">
+            @if (session('success'))
+                <div class="alert alert-success mb-4">{{ session('success') }}</div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-danger mb-4">{{ session('error') }}</div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger mb-4">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="row">
                 <div class="col-lg-8">
                     <div class="cart-table-wrapper">
@@ -31,104 +49,93 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="cart-product">
-                                            <div class="cart-product-image">
-                                                <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400"
-                                                    alt="Product">
+                                @forelse ($cart->items as $item)
+                                    @php
+                                        $lineTotal = number_format((float) $item->price * $item->quantity, 2);
+                                        $image = $item->image && !str_starts_with($item->image, 'http')
+                                            ? asset('storage/' . ltrim($item->image, '/'))
+                                            : $item->image;
+                                    @endphp
+                                    <tr>
+                                        <td>
+                                            <div class="cart-product">
+                                                <div class="cart-product-image">
+                                                    <img src="{{ $image ?: 'https://via.placeholder.com/120x120?text=Item' }}"
+                                                        alt="{{ $item->product_name }}">
+                                                </div>
+                                                <div class="cart-product-info">
+                                                    <h5>{{ $item->product_name }}</h5>
+                                                    @if (filled($item->variant_label))
+                                                        <p class="cart-product-meta">Variant: {{ $item->variant_label }}</p>
+                                                    @endif
+                                                    @if (filled($item->sku))
+                                                        <p class="cart-product-meta">SKU: {{ $item->sku }}</p>
+                                                    @endif
+                                                </div>
                                             </div>
-                                            <div class="cart-product-info">
-                                                <h5>Elegant Summer Dress</h5>
-                                                <p class="cart-product-meta">Size: M | Color: Blue</p>
+                                        </td>
+                                        <td>
+                                            <div class="cart-price">${{ number_format((float) $item->price, 2) }}</div>
+                                        </td>
+                                        <td>
+                                            <form action="{{ route('cart.item.update', $item->id) }}" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <div class="cart-quantity">
+                                                    <button type="button" onclick="updateQuantity(this, -1)"><i
+                                                            class="fas fa-minus"></i></button>
+                                                    <input type="number" value="{{ $item->quantity }}" min="1" readonly>
+                                                    <button type="button" onclick="updateQuantity(this, 1)"><i
+                                                            class="fas fa-plus"></i></button>
+                                                    <input type="hidden" name="quantity" value="{{ $item->quantity }}">
+                                                </div>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <div class="cart-subtotal">${{ $lineTotal }}</div>
+                                        </td>
+                                        <td>
+                                            <form action="{{ route('cart.item.remove', $item->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="cart-remove" type="submit" aria-label="Remove item">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 60px 20px; background: linear-gradient(135deg, rgba(134, 87, 73, 0.05) 0%, rgba(134, 87, 73, 0.08) 100%);">
+                                            <div style="max-width: 400px; margin: 0 auto;">
+                                                <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.6; color: #865749;">
+                                                    <i class="fas fa-shopping-bag"></i>
+                                                </div>
+                                                <h3 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700; color: #2c3e50;">Your Cart is Empty</h3>
+                                                <p style="margin: 0 0 24px 0; color: #666; font-size: 14px; line-height: 1.6;">Looks like you haven't added anything to your cart yet. Start exploring our amazing collection of fashion items!</p>
+                                                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                                                    <a href="{{ route('shop') }}" class="btn btn-primary" style="text-decoration: none; background-color: #865749; color: white; padding: 12px 28px; border-radius: 4px; font-weight: 600; transition: background-color 0.2s; display: inline-block; border: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#6d3f35'" onmouseout="this.style.backgroundColor='#865749'">Continue Shopping</a>
+                                                    <a href="{{ route('home') }}" class="btn btn-outline" style="text-decoration: none; background-color: white; color: #865749; padding: 12px 28px; border-radius: 4px; font-weight: 600; border: 2px solid #865749; transition: all 0.2s; display: inline-block; cursor: pointer;" onmouseover="this.style.backgroundColor='#f5f0ee'" onmouseout="this.style.backgroundColor='white'">Browse Home</a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-price">$129.99</div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-quantity">
-                                            <button onclick="updateQuantity(this, -1)"><i
-                                                    class="fas fa-minus"></i></button>
-                                            <input type="number" value="1" min="1" readonly>
-                                            <button onclick="updateQuantity(this, 1)"><i
-                                                    class="fas fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-subtotal">$129.99</div>
-                                    </td>
-                                    <td><button class="cart-remove"><i class="fas fa-times"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="cart-product">
-                                            <div class="cart-product-image">
-                                                <img src="https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=400"
-                                                    alt="Product">
-                                            </div>
-                                            <div class="cart-product-info">
-                                                <h5>Designer Handbag</h5>
-                                                <p class="cart-product-meta">Color: Brown</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-price">$199.99</div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-quantity">
-                                            <button onclick="updateQuantity(this, -1)"><i
-                                                    class="fas fa-minus"></i></button>
-                                            <input type="number" value="1" min="1" readonly>
-                                            <button onclick="updateQuantity(this, 1)"><i
-                                                    class="fas fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-subtotal">$199.99</div>
-                                    </td>
-                                    <td><button class="cart-remove"><i class="fas fa-times"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="cart-product">
-                                            <div class="cart-product-image">
-                                                <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400"
-                                                    alt="Product">
-                                            </div>
-                                            <div class="cart-product-info">
-                                                <h5>Classic White Sneakers</h5>
-                                                <p class="cart-product-meta">Size: 42</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-price">$79.99</div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-quantity">
-                                            <button onclick="updateQuantity(this, -1)"><i
-                                                    class="fas fa-minus"></i></button>
-                                            <input type="number" value="2" min="1" readonly>
-                                            <button onclick="updateQuantity(this, 1)"><i
-                                                    class="fas fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-subtotal">$159.98</div>
-                                    </td>
-                                    <td><button class="cart-remove"><i class="fas fa-times"></i></button></td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                         <div class="cart-actions">
-                            <form class="coupon-form">
-                                <input type="text" placeholder="Enter coupon code">
+                            <form class="coupon-form" method="POST">
+                                @csrf
+                                <input type="text" name="coupon_code" placeholder="Enter coupon code" value="{{ old('coupon_code') }}">
                                 <button type="submit" class="btn btn-secondary">Apply Coupon</button>
                             </form>
-                            <a href="{{ route('shop') }}" class="btn btn-outline">Continue Shopping</a>
+                            
+                            <form action="{{ route('cart.clear') }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-secondary">Clear Cart</button>
+                            </form>
+                            
                         </div>
                     </div>
                 </div>
@@ -137,22 +144,17 @@
                         <h4 class="summary-title">Cart Summary</h4>
                         <div class="summary-row">
                             <span>Subtotal</span>
-                            <span class="value">$489.96</span>
+                            <span class="value">${{ number_format((float) $subtotal, 2) }}</span>
                         </div>
                         <div class="summary-row">
-                            <span>Shipping</span>
-                            <span class="value">$10.00</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Tax (10%)</span>
-                            <span class="value">$49.00</span>
-                        </div>
-                        <div class="summary-row total">
-                            <span>Total</span>
-                            <span class="value">$548.96</span>
+                            <span>Total Items</span>
+                            <span class="value">{{ $totalItems }}</span>
                         </div>
                         <div class="summary-buttons">
                             <a href="{{ route('checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
+                        </div>
+                        <div class="summary-buttons">
+                            <a href="{{ route('shop') }}" class="btn btn-outline">Continue Shopping</a>
                         </div>
                     </div>
                 </div>
@@ -162,11 +164,22 @@
 
     @push('js')
         <script>
-            function updateQuantity(btn, change) {
-                const input = btn.parentElement.querySelector('input');
-                let value = parseInt(input.value) + change;
-                if (value < 1) value = 1;
-                input.value = value;
+            function updateQuantity(button, change) {
+                const wrapper = button.closest('.cart-quantity');
+                const readonlyInput = wrapper.querySelector('input[type="number"]');
+                const hiddenQuantityInput = wrapper.querySelector('input[type="hidden"][name="quantity"]');
+                const form = button.closest('form');
+
+                const current = parseInt(readonlyInput.value, 10) || 1;
+                const next = Math.max(1, current + change);
+
+                if (next === current) {
+                    return;
+                }
+
+                readonlyInput.value = String(next);
+                hiddenQuantityInput.value = String(next);
+                form.submit();
             }
         </script>
     @endpush
