@@ -143,11 +143,14 @@ class PageController extends Controller
 
         $homeCategories = Category::query()
             ->select(['id', 'name', 'slug', 'icon', 'image', 'sort_order'])
-            ->withCount('products')
+            ->withCount([
+                'products' => fn (Builder $query) => $query->where('status', 'active'),
+            ])
             ->where('is_active', true)
+            ->orderByDesc('products_count')
             ->orderBy('sort_order')
             ->orderBy('id')
-            ->limit(8)
+            // ->limit(8)
             ->get();
 
         if ($homeCategories->isEmpty()) {
@@ -482,13 +485,20 @@ class PageController extends Controller
     {
         $perPage = 20;
 
-        // Get filter parameters from request
-        $categoryTokens = [];
+        $parseMultiValueQuery = static function (mixed $value): array {
+            if (is_array($value)) {
+                return array_values(array_filter(array_map(static fn (mixed $item): string => trim((string) $item), $value)));
+            }
 
-        $rawCategories = trim((string) request()->query('categories', ''));
-        if ($rawCategories !== '') {
-            $categoryTokens = array_values(array_filter(array_map('trim', explode(',', $rawCategories))));
-        }
+            if (! is_string($value)) {
+                return [];
+            }
+
+            return array_values(array_filter(array_map('trim', explode(',', $value))));
+        };
+
+        // Get filter parameters from request
+        $categoryTokens = $parseMultiValueQuery(request()->query('categories', []));
 
         $singleCategory = trim((string) request()->query('category', ''));
         if ($singleCategory !== '') {
@@ -514,8 +524,7 @@ class PageController extends Controller
 
         $categoryIds = empty($categoryIds) ? null : $categoryIds;
 
-        $brandIds = request()->query('brands');
-        $brandIds = $brandIds ? explode(',', $brandIds) : null;
+        $brandIds = $parseMultiValueQuery(request()->query('brands', []));
         $brandIds = $brandIds ? array_map('intval', array_filter($brandIds)) : null;
 
         $minPrice = request()->query('min_price');
@@ -524,13 +533,11 @@ class PageController extends Controller
         $maxPrice = request()->query('max_price');
         $maxPrice = $maxPrice ? (float) $maxPrice : null;
 
-        $badges = request()->query('badges');
-        $badges = $badges ? explode(',', $badges) : null;
-        $badges = $badges ? array_filter($badges) : null;
+        $badges = $parseMultiValueQuery(request()->query('badges', []));
+        $badges = $badges ?: null;
 
-        $offerCodes = request()->query('offers');
-        $offerCodes = $offerCodes ? explode(',', (string) $offerCodes) : null;
-        $offerCodes = $offerCodes ? array_values(array_filter(array_map('trim', $offerCodes))) : null;
+        $offerCodes = $parseMultiValueQuery(request()->query('offers', []));
+        $offerCodes = $offerCodes ?: null;
 
         $singleOfferCode = trim((string) request()->query('offer', ''));
         if ($singleOfferCode !== '') {
@@ -558,7 +565,9 @@ class PageController extends Controller
         // Get available filter options from database
         $categories = Category::query()
             ->where('is_active', true)
-            ->withCount('products')
+            ->withCount([
+                'products' => fn (Builder $query) => $query->where('status', 'active'),
+            ])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();

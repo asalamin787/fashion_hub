@@ -49,7 +49,7 @@
                                 <h6>Category</h6>
                                 @forelse ($categories as $category)
                                     <div class="filter-option">
-                                        <input type="checkbox" id="cat{{ $category->id }}" name="categories" value="{{ $category->slug }}" 
+                                        <input type="checkbox" id="cat{{ $category->id }}" name="categories[]" value="{{ $category->slug }}"
                                             {{ in_array($category->slug, $selectedCategories, true) ? 'checked' : '' }}>
                                         <label for="cat{{ $category->id }}">{{ $category->name }} ({{ $category->products_count }})</label>
                                     </div>
@@ -62,9 +62,9 @@
                             <div class="filter-section">
                                 <h6>Price Range</h6>
                                 <div class="price-range">
-                                    <input type="number" name="min_price" placeholder="Min" value="{{ $selectedMinPrice ?? 0 }}" min="0">
+                                    <input type="number" name="min_price" placeholder="Min" value="{{ $selectedMinPrice ?? '' }}" min="0">
                                     <span>-</span>
-                                    <input type="number" name="max_price" placeholder="Max" value="{{ $selectedMaxPrice ?? 500 }}" min="0">
+                                    <input type="number" name="max_price" placeholder="Max" value="{{ $selectedMaxPrice ?? '' }}" min="0">
                                 </div>
                             </div>
 
@@ -73,7 +73,7 @@
                                 <h6>Product Type</h6>
                                 @forelse ($availableBadges as $badge)
                                     <div class="filter-option">
-                                        <input type="checkbox" id="badge{{ $loop->index }}" name="badges" value="{{ $badge }}"
+                                        <input type="checkbox" id="badge{{ $loop->index }}" name="badges[]" value="{{ $badge }}"
                                             {{ in_array($badge, $selectedBadges) ? 'checked' : '' }}>
                                         <label for="badge{{ $loop->index }}">{{ $badge }}</label>
                                     </div>
@@ -87,7 +87,7 @@
                                 <h6>Brand</h6>
                                 @forelse ($brands as $brand)
                                     <div class="filter-option">
-                                        <input type="checkbox" id="brand{{ $brand->id }}" name="brands" value="{{ $brand->id }}"
+                                        <input type="checkbox" id="brand{{ $brand->id }}" name="brands[]" value="{{ $brand->id }}"
                                             {{ in_array($brand->id, $selectedBrands) ? 'checked' : '' }}>
                                         <label for="brand{{ $brand->id }}">{{ $brand->name }}</label>
                                     </div>
@@ -113,7 +113,7 @@
                         </div>
                         <div class="products-sort">
                             <label>Sort by:</label>
-                            <select onchange="window.location = '{{ route('shop') }}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), sort_by: this.value}).toString()">
+                            <select onchange="const params = new URLSearchParams(window.location.search); params.set('sort_by', this.value); window.location = '{{ route('shop') }}?' + params.toString();">
                                 <option value="featured" {{ $sortBy === 'featured' ? 'selected' : '' }}>Featured</option>
                                 <option value="price_low" {{ $sortBy === 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
                                 <option value="price_high" {{ $sortBy === 'price_high' ? 'selected' : '' }}>Price: High to Low</option>
@@ -169,8 +169,13 @@
                                 </div>
                             </div>
                         @empty
-                            <div style="grid-column: 1 / -1;">
-                                <p class="text-center text-muted py-5">No products found matching your filters.</p>
+                            <div class="shop-empty-state">
+                                <div class="shop-empty-icon">
+                                    <i class="fas fa-box-open"></i>
+                                </div>
+                                <h4>No Products Found</h4>
+                                <p>Your selected filters did not match any products. Try resetting filters or broadening your search.</p>
+                                <a href="{{ route('shop') }}" class="btn btn-primary">Reset Filters</a>
                             </div>
                         @endforelse
                     </div>
