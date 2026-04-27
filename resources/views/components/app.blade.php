@@ -85,16 +85,45 @@
                             <span class="wishlist-badge" style="display:none;">0</span>
                         @endif
                     </a>
-                    <a href="{{ route('cart') }}">
+                    @php $cartCount = count(session('cart', [])); @endphp
+                    <button type="button" class="cart-toggle-btn" data-bs-toggle="offcanvas"
+                        data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" aria-label="Open cart">
                         <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-badge">3</span>
-                    </a>
+                        <span class="cart-badge">{{ $cartCount }}</span>
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
     {{ $slot }}
+
+    <!-- Cart Offcanvas -->
+    <div class="offcanvas offcanvas-end cart-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+        <div class="offcanvas-header cart-offcanvas-header">
+            <h5 class="offcanvas-title" id="cartOffcanvasLabel">
+                <i class="fas fa-shopping-bag me-2"></i>Your Cart
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            @if ($cartCount > 0)
+                <div class="cart-offcanvas-count">{{ $cartCount }} item{{ $cartCount > 1 ? 's' : '' }} added to cart</div>
+                <p class="cart-offcanvas-note">Review your selected products and continue to the full cart page.</p>
+            @else
+                <div class="cart-offcanvas-empty">
+                    <div class="cart-offcanvas-empty-icon"><i class="fas fa-shopping-bag"></i></div>
+                    <h6>Your cart is empty</h6>
+                    <p>Add stylish products from our collections and they will appear here.</p>
+                </div>
+            @endif
+
+            <div class="cart-offcanvas-actions">
+                <a href="{{ route('cart') }}" class="btn btn-primary w-100">View Cart</a>
+                <a href="{{ route('shop') }}" class="btn btn-outline w-100 mt-2">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -173,11 +202,12 @@
             </a>
         </div>
         <div class="nav-item">
-            <a href="{{ route('cart') }}" class="nav-link">
+            <button type="button" class="nav-link cart-toggle-btn-mobile" data-bs-toggle="offcanvas"
+                data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" aria-label="Open cart">
                 <i class="fas fa-shopping-cart"></i>
-                <span class="mobile-nav-badge">3</span>
+                <span class="mobile-nav-badge">{{ $cartCount }}</span>
                 <span>Cart</span>
-            </a>
+            </button>
         </div>
         <div class="nav-item">
             <a href="{{ route('login') }}" class="nav-link">

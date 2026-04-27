@@ -156,6 +156,20 @@ a {
     color: var(--primary-color);
 }
 
+.navbar-icons .cart-toggle-btn {
+    color: var(--dark-color);
+    font-size: 1.2rem;
+    position: relative;
+    transition: color 0.3s ease;
+    border: 0;
+    background: transparent;
+    padding: 0;
+}
+
+.navbar-icons .cart-toggle-btn:hover {
+    color: var(--primary-color);
+}
+
 .cart-badge {
     position: absolute;
     top: -8px;
@@ -186,6 +200,71 @@ a {
     justify-content: center;
     font-size: 0.7rem;
     font-weight: 600;
+}
+
+/* Cart Offcanvas */
+.cart-offcanvas {
+    width: min(380px, 90vw);
+}
+
+.cart-offcanvas-header {
+    border-bottom: 1px solid #eee;
+    background: linear-gradient(135deg, rgba(134, 87, 73, 0.08), rgba(192, 135, 106, 0.08));
+}
+
+.cart-offcanvas-header .offcanvas-title {
+    color: var(--dark-color);
+    font-weight: 700;
+}
+
+.cart-offcanvas-count {
+    background: rgba(134, 87, 73, 0.1);
+    color: var(--primary-color);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.cart-offcanvas-note {
+    color: var(--grey-dark);
+    margin-bottom: 24px;
+}
+
+.cart-offcanvas-empty {
+    text-align: center;
+    padding: 24px 14px;
+    margin-bottom: 14px;
+}
+
+.cart-offcanvas-empty-icon {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(134, 87, 73, 0.12);
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+}
+
+.cart-offcanvas-empty h6 {
+    margin-bottom: 8px;
+}
+
+.cart-offcanvas-empty p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.cart-offcanvas-actions {
+    margin-top: auto;
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, var(--white), rgba(255, 255, 255, 0.85));
+    padding-top: 10px;
 }
 
 /* Footer Styles */
@@ -511,6 +590,13 @@ a {
 
 .mobile-bottom-nav .nav-link i {
     font-size: 1.3rem;
+}
+
+.mobile-bottom-nav .cart-toggle-btn-mobile {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 0;
 }
 
 .mobile-bottom-nav .nav-link span {
