@@ -298,8 +298,10 @@
                             <button class="btn btn-primary btn-add-cart">
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
                             </button>
-                            <button class="btn btn-outline btn-wishlist">
-                                <i class="fas fa-heart"></i>
+                            <button class="btn btn-outline btn-wishlist wishlist-toggle-btn"
+                                data-toggle-url="{{ route('wishlist.toggle', $product) }}"
+                                aria-label="Add to wishlist">
+                                <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
                             </button>
                         </div>
 
@@ -482,10 +484,12 @@
                                                 aria-label="Add to cart">
                                                 <i class="fas fa-cart-plus"></i>
                                             </a>
-                                            <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                            <button type="button"
+                                                class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                                data-toggle-url="{{ route('wishlist.toggle', $related) }}"
                                                 aria-label="Add to wishlist">
-                                                <i class="fas fa-heart"></i>
-                                            </a>
+                                                <i class="{{ in_array($related->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="product-info">
@@ -687,6 +691,37 @@
                         if (btn) btn.click();
                     });
                 }
+            })();
+
+            // Wishlist toggle
+            (function () {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                document.querySelectorAll('.wishlist-toggle-btn').forEach(btn => {
+                    btn.addEventListener('click', async function () {
+                        const icon = this.querySelector('i');
+                        try {
+                            const res = await fetch(this.dataset.toggleUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    'Accept': 'application/json',
+                                },
+                            });
+                            const data = await res.json();
+
+                            icon.classList.toggle('fas', data.in_wishlist);
+                            icon.classList.toggle('far', !data.in_wishlist);
+
+                            document.querySelectorAll('.wishlist-badge').forEach(el => {
+                                el.textContent = data.count;
+                                el.style.display = data.count > 0 ? 'inline-flex' : 'none';
+                            });
+                        } catch (e) {
+                            console.error('Wishlist toggle failed:', e);
+                        }
+                    });
+                });
             })();
         </script>
     @endpush

@@ -151,10 +151,12 @@
                                         aria-label="Add to cart">
                                         <i class="fas fa-cart-plus"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                    <button type="button"
+                                        class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                        data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
                                         aria-label="Add to wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
+                                        <i class="{{ in_array($product->id ?? null, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                    </button>
                                 </div>
                             </div>
                             <div class="product-info">
@@ -212,10 +214,12 @@
                                                         aria-label="Add to cart">
                                                         <i class="fas fa-cart-plus"></i>
                                                     </a>
-                                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                                        data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
                                                         aria-label="Add to wishlist">
-                                                        <i class="fas fa-heart"></i>
-                                                    </a>
+                                                        <i class="{{ in_array($product->id ?? null, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div class="product-info">
@@ -336,10 +340,12 @@
                                                         aria-label="Add to cart">
                                                         <i class="fas fa-cart-plus"></i>
                                                     </a>
-                                                    <a href="#" class="btn btn-sm btn-secondary product-action-btn"
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                                        data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
                                                         aria-label="Add to wishlist">
-                                                        <i class="fas fa-heart"></i>
-                                                    </a>
+                                                        <i class="{{ in_array($product->id ?? null, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div class="product-info">
@@ -672,6 +678,37 @@
                 var newsletterModal = new bootstrap.Modal(document.getElementById('newsletterModal'));
                 newsletterModal.show();
             }, 5000);
+
+            // Wishlist toggle
+            (function () {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                document.querySelectorAll('.wishlist-toggle-btn').forEach(btn => {
+                    btn.addEventListener('click', async function () {
+                        const icon = this.querySelector('i');
+                        try {
+                            const res = await fetch(this.dataset.toggleUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    'Accept': 'application/json',
+                                },
+                            });
+                            const data = await res.json();
+
+                            icon.classList.toggle('fas', data.in_wishlist);
+                            icon.classList.toggle('far', !data.in_wishlist);
+
+                            document.querySelectorAll('.wishlist-badge').forEach(el => {
+                                el.textContent = data.count;
+                                el.style.display = data.count > 0 ? 'inline-flex' : 'none';
+                            });
+                        } catch (e) {
+                            console.error('Wishlist toggle failed:', e);
+                        }
+                    });
+                });
+            })();
         </script>
     @endpush
 </x-app>

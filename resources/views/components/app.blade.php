@@ -9,6 +9,7 @@
     <meta name="keywords" content="fashion, style, fashion blog, trends, wardrobe, shopping">
     <meta name="robots" content="index, follow">
     <meta name="author" content="FashionHub">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="canonical" href="{{ url()->current() }}">
 
     <meta property="og:type" content="website">
@@ -71,7 +72,15 @@
                 <div class="navbar-icons">
                     <a href="#"><i class="fas fa-search"></i></a>
                     <a href="{{ route('login') }}"><i class="fas fa-user"></i></a>
-                    <a href="{{ route('wishlist') }}"><i class="fas fa-heart"></i></a>
+                    <a href="{{ route('wishlist') }}" title="WishList" class="position-relative">
+                        <i class="fas fa-heart"></i>
+                        @php $wishlistCount = count(session('wishlist', [])); @endphp
+                        @if ($wishlistCount > 0)
+                            <span class="wishlist-badge">{{ $wishlistCount }}</span>
+                        @else
+                            <span class="wishlist-badge" style="display:none;">0</span>
+                        @endif
+                    </a>
                     <a href="{{ route('cart') }}">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-badge">3</span>

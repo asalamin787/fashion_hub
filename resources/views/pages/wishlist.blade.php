@@ -1,8 +1,14 @@
 <x-app>
+    @push('meta')
+        <title>My Wishlist | FashionHub</title>
+        <meta name="description" content="Your saved favourite items on FashionHub.">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    @endpush
+
     @push('css')
         <link rel="stylesheet" href="{{ asset('assets/css/wishlist.css') }}">
     @endpush
-    
+
     <section class="page-header">
         <div class="container">
             <h1><i class="fas fa-heart"></i> My Wishlist</h1>
@@ -14,251 +20,148 @@
             </nav>
         </div>
     </section>
-    
+
     <!-- Wishlist Section -->
     <section class="wishlist-section">
         <div class="container">
-            <!-- Wishlist Count -->
-            <div class="wishlist-header">
-                <h4>Your Saved Items <span class="wishlist-count">(6 Items)</span></h4>
-                <button class="btn btn-outline clear-wishlist-btn">
-                    <i class="fas fa-trash"></i> Clear All
-                </button>
-            </div>
-
-            <!-- Wishlist Grid -->
-            <div class="row g-4">
-                <!-- Wishlist Item 1 -->
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="wishlist-card product-card">
-                        <button class="remove-btn" title="Remove from wishlist">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="wishlist-image product-image">
-                            <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=400"
-                                alt="Product">
-                            <span class="badge-sale">-20%</span>
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 1]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="wishlist-content product-info">
-                            <h5 class="wishlist-title product-title">Classic Leather Jacket</h5>
-                            <div class="wishlist-rating product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                <span>(4.5)</span>
-                            </div>
-                            <div class="wishlist-price product-price">
-                                <span class="current-price">$159.99</span>
-                                <span class="original-price product-price-old">$199.99</span>
-                            </div>
-                        </div>
-                    </div>
+            @if ($products->isNotEmpty())
+                <div class="wishlist-header">
+                    <h4>Your Saved Items <span class="wishlist-count">({{ $products->count() }} {{ Str::plural('Item', $products->count()) }})</span></h4>
+                    <button class="btn btn-outline clear-wishlist-btn" id="clearWishlistBtn">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
                 </div>
 
-                <!-- Wishlist Item 2 -->
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="wishlist-card product-card">
-                        <button class="remove-btn" title="Remove from wishlist">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="wishlist-image product-image">
-                            <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400"
-                                alt="Product">
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 2]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="wishlist-content product-info">
-                            <h5 class="wishlist-title product-title">Elegant Summer Dress</h5>
-                            <div class="wishlist-rating product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <span>(5.0)</span>
-                            </div>
-                            <div class="wishlist-price product-price">
-                                <span class="current-price">$89.99</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="row g-4" id="wishlistGrid">
+                    @foreach ($products as $product)
+                        <div class="col-lg-3 col-md-4 col-sm-6 wishlist-item" data-product-id="{{ $product->id }}">
+                            <div class="wishlist-card product-card">
+                                <button class="remove-btn wishlist-toggle-btn"
+                                    data-toggle-url="{{ route('wishlist.toggle', $product) }}"
+                                    title="Remove from wishlist"
+                                    aria-label="Remove from wishlist">
+                                    <i class="fas fa-times"></i>
+                                </button>
 
-                <!-- Wishlist Item 3 -->
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="wishlist-card product-card">
-                        <button class="remove-btn" title="Remove from wishlist">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="wishlist-image product-image">
-                            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" alt="Product">
-                            <span class="badge-new">New</span>
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 3]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="wishlist-content product-info">
-                            <h5 class="wishlist-title product-title">Premium Running Shoes</h5>
-                            <div class="wishlist-rating product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                                <span>(4.0)</span>
-                            </div>
-                            <div class="wishlist-price product-price">
-                                <span class="current-price">$129.99</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                <div class="wishlist-image product-image">
+                                    <img src="{{ $product->featured_image_url }}" alt="{{ $product->name }}">
 
-                <!-- Wishlist Item 4 -->
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="wishlist-card product-card">
-                        <button class="remove-btn" title="Remove from wishlist">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="wishlist-image product-image">
-                            <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400" alt="Product">
-                            <span class="badge-sale">-30%</span>
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 4]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="wishlist-content product-info">
-                            <h5 class="wishlist-title product-title">Designer Handbag</h5>
-                            <div class="wishlist-rating product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                <span>(4.7)</span>
-                            </div>
-                            <div class="wishlist-price product-price">
-                                <span class="current-price">$209.99</span>
-                                <span class="original-price product-price-old">$299.99</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                    @if (filled($product->badge))
+                                        <span class="product-badge">{{ $product->badge }}</span>
+                                    @endif
 
-                <!-- Wishlist Item 5 -->
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="wishlist-card product-card">
-                        <button class="remove-btn" title="Remove from wishlist">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="wishlist-image product-image">
-                            <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400"
-                                alt="Product">
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 5]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="wishlist-content product-info">
-                            <h5 class="wishlist-title product-title">Stylish Sunglasses</h5>
-                            <div class="wishlist-rating product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <span>(5.0)</span>
-                            </div>
-                            <div class="wishlist-price product-price">
-                                <span class="current-price">$49.99</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                    <div class="product-overlay">
+                                        <a href="{{ route('product.details', $product) }}"
+                                            class="btn btn-sm btn-primary product-action-btn"
+                                            aria-label="Quick view">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('cart') }}"
+                                            class="btn btn-sm btn-secondary product-action-btn"
+                                            aria-label="Add to cart">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </a>
+                                    </div>
+                                </div>
 
-                <!-- Wishlist Item 6 -->
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="wishlist-card product-card">
-                        <button class="remove-btn" title="Remove from wishlist">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="wishlist-image product-image">
-                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400"
-                                alt="Product">
-                            <span class="badge-sale">-15%</span>
-                            <div class="product-overlay">
-                                <a href="{{ route('product.details', ['id' => 6]) }}" class="btn btn-sm btn-primary product-action-btn" aria-label="Quick view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="btn btn-sm btn-secondary product-action-btn" aria-label="Add to cart">
-                                    <i class="fas fa-cart-plus"></i>
-                                </a>
+                                <div class="wishlist-content product-info">
+                                    @if ($product->category)
+                                        <span class="product-category-label">{{ $product->category->name }}</span>
+                                    @endif
+                                    <h5 class="wishlist-title product-title">
+                                        <a href="{{ route('product.details', $product) }}">{{ $product->name }}</a>
+                                    </h5>
+                                    <div class="wishlist-price product-price">
+                                        ${{ number_format((float) ($product->sale_price ?? $product->base_price ?? 0), 2) }}
+                                        @if ((float) ($product->sale_price ?? 0) > 0 && (float) ($product->base_price ?? 0) > (float) ($product->sale_price ?? 0))
+                                            <span class="product-price-old">${{ number_format((float) $product->base_price, 2) }}</span>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="wishlist-content product-info">
-                            <h5 class="wishlist-title product-title">Luxury Wristwatch</h5>
-                            <div class="wishlist-rating product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                <span>(4.6)</span>
-                            </div>
-                            <div class="wishlist-price product-price">
-                                <span class="current-price">$339.99</span>
-                                <span class="original-price product-price-old">$399.99</span>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
+            @else
+                <div class="empty-wishlist-content">
+                    <div class="empty-wishlist-icon">
+                        <i class="far fa-heart"></i>
+                    </div>
+                    <h2>Your Wishlist is Empty</h2>
+                    <p>Save your favourite items here to buy them later.</p>
+                    <a href="{{ route('shop') }}" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag"></i> Start Shopping
+                    </a>
+                </div>
+            @endif
         </div>
     </section>
 
-    <!-- Empty Wishlist State (Hidden by default, show when wishlist is empty) -->
-    <section class="empty-wishlist-section" style="display: none;">
-        <div class="container">
-            <div class="empty-wishlist-content">
-                <div class="empty-wishlist-icon">
-                    <i class="far fa-heart"></i>
-                </div>
-                <h2>Your Wishlist is Empty</h2>
-                <p>Save your favorite items here to buy them later or share with friends.</p>
-                <a href="{{ route('shop') }}" class="btn btn-primary">
-                    <i class="fas fa-shopping-bag"></i> Start Shopping
-                </a>
-            </div>
-        </div>
-    </section>
+    @push('js')
+        <script>
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            async function toggleWishlist(url, btnEl) {
+                try {
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                        },
+                    });
+                    const data = await res.json();
+
+                    // Update navbar badge count
+                    document.querySelectorAll('.wishlist-badge').forEach(el => {
+                        el.textContent = data.count;
+                        el.style.display = data.count > 0 ? 'inline-flex' : 'none';
+                    });
+
+                    // Remove card from page
+                    if (!data.in_wishlist && btnEl) {
+                        const colEl = btnEl.closest('.wishlist-item');
+                        colEl.style.transition = 'opacity 0.3s';
+                        colEl.style.opacity = '0';
+                        setTimeout(() => {
+                            colEl.remove();
+                            updateWishlistCount();
+                        }, 300);
+                    }
+                } catch (e) {
+                    console.error('Wishlist toggle failed:', e);
+                }
+            }
+
+            function updateWishlistCount() {
+                const items = document.querySelectorAll('.wishlist-item');
+                const countEl = document.querySelector('.wishlist-count');
+                if (countEl) {
+                    const n = items.length;
+                    countEl.textContent = `(${n} ${n === 1 ? 'Item' : 'Items'})`;
+                }
+                if (items.length === 0) {
+                    location.reload();
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.wishlist-toggle-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        toggleWishlist(this.dataset.toggleUrl, this);
+                    });
+                });
+
+                const clearBtn = document.getElementById('clearWishlistBtn');
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', async function () {
+                        const btns = [...document.querySelectorAll('.wishlist-toggle-btn')];
+                        for (const btn of btns) {
+                            await toggleWishlist(btn.dataset.toggleUrl, btn);
+                        }
+                    });
+                }
+            });
+        </script>
+    @endpush
 </x-app>
