@@ -11,6 +11,10 @@
     <meta name="author" content="FashionHub">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="canonical" href="{{ url()->current() }}">
+    
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/fav-icon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/images/fav-icon.png') }}">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="FashionHub">
@@ -97,7 +101,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <h5><i class="fas fa-shopping-bag"></i> FashionHub</h5>
+                    <h5><img src="{{ asset('assets/images/logo.png') }}" width="230" alt="FashionHub Logo"></h5>
                     <p>Your premier destination for curated fashion collections. Discover timeless elegance and modern
                         trends, handpicked for you.</p>
                     <div class="footer-social">
