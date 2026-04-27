@@ -73,7 +73,7 @@
                             <div class="row">
                                 @foreach ($slide as $category)
                                     <div class="col-lg-3 col-md-6 mb-4">
-                                        <a href="{{ route('shop', ['category' => $category->slug]) }}"
+                                        <a href="{{ route('shop', ['categories' => ($category->slug ?? $category->id)]) }}"
                                             class="category-item-card">
                                             <div class="category-item-image"
                                                 style="background-image: url('{{ $category->image_url }}');">
@@ -261,36 +261,21 @@
                 <p>Explore our most popular collections</p>
             </div>
             <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="category-card">
-                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500"
-                            alt="Women's Fashion" class="category-image">
-                        <div class="category-overlay">
-                            <h3 class="category-name">Women's Fashion</h3>
-                            <p class="category-count">250+ Products</p>
-                        </div>
+                @foreach ($trendingCategories as $category)
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <a href="{{ route('shop', ['categories' => ($category->slug ?? $category->id)]) }}" class="category-card d-block">
+                            <img src="{{ $category->image_url }}"
+                                alt="{{ $category->name }}" class="category-image">
+                            <div class="category-overlay">
+                                <h3 class="category-name">{{ $category->name }}</h3>
+                                <p class="category-count">
+                                    {{ number_format((int) ($category->products_count ?? 0)) }}+
+                                    {{ (int) ($category->products_count ?? 0) === 1 ? 'Product' : 'Products' }}
+                                </p>
+                            </div>
+                        </a>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="category-card">
-                        <img src="https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=500"
-                            alt="Men's Fashion" class="category-image">
-                        <div class="category-overlay">
-                            <h3 class="category-name">Men's Fashion</h3>
-                            <p class="category-count">180+ Products</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="category-card">
-                        <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=500"
-                            alt="Accessories" class="category-image">
-                        <div class="category-overlay">
-                            <h3 class="category-name">Accessories</h3>
-                            <p class="category-count">120+ Products</p>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
@@ -306,7 +291,7 @@
                             <div class="promo-content">
                                 <h3 class="promo-title">{{ $offer->title }}</h3>
                                 <p class="promo-text">{{ $offer->description }}</p>
-                                <a href="{{ route('shop') }}" class="btn btn-outline"
+                                <a href="{{ route('shop', ['offers' => $offer->code]) }}" class="btn btn-outline"
                                     style="border: 2px solid rgba(255, 255, 255, 0.7); color: rgba(255, 255, 255, 0.7);">{{ $loop->first ? 'Shop Now' : 'Explore' }}</a>
                             </div>
                             <div class="promo-image">

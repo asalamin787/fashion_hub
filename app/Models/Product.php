@@ -561,6 +561,23 @@ class Product extends Model
         return $query->where('badge', $badge);
     }
 
+    public function scopeByOfferCode(Builder $query, string|array|null $offerCode): Builder
+    {
+        if ($offerCode === null) {
+            return $query;
+        }
+
+        $offerCodes = is_array($offerCode) ? array_values(array_filter($offerCode)) : [$offerCode];
+
+        if ($offerCodes === []) {
+            return $query;
+        }
+
+        return $query->whereHas('offers', function (Builder $offerQuery) use ($offerCodes): void {
+            $offerQuery->whereIn('code', $offerCodes);
+        });
+    }
+
     public function scopeByPriceRange(Builder $query, ?float $minPrice = null, ?float $maxPrice = null): Builder
     {
         if ($minPrice !== null) {

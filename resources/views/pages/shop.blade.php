@@ -49,8 +49,8 @@
                                 <h6>Category</h6>
                                 @forelse ($categories as $category)
                                     <div class="filter-option">
-                                        <input type="checkbox" id="cat{{ $category->id }}" name="categories" value="{{ $category->id }}" 
-                                            {{ in_array($category->id, $selectedCategories) ? 'checked' : '' }}>
+                                        <input type="checkbox" id="cat{{ $category->id }}" name="categories" value="{{ $category->slug }}" 
+                                            {{ in_array($category->slug, $selectedCategories, true) ? 'checked' : '' }}>
                                         <label for="cat{{ $category->id }}">{{ $category->name }} ({{ $category->products_count }})</label>
                                     </div>
                                 @empty

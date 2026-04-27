@@ -243,6 +243,25 @@ class PageController extends Controller
             ]);
         }
 
+        $trendingCategories = Category::query()
+            ->select(['id', 'name', 'slug', 'icon', 'image', 'sort_order'])
+            ->withCount([
+                'products' => fn (Builder $query) => $query->where('status', 'active'),
+            ])
+            ->where('is_active', true)
+            ->orderByDesc('products_count')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->limit(3)
+            ->get();
+
+        if ($trendingCategories->isEmpty()) {
+            $trendingCategories = $homeCategories
+                ->sortByDesc('products_count')
+                ->take(3)
+                ->values();
+        }
+
         $promoOffers = Offer::query()
             ->where('is_active', true)
             ->where(function (Builder $query): void {
@@ -260,11 +279,13 @@ class PageController extends Controller
             $promoOffers = collect([
                 (object) [
                     'title' => 'Summer Sale',
+                    'code' => 'SUMMER50',
                     'description' => 'Up to 50% off on selected items',
                     'image_url' => 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600',
                 ],
                 (object) [
                     'title' => 'New Arrivals',
+                    'code' => 'NEWARRIVAL20',
                     'description' => 'Discover the latest trends in fashion',
                     'image_url' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600',
                 ],
@@ -448,6 +469,7 @@ class PageController extends Controller
             'instagramSectionTitle' => $instagramSectionTitle,
             'instagramHandle' => $instagramHandle,
             'homeCategories' => $homeCategories,
+            'trendingCategories' => $trendingCategories,
             'blogHighlights' => $blogHighlights,
             'promoOffers' => $promoOffers,
             'featuredProducts' => $featuredProducts,
@@ -461,9 +483,36 @@ class PageController extends Controller
         $perPage = 20;
 
         // Get filter parameters from request
-        $categoryIds = request()->query('categories');
-        $categoryIds = $categoryIds ? explode(',', $categoryIds) : null;
-        $categoryIds = $categoryIds ? array_map('intval', array_filter($categoryIds)) : null;
+        $categoryTokens = [];
+
+        $rawCategories = trim((string) request()->query('categories', ''));
+        if ($rawCategories !== '') {
+            $categoryTokens = array_values(array_filter(array_map('trim', explode(',', $rawCategories))));
+        }
+
+        $singleCategory = trim((string) request()->query('category', ''));
+        if ($singleCategory !== '') {
+            $categoryTokens[] = $singleCategory;
+        }
+
+        $categoryTokens = array_values(array_unique(array_filter($categoryTokens)));
+
+        $numericCategoryIds = array_map(
+            'intval',
+            array_values(array_filter($categoryTokens, static fn ($token) => ctype_digit((string) $token)))
+        );
+        $slugCategoryTokens = array_values(array_filter($categoryTokens, static fn ($token) => ! ctype_digit((string) $token)));
+
+        $resolvedCategories = Category::query()
+            ->select(['id', 'slug'])
+            ->when(! empty($numericCategoryIds), fn ($q) => $q->orWhereIn('id', $numericCategoryIds))
+            ->when(! empty($slugCategoryTokens), fn ($q) => $q->orWhereIn('slug', $slugCategoryTokens))
+            ->get();
+
+        $categoryIds = $resolvedCategories->pluck('id')->map(fn ($id) => (int) $id)->values()->all();
+        $selectedCategorySlugs = $resolvedCategories->pluck('slug')->filter()->values()->all();
+
+        $categoryIds = empty($categoryIds) ? null : $categoryIds;
 
         $brandIds = request()->query('brands');
         $brandIds = $brandIds ? explode(',', $brandIds) : null;
@@ -479,6 +528,17 @@ class PageController extends Controller
         $badges = $badges ? explode(',', $badges) : null;
         $badges = $badges ? array_filter($badges) : null;
 
+        $offerCodes = request()->query('offers');
+        $offerCodes = $offerCodes ? explode(',', (string) $offerCodes) : null;
+        $offerCodes = $offerCodes ? array_values(array_filter(array_map('trim', $offerCodes))) : null;
+
+        $singleOfferCode = trim((string) request()->query('offer', ''));
+        if ($singleOfferCode !== '') {
+            $offerCodes ??= [];
+            $offerCodes[] = $singleOfferCode;
+            $offerCodes = array_values(array_unique(array_filter($offerCodes)));
+        }
+
         $sortBy = request()->query('sort_by', 'featured');
 
         // Build query with scopes
@@ -487,6 +547,7 @@ class PageController extends Controller
             ->byCategory($categoryIds)
             ->byBrand($brandIds)
             ->byBadge($badges)
+            ->byOfferCode($offerCodes)
             ->byPriceRange($minPrice, $maxPrice)
             ->sort($sortBy)
             ->with(['category', 'brand'])
@@ -518,7 +579,7 @@ class PageController extends Controller
             'categories' => $categories,
             'brands' => $brands,
             'availableBadges' => $availableBadges,
-            'selectedCategories' => $categoryIds ?? [],
+            'selectedCategories' => $selectedCategorySlugs,
             'selectedBrands' => $brandIds ?? [],
             'selectedBadges' => $badges ?? [],
             'selectedMinPrice' => $minPrice,

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Offer;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class OfferSeeder extends Seeder
@@ -39,10 +40,26 @@ class OfferSeeder extends Seeder
         ];
 
         foreach ($offers as $offerData) {
-            Offer::query()->updateOrCreate(
+            $offer = Offer::query()->updateOrCreate(
                 ['code' => $offerData['code']],
                 $offerData,
             );
+
+            $productIds = match ($offer->code) {
+                'SUMMER50' => Product::query()
+                    ->where('status', 'active')
+                    ->whereNotNull('sale_price')
+                    ->pluck('id')
+                    ->all(),
+                'NEWARRIVAL20' => Product::query()
+                    ->where('status', 'active')
+                    ->where('badge', 'New')
+                    ->pluck('id')
+                    ->all(),
+                default => [],
+            };
+
+            $offer->products()->sync($productIds);
         }
     }
 }
