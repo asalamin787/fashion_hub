@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Filament\Resources\Settings\Pages;
+
+use App\Filament\Resources\Settings\SettingResource;
+use App\Models\Setting;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Icons\Heroicon;
+
+class ListSettings extends ListRecords
+{
+    protected static string $resource = SettingResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('clearCache')
+                ->label('Clear Settings Cache')
+                ->icon(Heroicon::ArrowPath)
+                ->color('gray')
+                ->action(function (): void {
+                    Setting::forgetCache();
+                })
+                ->successNotificationTitle('Settings cache cleared.'),
+            CreateAction::make(),
+        ];
+    }
+}
