@@ -4,12 +4,15 @@ namespace App\Services;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Coupon;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CartService
 {
+    private const COUPON_SESSION_KEY = 'cart_coupon_id';
+
     /**
      * Retrieve the current active cart, creating one if it does not exist.
      *
@@ -150,6 +153,7 @@ class CartService
     public function clearCart(): void
     {
         $this->getCart()->items()->delete();
+        $this->removeCoupon();
     }
 
     /**
@@ -157,12 +161,7 @@ class CartService
      */
     public function getSubtotal(): string
     {
-        $total = $this->getCart()
-            ->items()
-            ->selectRaw('SUM(price * quantity) as total')
-            ->value('total') ?? 0;
-
-        return number_format((float) $total, 2, '.', '');
+        return number_format($this->calculateSubtotalAmount(), 2, '.', '');
     }
 
     /**
@@ -171,6 +170,101 @@ class CartService
     public function getTotalItems(): int
     {
         return (int) $this->getCart()->items()->sum('quantity');
+    }
+
+    /**
+     * Return all cart totals including applied coupon, discount, and grand total.
+     *
+     * @return array{
+     *     subtotal: float,
+     *     discount: float,
+     *     total: float,
+     *     total_items: int,
+     *     coupon: array{
+     *         id: int,
+     *         title: string,
+     *         code: string,
+     *         type: string,
+     *         value: float,
+     *         formatted_value: string,
+     *         discount_amount: float,
+     *         discount_amount_formatted: string
+     *     }|null
+     * }
+     */
+    public function getCartTotals(): array
+    {
+        $subtotal = $this->calculateSubtotalAmount();
+        $coupon = $this->getAppliedCouponData();
+        $discount = (float) ($coupon['discount_amount'] ?? 0);
+
+        return [
+            'subtotal' => $subtotal,
+            'discount' => $discount,
+            'total' => max($subtotal - $discount, 0),
+            'total_items' => $this->getTotalItems(),
+            'coupon' => $coupon,
+        ];
+    }
+
+    /**
+     * Apply a coupon code to the current cart.
+     *
+     * @return array{
+     *     subtotal: float,
+     *     discount: float,
+     *     total: float,
+     *     total_items: int,
+     *     coupon: array{
+     *         id: int,
+     *         title: string,
+     *         code: string,
+     *         type: string,
+     *         value: float,
+     *         formatted_value: string,
+     *         discount_amount: float,
+     *         discount_amount_formatted: string
+     *     }|null
+     * }
+     *
+     * @throws \RuntimeException
+     */
+    public function applyCoupon(string $couponCode): array
+    {
+        $normalizedCode = mb_strtoupper(trim($couponCode));
+
+        if ($normalizedCode === '') {
+            throw new \RuntimeException('Please enter a coupon code.');
+        }
+
+        $subtotal = $this->calculateSubtotalAmount();
+
+        if ($subtotal <= 0) {
+            throw new \RuntimeException('Your cart is empty.');
+        }
+
+        /** @var Coupon|null $coupon */
+        $coupon = Coupon::query()
+            ->whereRaw('LOWER(code) = ?', [mb_strtolower($normalizedCode)])
+            ->first();
+
+        if (! $coupon || ! $coupon->isAvailable()) {
+            throw new \RuntimeException('Invalid or expired coupon code.');
+        }
+
+        $this->ensureCouponEligibility($coupon, $subtotal, true);
+
+        session([self::COUPON_SESSION_KEY => $coupon->id]);
+
+        return $this->getCartTotals();
+    }
+
+    /**
+     * Remove any applied coupon from the current session cart.
+     */
+    public function removeCoupon(): void
+    {
+        session()->forget(self::COUPON_SESSION_KEY);
     }
 
     /**
@@ -293,5 +387,106 @@ class CartService
             : (float) ($product->base_price ?? 0);
 
         return [$price, $stock, null, $product->featured_image ?? null, null];
+    }
+
+    /**
+     * Return the currently applied coupon details including computed discount.
+     *
+     * @return array{
+     *     id: int,
+     *     title: string,
+     *     code: string,
+     *     type: string,
+     *     value: float,
+     *     formatted_value: string,
+     *     discount_amount: float,
+     *     discount_amount_formatted: string,
+     * }|null
+     */
+    private function getAppliedCouponData(): ?array
+    {
+        $coupon = $this->getAppliedCoupon();
+
+        if (! $coupon) {
+            return null;
+        }
+
+        $subtotal = $this->calculateSubtotalAmount();
+        $discountAmount = $this->calculateDiscountAmount($coupon, $subtotal);
+
+        return [
+            'id' => (int) $coupon->id,
+            'title' => (string) $coupon->name,
+            'code' => (string) $coupon->code,
+            'type' => (string) $coupon->type,
+            'value' => (float) $coupon->value,
+            'formatted_value' => (string) $coupon->formatted_value,
+            'discount_amount' => $discountAmount,
+            'discount_amount_formatted' => number_format($discountAmount, 2, '.', ''),
+        ];
+    }
+
+    private function getAppliedCoupon(): ?Coupon
+    {
+        $couponId = session(self::COUPON_SESSION_KEY);
+
+        if (! $couponId) {
+            return null;
+        }
+
+        /** @var Coupon|null $coupon */
+        $coupon = Coupon::query()->find((int) $couponId);
+
+        if (! $coupon || ! $coupon->isAvailable()) {
+            $this->removeCoupon();
+
+            return null;
+        }
+
+        $subtotal = $this->calculateSubtotalAmount();
+
+        if ($subtotal <= 0 || ! $this->ensureCouponEligibility($coupon, $subtotal, false)) {
+            $this->removeCoupon();
+
+            return null;
+        }
+
+        return $coupon;
+    }
+
+    private function calculateSubtotalAmount(): float
+    {
+        return (float) ($this->getCart()
+            ->items()
+            ->selectRaw('SUM(price * quantity) as total')
+            ->value('total') ?? 0);
+    }
+
+    private function calculateDiscountAmount(Coupon $coupon, float $subtotal): float
+    {
+        if ($coupon->type === 'percentage') {
+            $discount = $subtotal * ((float) $coupon->value / 100);
+
+            if ($coupon->max_discount_amount !== null) {
+                $discount = min($discount, (float) $coupon->max_discount_amount);
+            }
+        } else {
+            $discount = min((float) $coupon->value, $subtotal);
+        }
+
+        return min($discount, $subtotal);
+    }
+
+    private function ensureCouponEligibility(Coupon $coupon, float $subtotal, bool $throwOnFail): bool
+    {
+        if ($coupon->min_order_amount !== null && $subtotal < (float) $coupon->min_order_amount) {
+            if ($throwOnFail) {
+                throw new \RuntimeException('This coupon requires a minimum order amount of $'.number_format((float) $coupon->min_order_amount, 2).'.');
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }

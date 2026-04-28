@@ -189,11 +189,25 @@
                         </div>
 
                         <div class="cart-actions">
-                            <form class="coupon-form" method="POST">
+                            <div class="coupon-feedback" data-coupon-feedback></div>
+
+                            <form class="coupon-form" method="POST" action="{{ route('cart.coupon.apply') }}"
+                                data-coupon-apply-form>
                                 @csrf
-                                <input type="text" name="coupon_code" placeholder="Enter coupon code" value="{{ old('coupon_code') }}">
+                                <input type="text" name="coupon_code" placeholder="Enter coupon code"
+                                    value="{{ old('coupon_code', $coupon['code'] ?? '') }}">
                                 <button type="submit" class="btn btn-secondary">Apply Coupon</button>
                             </form>
+
+                            <div class="applied-coupon-block" data-applied-coupon-block
+                                style="{{ $coupon ? '' : 'display: none;' }}">
+                                <span>Applied: <strong data-applied-coupon-code>{{ $coupon['code'] ?? '' }}</strong></span>
+                                <form action="{{ route('cart.coupon.remove') }}" method="POST" data-coupon-remove-form>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline btn-sm">Remove</button>
+                                </form>
+                            </div>
                             
                             <form action="{{ route('cart.clear') }}" method="POST">
                                 @csrf
@@ -211,9 +225,17 @@
                             <span>Subtotal</span>
                             <span class="value" data-cart-summary-subtotal>${{ number_format((float) $subtotal, 2) }}</span>
                         </div>
+                        <div class="summary-row" data-cart-summary-discount-row style="{{ (float) $discount > 0 ? '' : 'display: none;' }}">
+                            <span>Discount</span>
+                            <span class="value" data-cart-summary-discount>-${{ number_format((float) $discount, 2) }}</span>
+                        </div>
                         <div class="summary-row">
                             <span>Total Items</span>
                             <span class="value" data-cart-summary-items>{{ $totalItems }}</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span class="value" data-cart-summary-total>${{ number_format((float) $total, 2) }}</span>
                         </div>
                         <div class="summary-buttons">
                             <a href="{{ route('checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
@@ -229,6 +251,59 @@
 
     @push('js')
         <script>
+            function showCouponFeedback(message, type = 'success') {
+                const feedbackEl = document.querySelector('[data-coupon-feedback]');
+
+                if (!feedbackEl) {
+                    return;
+                }
+
+                feedbackEl.textContent = message;
+                feedbackEl.className = `coupon-feedback ${type}`;
+                feedbackEl.style.display = 'block';
+
+                setTimeout(() => {
+                    feedbackEl.style.display = 'none';
+                }, 3000);
+            }
+
+            function updateCouponState(data) {
+                const discountRow = document.querySelector('[data-cart-summary-discount-row]');
+                const discountEl = document.querySelector('[data-cart-summary-discount]');
+                const totalEl = document.querySelector('[data-cart-summary-total]');
+                const couponBlock = document.querySelector('[data-applied-coupon-block]');
+                const couponCodeEl = document.querySelector('[data-applied-coupon-code]');
+                const applyForm = document.querySelector('[data-coupon-apply-form]');
+                const couponInput = applyForm?.querySelector('input[name="coupon_code"]');
+
+                const coupon = data.applied_coupon ?? null;
+                const discountValue = parseFloat(data.cart_discount ?? 0);
+
+                if (discountRow) {
+                    discountRow.style.display = discountValue > 0 ? '' : 'none';
+                }
+
+                if (discountEl) {
+                    discountEl.textContent = `-$${(data.cart_discount ?? '0.00')}`;
+                }
+
+                if (totalEl) {
+                    totalEl.textContent = `$${(data.cart_total ?? '0.00')}`;
+                }
+
+                if (couponBlock) {
+                    couponBlock.style.display = coupon ? '' : 'none';
+                }
+
+                if (couponCodeEl) {
+                    couponCodeEl.textContent = coupon?.code ?? '';
+                }
+
+                if (couponInput && !couponInput.matches(':focus')) {
+                    couponInput.value = coupon?.code ?? '';
+                }
+            }
+
             async function updateQuantity(button, change) {
                 const wrapper = button.closest('.cart-quantity');
                 const readonlyInput = wrapper.querySelector('.cart-quantity-display');
@@ -293,6 +368,8 @@
                         subtotalEl.textContent = `$${data.cart_subtotal}`;
                     }
 
+                    updateCouponState(data);
+
                     const totalItemsEl = document.querySelector('[data-cart-summary-items]');
                     if (totalItemsEl) {
                         totalItemsEl.textContent = String(data.cart_total_items ?? 0);
@@ -316,6 +393,88 @@
                     });
                 }
             }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+
+                async function submitCouponForm(form, method = 'POST') {
+                    const formData = new FormData(form);
+
+                    if (method === 'DELETE') {
+                        formData.set('_method', 'DELETE');
+                    }
+
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        },
+                        body: formData,
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Coupon request failed.');
+                    }
+
+                    const subtotalEl = document.querySelector('[data-cart-summary-subtotal]');
+                    if (subtotalEl) {
+                        subtotalEl.textContent = `$${data.cart_subtotal}`;
+                    }
+
+                    const totalItemsEl = document.querySelector('[data-cart-summary-items]');
+                    if (totalItemsEl) {
+                        totalItemsEl.textContent = String(data.cart_total_items ?? 0);
+                    }
+
+                    document.querySelectorAll('.cart-badge, .mobile-nav-badge').forEach(el => {
+                        el.textContent = String(data.cart_count ?? 0);
+                    });
+
+                    const offcanvasContent = document.querySelector('[data-cart-offcanvas-content]');
+                    if (offcanvasContent && data.cart_offcanvas_html) {
+                        offcanvasContent.innerHTML = data.cart_offcanvas_html;
+                    }
+
+                    updateCouponState(data);
+
+                    return data;
+                }
+
+                const couponApplyForm = document.querySelector('[data-coupon-apply-form]');
+                if (couponApplyForm) {
+                    couponApplyForm.addEventListener('submit', async function(event) {
+                        event.preventDefault();
+
+                        try {
+                            const data = await submitCouponForm(this, 'POST');
+                            showCouponFeedback(data.message || 'Coupon applied successfully.', 'success');
+                        } catch (error) {
+                            showCouponFeedback(error.message || 'Unable to apply coupon.', 'error');
+                        }
+                    });
+                }
+
+                document.addEventListener('submit', async function(event) {
+                    const removeForm = event.target.closest('[data-coupon-remove-form]');
+
+                    if (!removeForm) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    try {
+                        const data = await submitCouponForm(removeForm, 'DELETE');
+                        showCouponFeedback(data.message || 'Coupon removed successfully.', 'success');
+                    } catch (error) {
+                        showCouponFeedback(error.message || 'Unable to remove coupon.', 'error');
+                    }
+                });
+            });
         </script>
     @endpush
 </x-app>

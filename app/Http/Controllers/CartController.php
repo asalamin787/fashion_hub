@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddToCartRequest;
+use App\Http\Requests\ApplyCouponRequest;
 use App\Http\Requests\UpdateCartItemRequest;
+use App\Models\Cart;
 use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CartController extends Controller
@@ -16,11 +19,15 @@ class CartController extends Controller
     public function index(): View
     {
         $cart = $this->cartService->getCart()->load('items.product');
+        $totals = $this->cartService->getCartTotals();
 
         return view('pages.cart', [
             'cart' => $cart,
-            'subtotal' => $this->cartService->getSubtotal(),
-            'totalItems' => $this->cartService->getTotalItems(),
+            'subtotal' => $totals['subtotal'],
+            'discount' => $totals['discount'],
+            'total' => $totals['total'],
+            'totalItems' => $totals['total_items'],
+            'coupon' => $totals['coupon'],
         ]);
     }
 
@@ -47,20 +54,12 @@ class CartController extends Controller
             );
 
             if ($request->expectsJson()) {
-                $cart = $this->cartService->getCart()->load('items.product');
-                $cartCount = (int) $cart->items->sum('quantity');
-
-                return response()->json([
+                return response()->json(array_merge([
                     'message' => 'Product added to cart.',
                     'product_id' => $productId,
-                    'cart_count' => $cartCount,
                     'wishlist_count' => count($request->session()->get('wishlist', [])),
                     'removed_from_wishlist' => $wasInWishlist,
-                    'cart_offcanvas_html' => view('components.cart-offcanvas-content', [
-                        'cart' => $cart,
-                        'cartCount' => $cartCount,
-                    ])->render(),
-                ]);
+                ], $this->buildCartUiPayload()));
             }
 
             return back()->with('success', 'Product added to cart.');
@@ -91,21 +90,12 @@ class CartController extends Controller
                     ], 404);
                 }
 
-                $cartCount = (int) $cart->items->sum('quantity');
-
-                return response()->json([
+                return response()->json(array_merge([
                     'message' => 'Cart quantity updated.',
                     'item_id' => $id,
                     'item_quantity' => (int) $updatedItem->quantity,
                     'line_subtotal' => number_format((float) $updatedItem->price * $updatedItem->quantity, 2),
-                    'cart_subtotal' => number_format((float) $cart->items->sum(fn ($item) => (float) $item->price * $item->quantity), 2),
-                    'cart_total_items' => $cartCount,
-                    'cart_count' => $cartCount,
-                    'cart_offcanvas_html' => view('components.cart-offcanvas-content', [
-                        'cart' => $cart,
-                        'cartCount' => $cartCount,
-                    ])->render(),
-                ]);
+                ], $this->buildCartUiPayload($cart)));
             }
 
             return back()->with('success', 'Cart quantity updated.');
@@ -136,5 +126,67 @@ class CartController extends Controller
         $this->cartService->clearCart();
 
         return back()->with('success', 'Cart cleared.');
+    }
+
+    public function applyCoupon(ApplyCouponRequest $request): RedirectResponse|JsonResponse
+    {
+        try {
+            $validated = $request->validated();
+            $this->cartService->applyCoupon($validated['coupon_code']);
+
+            if ($request->expectsJson()) {
+                return response()->json(array_merge([
+                    'message' => 'Coupon applied successfully.',
+                    'coupon_code' => $validated['coupon_code'],
+                ], $this->buildCartUiPayload()));
+            }
+
+            return back()->with('success', 'Coupon applied successfully.');
+        } catch (\RuntimeException $exception) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => $exception->getMessage(),
+                ], 422);
+            }
+
+            return back()->withInput()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function removeCoupon(Request $request): RedirectResponse|JsonResponse
+    {
+        $this->cartService->removeCoupon();
+
+        if ($request->expectsJson()) {
+            return response()->json(array_merge([
+                'message' => 'Coupon removed successfully.',
+            ], $this->buildCartUiPayload()));
+        }
+
+        return back()->with('success', 'Coupon removed successfully.');
+    }
+
+    /**
+     * @param  Cart|null  $cart
+     * @return array<string, mixed>
+     */
+    private function buildCartUiPayload($cart = null): array
+    {
+        $activeCart = $cart?->loadMissing('items.product') ?? $this->cartService->getCart()->load('items.product');
+        $cartCount = (int) $activeCart->items->sum('quantity');
+        $totals = $this->cartService->getCartTotals();
+
+        return [
+            'cart_count' => $cartCount,
+            'cart_total_items' => (int) $totals['total_items'],
+            'cart_subtotal' => number_format((float) $totals['subtotal'], 2, '.', ''),
+            'cart_discount' => number_format((float) $totals['discount'], 2, '.', ''),
+            'cart_total' => number_format((float) $totals['total'], 2, '.', ''),
+            'applied_coupon' => $totals['coupon'],
+            'cart_offcanvas_html' => view('components.cart-offcanvas-content', [
+                'cart' => $activeCart,
+                'cartCount' => $cartCount,
+            ])->render(),
+        ];
     }
 }

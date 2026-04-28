@@ -17,6 +17,8 @@ Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::patch('/cart/item/{id}', [CartController::class, 'update'])->name('cart.item.update');
 Route::delete('/cart/item/{id}', [CartController::class, 'remove'])->name('cart.item.remove');
 Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+Route::post('/cart/coupon/apply', [CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
+Route::delete('/cart/coupon/remove', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/blog', [PageController::class, 'blog'])->name('blog');
