@@ -26,10 +26,17 @@
         <div class="container">
             @if ($products->isNotEmpty())
                 <div class="wishlist-header">
-                    <h4>Your Saved Items <span class="wishlist-count">({{ $products->count() }} {{ Str::plural('Item', $products->count()) }})</span></h4>
-                    <button class="btn btn-outline clear-wishlist-btn" id="clearWishlistBtn">
-                        <i class="fas fa-trash"></i> Clear All
-                    </button>
+                    <div class="wishlist-summary">
+                        <h4>Your Saved Items</h4>
+                        <div class="wishlist-count">
+                            <strong>{{ $products->count() }}</strong> {{ Str::plural('item', $products->count()) }} in your wishlist
+                        </div>
+                    </div>
+                    <div class="wishlist-actions">
+                        <button class="btn btn-outline clear-wishlist-btn" id="clearWishlistBtn">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
                 </div>
 
                 <div class="wishlist-products-grid" id="wishlistGrid">
@@ -37,6 +44,7 @@
                         <div class="wishlist-item" data-product-id="{{ $product->id }}">
                             <div class="wishlist-card product-card">
                                 <button class="remove-btn wishlist-toggle-btn"
+                                    data-product-id="{{ $product->id }}"
                                     data-toggle-url="{{ route('wishlist.toggle', $product) }}"
                                     title="Remove from wishlist"
                                     aria-label="Remove from wishlist">
@@ -63,7 +71,7 @@
                                                 <i class="fas fa-cart-plus"></i>
                                             </a>
                                         @else
-                                            <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block">
+                                            <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block ajax-add-to-cart-form">
                                                 @csrf
                                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                                                 <input type="hidden" name="quantity" value="1">
@@ -113,6 +121,15 @@
         <script>
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+            function renderEmptyWishlistState() {
+                const template = document.getElementById('emptyWishlistTemplate');
+                const container = document.querySelector('.wishlist-section .container');
+
+                if (template && container) {
+                    container.innerHTML = template.innerHTML;
+                }
+            }
+
             async function toggleWishlist(url, btnEl) {
                 try {
                     const res = await fetch(url, {
@@ -150,10 +167,10 @@
                 const countEl = document.querySelector('.wishlist-count');
                 if (countEl) {
                     const n = items.length;
-                    countEl.textContent = `(${n} ${n === 1 ? 'Item' : 'Items'})`;
+                    countEl.innerHTML = `<strong>${n}</strong> ${n === 1 ? 'item' : 'items'} in your wishlist`;
                 }
                 if (items.length === 0) {
-                    location.reload();
+                    renderEmptyWishlistState();
                 }
             }
 
@@ -176,4 +193,17 @@
             });
         </script>
     @endpush
+
+    <template id="emptyWishlistTemplate">
+        <div class="empty-wishlist-content">
+            <div class="empty-wishlist-icon">
+                <i class="far fa-heart"></i>
+            </div>
+            <h2>Your Wishlist is Empty</h2>
+            <p>Save your favourite items here to buy them later.</p>
+            <a href="{{ route('shop') }}" class="btn btn-primary">
+                <i class="fas fa-shopping-bag"></i> Start Shopping
+            </a>
+        </div>
+    </template>
 </x-app>

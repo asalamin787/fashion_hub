@@ -154,7 +154,7 @@
                                             <i class="fas fa-cart-plus"></i>
                                         </a>
                                     @else
-                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block">
+                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block ajax-add-to-cart-form">
                                             @csrf
                                             <input type="hidden" name="product_id" value="{{ $product->id }}">
                                             <input type="hidden" name="quantity" value="1">
@@ -164,8 +164,9 @@
                                             </button>
                                         </form>
                                     @endif
-                                    <button type="button"
+                                        <button type="button"
                                         class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                            data-product-id="{{ $product->id }}"
                                         data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
                                         aria-label="Add to wishlist">
                                         <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
@@ -229,7 +230,7 @@
                                                             <i class="fas fa-cart-plus"></i>
                                                         </a>
                                                     @else
-                                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block">
+                                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block ajax-add-to-cart-form">
                                                             @csrf
                                                             <input type="hidden" name="product_id" value="{{ $product->id }}">
                                                             <input type="hidden" name="quantity" value="1">
@@ -241,6 +242,7 @@
                                                     @endif
                                                     <button type="button"
                                                         class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                                        data-product-id="{{ $product->id }}"
                                                         data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
                                                         aria-label="Add to wishlist">
                                                         <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
@@ -367,7 +369,7 @@
                                                             <i class="fas fa-cart-plus"></i>
                                                         </a>
                                                     @else
-                                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block">
+                                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block ajax-add-to-cart-form">
                                                             @csrf
                                                             <input type="hidden" name="product_id" value="{{ $product->id }}">
                                                             <input type="hidden" name="quantity" value="1">
@@ -379,6 +381,7 @@
                                                     @endif
                                                     <button type="button"
                                                         class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                                        data-product-id="{{ $product->id }}"
                                                         data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
                                                         aria-label="Add to wishlist">
                                                         <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>

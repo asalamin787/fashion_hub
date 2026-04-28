@@ -110,60 +110,8 @@
             </h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body" style="padding: 0;">
-            <div style="flex: 1; overflow-y: auto;">
-                @if ($cartCount > 0)
-                    {{-- <div class="cart-offcanvas-count" style="padding: 20px; background: linear-gradient(135deg, rgba(134, 87, 73, 0.1) 0%, rgba(134, 87, 73, 0.05) 100%); border-bottom: 1px solid #eee;">
-                        <div style="font-size: 20px; font-weight: 700; color: #865749;">{{ $cartCount }} item{{ $cartCount > 1 ? 's' : '' }}</div>
-                        <p class="cart-offcanvas-note" style="margin: 8px 0 0 0; color: #666; font-size: 14px;">added to cart</p>
-                    </div> --}}
-
-                    <div style="padding: 16px 14px 12px 14px; max-height: 488px; overflow-y: auto;">
-                        @foreach ($cart->items as $item)
-                            @php
-                                $offcanvasImage = $item->image && !str_starts_with($item->image, 'http')
-                                    ? asset('storage/' . ltrim($item->image, '/'))
-                                    : $item->image;
-                                $offcanvasLineTotal = number_format((float) $item->price * $item->quantity, 2);
-                            @endphp
-
-                            <div style="display: flex; gap: 12px; padding: 12px; background: #fff; border: 1px solid #f0e6e1; border-radius: 10px; margin-bottom: 10px;">
-                                <div style="width: 64px; height: 64px; border-radius: 8px; overflow: hidden; border: 1px solid #f1e9e5; flex-shrink: 0; background: #fff;">
-                                    <img src="{{ $offcanvasImage ?: 'https://via.placeholder.com/64x64?text=Item' }}" alt="{{ $item->product_name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                </div>
-
-                                <div style="flex: 1; min-width: 0;">
-                                    <p style="margin: 0; color: #2c3e50; font-size: 14px; font-weight: 700; line-height: 1.35;">{{ $item->product_name }}</p>
-                                    @if (filled($item->variant_label))
-                                        <p style="margin: 3px 0 0 0; color: #7b6a63; font-size: 12px;">{{ $item->variant_label }}</p>
-                                    @endif
-                                    <div style="margin-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                                        <span style="font-size: 12px; color: #6c757d;">Qty: {{ $item->quantity }}</span>
-                                        <span style="font-size: 13px; color: #865749; font-weight: 700;">${{ $offcanvasLineTotal }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="cart-offcanvas-empty" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; min-height: 300px;">
-                        <div class="cart-offcanvas-empty-icon" style="font-size: 64px; color: #865749; opacity: 0.6; margin-bottom: 16px;"><i class="fas fa-shopping-bag"></i></div>
-                        <h6 style="margin: 0 0 8px 0; color: #2c3e50; font-weight: 700; font-size: 16px;">Your cart is empty</h6>
-                        <p style="margin: 0; color: #666; font-size: 13px; line-height: 1.6;">Add stylish products from our collections and they will appear here.</p>
-                    </div>
-                @endif
-            </div>
-
-            <div class="cart-offcanvas-actions" style="padding: 20px; border-top: 1px solid #eee; background: #f8f9fa;">
-                @if ($cartCount > 0)
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; color: #4b4b4b; font-size: 14px; font-weight: 600;">
-                        <span>Subtotal</span>
-                        <span style="color: #865749; font-size: 16px; font-weight: 800;">${{ number_format((float) $cart->items->sum(fn($cartItem) => (float) $cartItem->price * $cartItem->quantity), 2) }}</span>
-                    </div>
-                @endif
-                <a href="{{ route('cart') }}" class="btn btn-primary w-100" style="background-color: #865749; border: none; padding: 12px; font-weight: 600; border-radius: 4px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#6d3f35'" onmouseout="this.style.backgroundColor='#865749'">View Full Cart</a>
-                <a href="{{ route('shop') }}" class="btn btn-outline w-100 mt-2" style="border: 2px solid #865749; color: #865749; padding: 10px; font-weight: 600; border-radius: 4px; background: white; text-decoration: none; display: block; text-align: center; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f5f0ee'" onmouseout="this.style.backgroundColor='white'">Continue Shopping</a>
-            </div>
+        <div class="cart-offcanvas-content" data-cart-offcanvas-content>
+            @include('components.cart-offcanvas-content', ['cart' => $cart, 'cartCount' => $cartCount])
         </div>
     </div>
 
@@ -261,6 +209,91 @@
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('submit', async function(event) {
+            const form = event.target.closest('.ajax-add-to-cart-form');
+
+            if (!form) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonHtml = submitButton ? submitButton.innerHTML : null;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: new FormData(form),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Unable to add product to cart.');
+                }
+
+                document.querySelectorAll('.cart-badge, .mobile-nav-badge').forEach(function(element) {
+                    element.textContent = data.cart_count ?? 0;
+                });
+
+                document.querySelectorAll('.wishlist-badge').forEach(function(element) {
+                    const wishlistCount = data.wishlist_count ?? 0;
+                    element.textContent = wishlistCount;
+                    element.style.display = wishlistCount > 0 ? 'inline-flex' : 'none';
+                });
+
+                const offcanvasContent = document.querySelector('[data-cart-offcanvas-content]');
+
+                if (offcanvasContent && data.cart_offcanvas_html) {
+                    offcanvasContent.innerHTML = data.cart_offcanvas_html;
+                }
+
+                if (data.removed_from_wishlist && data.product_id) {
+                    document.querySelectorAll(`.wishlist-toggle-btn[data-product-id="${data.product_id}"] i`).forEach(function(icon) {
+                        icon.classList.add('far');
+                        icon.classList.remove('fas');
+                    });
+
+                    const wishlistItem = document.querySelector(`.wishlist-item[data-product-id="${data.product_id}"]`);
+
+                    if (wishlistItem) {
+                        wishlistItem.style.transition = 'opacity 0.3s';
+                        wishlistItem.style.opacity = '0';
+
+                        setTimeout(function() {
+                            wishlistItem.remove();
+
+                            if (typeof updateWishlistCount === 'function') {
+                                updateWishlistCount();
+                            }
+                        }, 300);
+                    }
+                }
+            } catch (error) {
+                console.error('Cart add failed:', error);
+                window.alert(error.message || 'Unable to add product to cart.');
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonHtml;
+                }
+            }
+        });
+    </script>
 
     @stack('js')
 </body>

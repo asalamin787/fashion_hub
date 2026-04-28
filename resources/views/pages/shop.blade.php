@@ -163,7 +163,7 @@
                                             </a>
                                         @else
                                             <form action="{{ route('cart.add') }}" method="POST"
-                                                class="d-inline-block">
+                                                class="d-inline-block ajax-add-to-cart-form">
                                                 @csrf
                                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                                                 <input type="hidden" name="quantity" value="1">
@@ -176,6 +176,7 @@
                                         @endif
                                         <button type="button"
                                             class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                            data-product-id="{{ $product->id }}"
                                             data-toggle-url="{{ route('wishlist.toggle', $product) }}"
                                             aria-label="Add to wishlist">
                                             <i
