@@ -38,7 +38,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="cart-table-wrapper">
-                        <table class="cart-table">
+                        <table class="cart-table cart-table-desktop">
                             <thead>
                                 <tr>
                                     <th>Product</th>
@@ -123,6 +123,65 @@
                                 @endforelse
                             </tbody>
                         </table>
+
+                        <div class="cart-mobile-list">
+                            @foreach ($cart->items as $item)
+                                @php
+                                    $lineTotal = number_format((float) $item->price * $item->quantity, 2);
+                                    $image = $item->image && !str_starts_with($item->image, 'http')
+                                        ? asset('storage/' . ltrim($item->image, '/'))
+                                        : $item->image;
+                                @endphp
+
+                                <div class="cart-mobile-item">
+                                    <div class="cart-mobile-top">
+                                        <div class="cart-product-image">
+                                            <img src="{{ $image ?: 'https://via.placeholder.com/120x120?text=Item' }}"
+                                                alt="{{ $item->product_name }}">
+                                        </div>
+                                        <div class="cart-mobile-info">
+                                            <h5>{{ $item->product_name }}</h5>
+                                            @if (filled($item->variant_label))
+                                                <p class="cart-product-meta">Variant: {{ $item->variant_label }}</p>
+                                            @endif
+                                            @if (filled($item->sku))
+                                                <p class="cart-product-meta">SKU: {{ $item->sku }}</p>
+                                            @endif
+                                            <div class="cart-price">${{ number_format((float) $item->price, 2) }}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="cart-mobile-bottom">
+                                        <form action="{{ route('cart.item.update', $item->id) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <div class="cart-quantity">
+                                                <button type="button" onclick="updateQuantity(this, -1)"><i
+                                                        class="fas fa-minus"></i></button>
+                                                <input type="number" value="{{ $item->quantity }}" min="1" readonly>
+                                                <button type="button" onclick="updateQuantity(this, 1)"><i
+                                                        class="fas fa-plus"></i></button>
+                                                <input type="hidden" name="quantity" value="{{ $item->quantity }}">
+                                            </div>
+                                        </form>
+
+                                        <div class="cart-mobile-subtotal-wrap">
+                                            <span>Subtotal</span>
+                                            <div class="cart-subtotal">${{ $lineTotal }}</div>
+                                        </div>
+
+                                        <form action="{{ route('cart.item.remove', $item->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="cart-remove" type="submit" aria-label="Remove item">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
                         <div class="cart-actions">
                             <form class="coupon-form" method="POST">
                                 @csrf
@@ -133,7 +192,7 @@
                             <form action="{{ route('cart.clear') }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-secondary">Clear Cart</button>
+                                <button type="submit" class="btn btn-secondary w-100">Clear Cart</button>
                             </form>
                             
                         </div>
