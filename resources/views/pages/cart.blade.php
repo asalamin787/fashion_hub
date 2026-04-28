@@ -56,7 +56,7 @@
                                             ? asset('storage/' . ltrim($item->image, '/'))
                                             : $item->image;
                                     @endphp
-                                    <tr>
+                                    <tr data-cart-item-id="{{ $item->id }}">
                                         <td>
                                             <div class="cart-product">
                                                 <div class="cart-product-image">
@@ -78,21 +78,24 @@
                                             <div class="cart-price">${{ number_format((float) $item->price, 2) }}</div>
                                         </td>
                                         <td>
-                                            <form action="{{ route('cart.item.update', $item->id) }}" method="POST">
+                                            <form action="{{ route('cart.item.update', $item->id) }}" method="POST"
+                                                class="cart-quantity-form" data-cart-item-id="{{ $item->id }}">
                                                 @csrf
                                                 @method('PATCH')
                                                 <div class="cart-quantity">
                                                     <button type="button" onclick="updateQuantity(this, -1)"><i
                                                             class="fas fa-minus"></i></button>
-                                                    <input type="number" value="{{ $item->quantity }}" min="1" readonly>
+                                                    <input type="number" value="{{ $item->quantity }}" min="1" readonly
+                                                        class="cart-quantity-display">
                                                     <button type="button" onclick="updateQuantity(this, 1)"><i
                                                             class="fas fa-plus"></i></button>
-                                                    <input type="hidden" name="quantity" value="{{ $item->quantity }}">
+                                                    <input type="hidden" name="quantity" value="{{ $item->quantity }}"
+                                                        class="cart-quantity-hidden">
                                                 </div>
                                             </form>
                                         </td>
                                         <td>
-                                            <div class="cart-subtotal">${{ $lineTotal }}</div>
+                                            <div class="cart-subtotal" data-line-subtotal>${{ $lineTotal }}</div>
                                         </td>
                                         <td>
                                             <form action="{{ route('cart.item.remove', $item->id) }}" method="POST">
@@ -133,7 +136,7 @@
                                         : $item->image;
                                 @endphp
 
-                                <div class="cart-mobile-item">
+                                <div class="cart-mobile-item" data-cart-item-id="{{ $item->id }}">
                                     <div class="cart-mobile-top">
                                         <div class="cart-product-image">
                                             <img src="{{ $image ?: 'https://via.placeholder.com/120x120?text=Item' }}"
@@ -152,22 +155,25 @@
                                     </div>
 
                                     <div class="cart-mobile-bottom">
-                                        <form action="{{ route('cart.item.update', $item->id) }}" method="POST">
+                                        <form action="{{ route('cart.item.update', $item->id) }}" method="POST"
+                                            class="cart-quantity-form" data-cart-item-id="{{ $item->id }}">
                                             @csrf
                                             @method('PATCH')
                                             <div class="cart-quantity">
                                                 <button type="button" onclick="updateQuantity(this, -1)"><i
                                                         class="fas fa-minus"></i></button>
-                                                <input type="number" value="{{ $item->quantity }}" min="1" readonly>
+                                                <input type="number" value="{{ $item->quantity }}" min="1" readonly
+                                                    class="cart-quantity-display">
                                                 <button type="button" onclick="updateQuantity(this, 1)"><i
                                                         class="fas fa-plus"></i></button>
-                                                <input type="hidden" name="quantity" value="{{ $item->quantity }}">
+                                                <input type="hidden" name="quantity" value="{{ $item->quantity }}"
+                                                    class="cart-quantity-hidden">
                                             </div>
                                         </form>
 
                                         <div class="cart-mobile-subtotal-wrap">
                                             <span>Subtotal</span>
-                                            <div class="cart-subtotal">${{ $lineTotal }}</div>
+                                            <div class="cart-subtotal" data-line-subtotal>${{ $lineTotal }}</div>
                                         </div>
 
                                         <form action="{{ route('cart.item.remove', $item->id) }}" method="POST">
@@ -203,11 +209,11 @@
                         <h4 class="summary-title">Cart Summary</h4>
                         <div class="summary-row">
                             <span>Subtotal</span>
-                            <span class="value">${{ number_format((float) $subtotal, 2) }}</span>
+                            <span class="value" data-cart-summary-subtotal>${{ number_format((float) $subtotal, 2) }}</span>
                         </div>
                         <div class="summary-row">
                             <span>Total Items</span>
-                            <span class="value">{{ $totalItems }}</span>
+                            <span class="value" data-cart-summary-items>{{ $totalItems }}</span>
                         </div>
                         <div class="summary-buttons">
                             <a href="{{ route('checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
@@ -223,22 +229,92 @@
 
     @push('js')
         <script>
-            function updateQuantity(button, change) {
+            async function updateQuantity(button, change) {
                 const wrapper = button.closest('.cart-quantity');
-                const readonlyInput = wrapper.querySelector('input[type="number"]');
-                const hiddenQuantityInput = wrapper.querySelector('input[type="hidden"][name="quantity"]');
+                const readonlyInput = wrapper.querySelector('.cart-quantity-display');
+                const hiddenQuantityInput = wrapper.querySelector('.cart-quantity-hidden');
                 const form = button.closest('form');
+                const cartItemId = form?.dataset.cartItemId;
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
 
                 const current = parseInt(readonlyInput.value, 10) || 1;
                 const next = Math.max(1, current + change);
 
-                if (next === current) {
+                if (next === current || !form || !cartItemId) {
                     return;
                 }
 
-                readonlyInput.value = String(next);
-                hiddenQuantityInput.value = String(next);
-                form.submit();
+                if (form.dataset.loading === '1') {
+                    return;
+                }
+
+                form.dataset.loading = '1';
+
+                const allButtons = document.querySelectorAll(`.cart-quantity-form[data-cart-item-id="${cartItemId}"] button`);
+                allButtons.forEach(btn => {
+                    btn.disabled = true;
+                });
+
+                const formData = new FormData(form);
+                formData.set('quantity', String(next));
+                formData.set('_method', 'PATCH');
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        },
+                        body: formData,
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Unable to update quantity.');
+                    }
+
+                    document.querySelectorAll(`.cart-quantity-form[data-cart-item-id="${cartItemId}"] .cart-quantity-display`).forEach(input => {
+                        input.value = String(data.item_quantity);
+                    });
+
+                    document.querySelectorAll(`.cart-quantity-form[data-cart-item-id="${cartItemId}"] .cart-quantity-hidden`).forEach(input => {
+                        input.value = String(data.item_quantity);
+                    });
+
+                    document.querySelectorAll(`[data-cart-item-id="${cartItemId}"] [data-line-subtotal]`).forEach(el => {
+                        el.textContent = `$${data.line_subtotal}`;
+                    });
+
+                    const subtotalEl = document.querySelector('[data-cart-summary-subtotal]');
+                    if (subtotalEl) {
+                        subtotalEl.textContent = `$${data.cart_subtotal}`;
+                    }
+
+                    const totalItemsEl = document.querySelector('[data-cart-summary-items]');
+                    if (totalItemsEl) {
+                        totalItemsEl.textContent = String(data.cart_total_items ?? 0);
+                    }
+
+                    document.querySelectorAll('.cart-badge, .mobile-nav-badge').forEach(el => {
+                        el.textContent = String(data.cart_count ?? 0);
+                    });
+
+                    const offcanvasContent = document.querySelector('[data-cart-offcanvas-content]');
+                    if (offcanvasContent && data.cart_offcanvas_html) {
+                        offcanvasContent.innerHTML = data.cart_offcanvas_html;
+                    }
+                } catch (error) {
+                    console.error('Cart quantity update failed:', error);
+                    window.alert(error.message || 'Unable to update quantity.');
+                } finally {
+                    form.dataset.loading = '0';
+                    allButtons.forEach(btn => {
+                        btn.disabled = false;
+                    });
+                }
             }
         </script>
     @endpush

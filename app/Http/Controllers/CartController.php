@@ -75,13 +75,47 @@ class CartController extends Controller
         }
     }
 
-    public function update(UpdateCartItemRequest $request, int $id): RedirectResponse
+    public function update(UpdateCartItemRequest $request, int $id): RedirectResponse|JsonResponse
     {
         try {
-            $this->cartService->updateQuantity($id, (int) $request->validated('quantity'));
+            $quantity = (int) $request->validated('quantity');
+            $this->cartService->updateQuantity($id, $quantity);
+
+            if ($request->expectsJson()) {
+                $cart = $this->cartService->getCart()->load('items.product');
+                $updatedItem = $cart->items->firstWhere('id', $id);
+
+                if (! $updatedItem) {
+                    return response()->json([
+                        'message' => 'Cart item not found.',
+                    ], 404);
+                }
+
+                $cartCount = (int) $cart->items->sum('quantity');
+
+                return response()->json([
+                    'message' => 'Cart quantity updated.',
+                    'item_id' => $id,
+                    'item_quantity' => (int) $updatedItem->quantity,
+                    'line_subtotal' => number_format((float) $updatedItem->price * $updatedItem->quantity, 2),
+                    'cart_subtotal' => number_format((float) $cart->items->sum(fn ($item) => (float) $item->price * $item->quantity), 2),
+                    'cart_total_items' => $cartCount,
+                    'cart_count' => $cartCount,
+                    'cart_offcanvas_html' => view('components.cart-offcanvas-content', [
+                        'cart' => $cart,
+                        'cartCount' => $cartCount,
+                    ])->render(),
+                ]);
+            }
 
             return back()->with('success', 'Cart quantity updated.');
         } catch (\Throwable $exception) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Unable to update cart item.',
+                ], 422);
+            }
+
             return back()->withInput()->with('error', 'Unable to update cart item.');
         }
     }
