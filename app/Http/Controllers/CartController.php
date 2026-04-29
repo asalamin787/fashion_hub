@@ -25,6 +25,8 @@ class CartController extends Controller
             'cart' => $cart,
             'subtotal' => $totals['subtotal'],
             'discount' => $totals['discount'],
+            'taxAmount' => $totals['tax'],
+            'taxRate' => $totals['tax_rate'],
             'total' => $totals['total'],
             'totalItems' => $totals['total_items'],
             'coupon' => $totals['coupon'],
@@ -181,6 +183,8 @@ class CartController extends Controller
             'cart_total_items' => (int) $totals['total_items'],
             'cart_subtotal' => number_format((float) $totals['subtotal'], 2, '.', ''),
             'cart_discount' => number_format((float) $totals['discount'], 2, '.', ''),
+            'cart_tax' => number_format((float) $totals['tax'], 2, '.', ''),
+            'cart_tax_rate' => number_format((float) $totals['tax_rate'], 2, '.', ''),
             'cart_total' => number_format((float) $totals['total'], 2, '.', ''),
             'applied_coupon' => $totals['coupon'],
             'cart_offcanvas_html' => view('components.cart-offcanvas-content', [

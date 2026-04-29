@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Coupon;
 use App\Models\Product;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -178,6 +179,8 @@ class CartService
      * @return array{
      *     subtotal: float,
      *     discount: float,
+     *     tax: float,
+     *     tax_rate: float,
      *     total: float,
      *     total_items: int,
      *     coupon: array{
@@ -197,11 +200,16 @@ class CartService
         $subtotal = $this->calculateSubtotalAmount();
         $coupon = $this->getAppliedCouponData();
         $discount = (float) ($coupon['discount_amount'] ?? 0);
+        $taxRate = $this->getTaxRatePercentage();
+        $taxableSubtotal = max($subtotal - $discount, 0);
+        $tax = $this->calculateTaxAmount($taxableSubtotal, $taxRate);
 
         return [
             'subtotal' => $subtotal,
             'discount' => $discount,
-            'total' => max($subtotal - $discount, 0),
+            'tax' => $tax,
+            'tax_rate' => $taxRate,
+            'total' => $taxableSubtotal + $tax,
             'total_items' => $this->getTotalItems(),
             'coupon' => $coupon,
         ];
@@ -213,6 +221,8 @@ class CartService
      * @return array{
      *     subtotal: float,
      *     discount: float,
+     *     tax: float,
+     *     tax_rate: float,
      *     total: float,
      *     total_items: int,
      *     coupon: array{
@@ -488,5 +498,47 @@ class CartService
         }
 
         return true;
+    }
+
+    private function getTaxRatePercentage(): float
+    {
+        $taxSettingKeys = Setting::query()
+            ->select(['group', 'key'])
+            ->get()
+            ->flatMap(function (Setting $setting): array {
+                return [
+                    (string) $setting->key,
+                    (string) $setting->group.'.'.$setting->key,
+                ];
+            })
+            ->filter(function (string $settingKey): bool {
+                $normalized = mb_strtolower($settingKey);
+
+                return str_contains($normalized, 'tax') || str_contains($normalized, 'vat');
+            })
+            ->unique()
+            ->values()
+            ->all();
+
+        foreach ($taxSettingKeys as $settingKey) {
+            $rawTax = setting($settingKey, null);
+
+            if (! is_numeric($rawTax)) {
+                continue;
+            }
+
+            return max((float) $rawTax, 0);
+        }
+
+        return 0;
+    }
+
+    private function calculateTaxAmount(float $amount, float $taxRate): float
+    {
+        if ($amount <= 0 || $taxRate <= 0) {
+            return 0;
+        }
+
+        return $amount * ($taxRate / 100);
     }
 }

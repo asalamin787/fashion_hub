@@ -229,6 +229,10 @@
                             <span>Discount</span>
                             <span class="value" data-cart-summary-discount>-${{ number_format((float) $discount, 2) }}</span>
                         </div>
+                        <div class="summary-row" data-cart-summary-tax-row style="{{ (float) $taxAmount > 0 ? '' : 'display: none;' }}">
+                            <span data-cart-summary-tax-label>Tax ({{ number_format((float) $taxRate, 2) }}%)</span>
+                            <span class="value" data-cart-summary-tax>${{ number_format((float) $taxAmount, 2) }}</span>
+                        </div>
                         <div class="summary-row">
                             <span>Total Items</span>
                             <span class="value" data-cart-summary-items>{{ $totalItems }}</span>
@@ -270,6 +274,9 @@
             function updateCouponState(data) {
                 const discountRow = document.querySelector('[data-cart-summary-discount-row]');
                 const discountEl = document.querySelector('[data-cart-summary-discount]');
+                const taxRow = document.querySelector('[data-cart-summary-tax-row]');
+                const taxEl = document.querySelector('[data-cart-summary-tax]');
+                const taxLabelEl = document.querySelector('[data-cart-summary-tax-label]');
                 const totalEl = document.querySelector('[data-cart-summary-total]');
                 const couponBlock = document.querySelector('[data-applied-coupon-block]');
                 const couponCodeEl = document.querySelector('[data-applied-coupon-code]');
@@ -278,6 +285,8 @@
 
                 const coupon = data.applied_coupon ?? null;
                 const discountValue = parseFloat(data.cart_discount ?? 0);
+                const taxValue = parseFloat(data.cart_tax ?? 0);
+                const taxRate = data.cart_tax_rate ?? '0.00';
 
                 if (discountRow) {
                     discountRow.style.display = discountValue > 0 ? '' : 'none';
@@ -285,6 +294,18 @@
 
                 if (discountEl) {
                     discountEl.textContent = `-$${(data.cart_discount ?? '0.00')}`;
+                }
+
+                if (taxRow) {
+                    taxRow.style.display = taxValue > 0 ? '' : 'none';
+                }
+
+                if (taxEl) {
+                    taxEl.textContent = `$${(data.cart_tax ?? '0.00')}`;
+                }
+
+                if (taxLabelEl) {
+                    taxLabelEl.textContent = `Tax (${taxRate}%)`;
                 }
 
                 if (totalEl) {
