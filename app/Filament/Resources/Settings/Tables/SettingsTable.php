@@ -30,7 +30,8 @@ class SettingsTable
                     ->searchable()
                     ->sortable()
                     ->copyable()
-                    ->description(fn (Setting $record): string => $record->label),
+                    ->formatStateUsing(fn (string $state, Setting $record): string => $record->dot_key)
+                    ->description(fn (Setting $record): string => $record->display_name),
                 TextColumn::make('type')
                     ->badge()
                     ->sortable()
@@ -45,7 +46,8 @@ class SettingsTable
                     ->true(Heroicon::CheckCircle, 'success')
                     ->false(Heroicon::XCircle, 'gray')
                     ->sortable(),
-                TextColumn::make('sort_order')
+                TextColumn::make('order')
+                    ->label('Order')
                     ->sortable(),
                 TextColumn::make('updated_at')
                     ->label('Updated')
@@ -54,9 +56,9 @@ class SettingsTable
             ])
             ->filters([
                 SelectFilter::make('group')
-                    ->options(array_combine(Setting::GROUPS, array_map(static fn (string $group): string => ucfirst($group), Setting::GROUPS))),
+                    ->options(array_combine(Setting::GROUPS, array_map(static fn (string $group): string => str($group)->headline()->toString(), Setting::GROUPS))),
                 SelectFilter::make('type')
-                    ->options(array_combine(Setting::TYPES, array_map(static fn (string $type): string => ucfirst($type), Setting::TYPES))),
+                    ->options(array_combine(Setting::TYPES, array_map(static fn (string $type): string => str($type)->replace('_', ' ')->headline()->toString(), Setting::TYPES))),
                 TernaryFilter::make('is_public')
                     ->label('Public visibility'),
             ])

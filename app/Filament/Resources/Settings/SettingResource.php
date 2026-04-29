@@ -11,10 +11,12 @@ use App\Filament\Resources\Settings\Schemas\SettingInfolist;
 use App\Filament\Resources\Settings\Tables\SettingsTable;
 use App\Models\Setting;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Schema as SchemaFacade;
 use UnitEnum;
 
 class SettingResource extends Resource
@@ -23,17 +25,19 @@ class SettingResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static ?string $navigationLabel = 'Settings';
+    protected static ?string $navigationLabel = 'Settings Library';
 
     protected static ?string $modelLabel = 'Setting';
 
-    protected static ?string $pluralModelLabel = 'Settings';
+    protected static ?string $pluralModelLabel = 'Settings Library';
 
     protected static string|UnitEnum|null $navigationGroup = 'System Management';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
-    protected static ?string $recordTitleAttribute = 'label';
+    protected static ?string $recordTitleAttribute = 'display_name';
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
     {
@@ -69,6 +73,15 @@ class SettingResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
+        if (! SchemaFacade::hasTable('settings')) {
+            return null;
+        }
+
         return (string) static::getModel()::count();
+    }
+
+    public static function canAccess(): bool
+    {
+        return Filament::auth()->user()?->role === 'admin';
     }
 }

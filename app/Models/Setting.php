@@ -11,28 +11,33 @@ use Illuminate\Support\Str;
 class Setting extends Model
 {
     public const GROUPS = [
-        'general',
-        'company',
+        'site',
+        'admin',
         'seo',
+        'social',
         'payment',
         'mail',
-        'social',
-        'invoice',
-        'shipping',
         'appearance',
-        'security',
     ];
 
     public const TYPES = [
         'text',
         'textarea',
+        'rich_text',
         'number',
-        'boolean',
-        'select',
-        'json',
+        'email',
+        'url',
+        'password',
+        'checkbox',
+        'toggle',
+        'select_dropdown',
+        'radio_btn',
         'image',
         'file',
         'color',
+        'date',
+        'datetime',
+        'json',
     ];
 
     protected static string $settingsCacheKey = 'system.settings.all';
@@ -43,12 +48,12 @@ class Setting extends Model
     protected $fillable = [
         'group',
         'key',
+        'display_name',
         'value',
         'type',
-        'label',
-        'description',
+        'details',
+        'order',
         'is_public',
-        'sort_order',
     ];
 
     /**
@@ -57,23 +62,30 @@ class Setting extends Model
     protected function casts(): array
     {
         return [
+            'details' => 'array',
             'is_public' => 'boolean',
-            'sort_order' => 'integer',
+            'order' => 'integer',
         ];
     }
 
     protected static function booted(): void
     {
         static::saving(function (Setting $setting): void {
-            if (! in_array($setting->type, self::TYPES, true)) {
-                $setting->type = 'text';
-            }
+            $setting->group = static::normalizeGroup((string) $setting->group);
+            [$group, $key] = static::resolveGroupAndKey((string) $setting->key, $setting->group ?: 'site');
 
-            $setting->value = static::normalizeValueByType($setting->value, $setting->type);
-
-            if (blank($setting->label)) {
-                $setting->label = Str::of((string) $setting->key)->replace(['.', '_', '-'], ' ')->title()->toString();
-            }
+            $setting->group = $group;
+            $setting->key = $key;
+            $setting->type = in_array($setting->type, static::TYPES, true) ? $setting->type : 'text';
+            $setting->display_name = filled($setting->display_name)
+                ? (string) $setting->display_name
+                : Str::of($setting->key)->replace(['.', '_', '-'], ' ')->title()->toString();
+            $setting->details = static::normalizeDetails($setting->details);
+            $setting->value = static::normalizeValueForStorage($setting->value, $setting->type);
+            $setting->order ??= 0;
+            $setting->setAttribute('label', $setting->display_name);
+            $setting->setAttribute('description', data_get($setting->details, 'help'));
+            $setting->setAttribute('sort_order', $setting->order);
         });
 
         static::saved(fn (): bool => static::forgetCache());
@@ -83,6 +95,26 @@ class Setting extends Model
     public function scopeForGroup(Builder $query, string $group): Builder
     {
         return $query->where('group', $group);
+    }
+
+    public function scopeOrdered(Builder $query, string $direction = 'asc'): Builder
+    {
+        return $query
+            ->orderBy('group')
+            ->orderBy('order', $direction)
+            ->orderBy('id', $direction);
+    }
+
+    public function getDotKeyAttribute(): string
+    {
+        return $this->group.'.'.$this->key;
+    }
+
+    public function getHelpTextAttribute(): ?string
+    {
+        $help = data_get($this->details, 'help');
+
+        return is_string($help) ? $help : null;
     }
 
     public function getFormattedValueAttribute(): string
@@ -102,29 +134,22 @@ class Setting extends Model
             return $default;
         }
 
-        return static::castStoredValue($setting->value, $setting->type);
+        return static::castValueForRuntime($setting->value, $setting->type);
     }
 
-    public static function set(string $key, mixed $value, string $group = 'general'): Setting
+    public static function set(string $key, mixed $value, string $group = 'site'): Setting
     {
-        if (str_contains($key, '.')) {
-            [$parsedGroup, $parsedKey] = static::resolveGroupAndKey($key);
-
-            $group = $parsedGroup;
-            $key = $parsedKey;
-        }
-
-        [$storedValue, $resolvedType] = static::normalizeForStorage($value);
+        [$resolvedGroup, $resolvedKey] = static::resolveGroupAndKey($key, $group);
 
         $setting = static::query()->updateOrCreate(
             [
-                'group' => $group,
-                'key' => $key,
+                'group' => $resolvedGroup,
+                'key' => $resolvedKey,
             ],
             [
-                'value' => $storedValue,
-                'type' => $resolvedType,
-                'label' => Str::of($key)->replace(['.', '_', '-'], ' ')->title()->toString(),
+                'display_name' => Str::of($resolvedKey)->replace(['.', '_', '-'], ' ')->title()->toString(),
+                'type' => static::inferTypeFromValue($value),
+                'value' => $value,
             ],
         );
 
@@ -137,8 +162,8 @@ class Setting extends Model
     {
         return static::cachedSettings()
             ->filter(fn (Setting $row): bool => $row->group === $group)
-            ->sortBy('sort_order')
-            ->mapWithKeys(fn (Setting $row): array => [$row->key => static::castStoredValue($row->value, $row->type)]);
+            ->sortBy('order')
+            ->mapWithKeys(fn (Setting $row): array => [$row->key => static::castValueForRuntime($row->value, $row->type)]);
     }
 
     public static function forgetCache(): bool
@@ -155,119 +180,159 @@ class Setting extends Model
             ->groupBy('group')
             ->map(function (Collection $rows): array {
                 return $rows
-                    ->sortBy('sort_order')
-                    ->mapWithKeys(fn (Setting $row): array => [$row->key => static::castStoredValue($row->value, $row->type)])
+                    ->sortBy('order')
+                    ->mapWithKeys(fn (Setting $row): array => [$row->key => static::castValueForRuntime($row->value, $row->type)])
                     ->all();
             })
             ->all();
     }
 
-    protected static function cachedSettings(): Collection
-    {
-        /** @var Collection<int, Setting> $settings */
-        $settings = Cache::remember(
-            static::$settingsCacheKey,
-            now()->addHour(),
-            fn (): Collection => static::query()
-                ->orderBy('group')
-                ->orderBy('sort_order')
-                ->orderBy('id')
-                ->get(),
-        );
-
-        return $settings;
-    }
-
     /**
      * @return array{0: string, 1: string}
      */
-    protected static function resolveGroupAndKey(string $key): array
+    public static function resolveGroupAndKey(string $key, string $defaultGroup = 'site'): array
     {
+        $key = trim($key);
+
         if (! str_contains($key, '.')) {
-            return ['general', $key];
+            return [static::normalizeGroup($defaultGroup), static::normalizeKey($key)];
         }
 
-        $segments = explode('.', $key, 2);
+        [$group, $settingKey] = explode('.', $key, 2);
 
-        return [$segments[0], $segments[1]];
+        return [static::normalizeGroup($group), static::normalizeKey($settingKey)];
     }
 
-    /**
-     * @return array{0: string|null, 1: string}
-     */
-    protected static function normalizeForStorage(mixed $value): array
+    public static function normalizeGroup(string $group): string
     {
-        if (is_bool($value)) {
-            return [$value ? '1' : '0', 'boolean'];
-        }
-
-        if (is_int($value) || is_float($value)) {
-            return [(string) $value, 'number'];
-        }
-
-        if (is_array($value)) {
-            return [json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR), 'json'];
-        }
-
-        if ($value === null) {
-            return [null, 'text'];
-        }
-
-        return [(string) $value, 'text'];
+        return Str::of($group)
+            ->trim()
+            ->lower()
+            ->replace(' ', '_')
+            ->replace('-', '_')
+            ->toString();
     }
 
-    protected static function castStoredValue(mixed $value, string $type): mixed
+    public static function normalizeKey(string $key): string
     {
-        if ($value === null) {
+        return Str::of($key)
+            ->trim()
+            ->lower()
+            ->replace(' ', '_')
+            ->replace('-', '_')
+            ->trim('.')
+            ->toString();
+    }
+
+    public static function normalizeDetails(mixed $details): ?array
+    {
+        if (blank($details)) {
             return null;
         }
 
-        if ($type === 'json' && is_array($value)) {
+        if (is_string($details)) {
+            $decoded = json_decode($details, true);
+
+            return is_array($decoded) ? $decoded : null;
+        }
+
+        return is_array($details) ? $details : null;
+    }
+
+    protected static function cachedSettings(): Collection
+    {
+        try {
+            $cachedPayload = Cache::get(static::$settingsCacheKey);
+        } catch (\Throwable) {
+            $cachedPayload = null;
+        }
+
+        if (is_array($cachedPayload)) {
+            return static::hydrate($cachedPayload);
+        }
+
+        static::forgetCache();
+
+        $freshPayload = static::query()
+            ->ordered()
+            ->get()
+            ->map(fn (Setting $setting): array => $setting->getAttributes())
+            ->all();
+
+        Cache::put(static::$settingsCacheKey, $freshPayload, now()->addHour());
+
+        return static::hydrate($freshPayload);
+    }
+
+    public static function normalizeValueForStorage(mixed $value, string $type): ?string
+    {
+        if (($type === 'password') && blank($value)) {
+            return null;
+        }
+
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return match ($type) {
+            'checkbox', 'toggle' => filter_var($value, FILTER_VALIDATE_BOOLEAN) ? '1' : '0',
+            'number' => is_numeric($value) ? (string) $value : null,
+            'json' => is_array($value)
+                ? json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                : (json_decode((string) $value, true) !== null
+                    ? (string) $value
+                    : json_encode([(string) $value], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)),
+            default => is_array($value) ? (string) collect($value)->filter()->first() : (string) $value,
+        };
+    }
+
+    public static function castValueForRuntime(mixed $value, string $type): mixed
+    {
+        if ($value === null) {
+            return match ($type) {
+                'checkbox', 'toggle' => false,
+                'json' => [],
+                default => null,
+            };
+        }
+
+        if (($type === 'json') && is_array($value)) {
             return $value;
         }
 
         $value = (string) $value;
 
         return match ($type) {
-            'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false,
+            'checkbox', 'toggle' => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false,
             'number' => str_contains($value, '.') ? (float) $value : (int) $value,
             'json' => json_decode($value, true) ?? [],
             default => $value,
         };
     }
 
-    protected static function formatValueForDisplay(mixed $value, string $type): string
+    public static function inferTypeFromValue(mixed $value): string
     {
-        if ($value === null || $value === '') {
-            return '-';
-        }
-
-        if (is_array($value)) {
-            return Str::limit((string) json_encode($value), 120);
-        }
-
-        $value = (string) $value;
-
-        return match ($type) {
-            'boolean' => ((filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false) ? 'True' : 'False'),
-            'json' => Str::limit((string) $value, 120),
-            default => Str::limit($value, 120),
+        return match (true) {
+            is_bool($value) => 'toggle',
+            is_int($value), is_float($value) => 'number',
+            is_array($value) => 'json',
+            default => 'text',
         };
     }
 
-    protected static function normalizeValueByType(mixed $value, string $type): ?string
+    protected static function formatValueForDisplay(mixed $value, string $type): string
     {
-        if ($value === null || $value === '') {
-            return null;
+        $runtimeValue = static::castValueForRuntime($value, $type);
+
+        if ($runtimeValue === null || $runtimeValue === '') {
+            return '-';
         }
 
         return match ($type) {
-            'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN) ? '1' : '0',
-            'number' => is_numeric($value) ? (string) $value : null,
-            'json' => is_array($value)
-                ? json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
-                : (json_decode((string) $value) !== null ? (string) $value : json_encode([(string) $value], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)),
-            default => (string) $value,
+            'checkbox', 'toggle' => $runtimeValue ? 'Enabled' : 'Disabled',
+            'json' => Str::limit((string) json_encode($runtimeValue, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 120),
+            'password' => '••••••••',
+            default => Str::limit((string) $runtimeValue, 120),
         };
     }
 }

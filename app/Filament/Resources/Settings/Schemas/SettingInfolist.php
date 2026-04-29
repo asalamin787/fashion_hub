@@ -26,21 +26,23 @@ class SettingInfolist
                             ->color('info'),
                         TextEntry::make('key')
                             ->badge()
-                            ->copyable(),
-                        TextEntry::make('label'),
+                            ->copyable()
+                            ->formatStateUsing(fn ($state, $record): string => $record->dot_key),
+                        TextEntry::make('display_name'),
                         TextEntry::make('type')
                             ->badge()
                             ->color('warning'),
                         TextEntry::make('formatted_value')
                             ->label('Value')
                             ->columnSpanFull(),
-                        TextEntry::make('description')
+                        TextEntry::make('help_text')
+                            ->label('Help text')
                             ->placeholder('-')
                             ->columnSpanFull(),
                         IconEntry::make('is_public')
                             ->label('Public')
                             ->boolean(),
-                        TextEntry::make('sort_order'),
+                        TextEntry::make('order'),
                         TextEntry::make('created_at')
                             ->dateTime('d M Y, h:i A'),
                         TextEntry::make('updated_at')
