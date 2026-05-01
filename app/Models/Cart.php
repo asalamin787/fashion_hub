@@ -43,6 +43,11 @@ class Cart extends Model
         return $this->hasMany(CartItem::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     /**
      * Scope to only active carts.
      *

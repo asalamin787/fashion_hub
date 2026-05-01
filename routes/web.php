@@ -1,9 +1,13 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\WishlistController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +23,16 @@ Route::delete('/cart/item/{id}', [CartController::class, 'remove'])->name('cart.
 Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::post('/cart/coupon/apply', [CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
 Route::delete('/cart/coupon/remove', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
-Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/payment/{orderNumber}', [PaymentController::class, 'show'])->name('payment.show');
+Route::post('/payment/{orderNumber}/process', [PaymentController::class, 'processStripePayment'])->name('payment.process.stripe');
+Route::get('/checkout/payment/success/{orderNumber}', [PaymentController::class, 'success'])->name('checkout.payment.success');
+Route::get('/checkout/payment/failed/{orderNumber}', [PaymentController::class, 'failed'])->name('checkout.payment.failed');
+Route::get('/orders/{orderNumber}/confirmation', [CheckoutController::class, 'confirmation'])->name('order.confirmation');
+Route::post('/webhooks/stripe', StripeWebhookController::class)
+    ->withoutMiddleware([VerifyCsrfToken::class])
+    ->name('stripe.webhook');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/blog', [PageController::class, 'blog'])->name('blog');
 Route::get('/blog-details/{blogPost:slug?}', [PageController::class, 'blogDetails'])->name('blog.details');

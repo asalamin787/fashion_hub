@@ -1,4 +1,4 @@
-<x-app>
+﻿<x-app>
     @push('css')
         <link rel="stylesheet" href="{{ asset('assets/css/checkout.css') }}">
     @endpush
@@ -18,193 +18,490 @@
 
     <section class="checkout-section">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="checkout-form">
-                        <div class="form-section">
-                            <h4 class="section-title-small">Billing Details</h4>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="firstName" class="form-label">First Name *</label>
-                                        <input type="text" class="form-control" id="firstName" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="lastName" class="form-label">Last Name *</label>
-                                        <input type="text" class="form-control" id="lastName" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="email" class="form-label">Email Address *</label>
-                                <input type="email" class="form-control" id="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="phone" class="form-label">Phone Number *</label>
-                                <input type="tel" class="form-control" id="phone" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="company" class="form-label">Company Name (Optional)</label>
-                                <input type="text" class="form-control" id="company">
-                            </div>
-                            <div class="form-group">
-                                <label for="country" class="form-label">Country *</label>
-                                <select class="form-control" id="country" required>
-                                    <option value="">Select Country</option>
-                                    <option value="us">United States</option>
-                                    <option value="uk">United Kingdom</option>
-                                    <option value="ca">Canada</option>
-                                    <option value="au">Australia</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="address" class="form-label">Street Address *</label>
-                                <input type="text" class="form-control" id="address"
-                                    placeholder="House number and street name" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control"
-                                    placeholder="Apartment, suite, unit, etc. (optional)">
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="city" class="form-label">City *</label>
-                                        <input type="text" class="form-control" id="city" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="state" class="form-label">State *</label>
-                                        <input type="text" class="form-control" id="state" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="zip" class="form-label">ZIP Code *</label>
-                                        <input type="text" class="form-control" id="zip" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="notes" class="form-label">Order Notes (Optional)</label>
-                                <textarea class="form-control" id="notes" rows="4"
-                                    placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
-                            </div>
-                        </div>
 
-                        <div class="form-section">
-                            <h4 class="section-title-small">Payment Method</h4>
-                            <div class="payment-methods">
-                                <div class="payment-option active">
-                                    <label>
-                                        <input type="radio" name="payment" value="card" checked>
-                                        <i class="fas fa-credit-card"></i>
-                                        Credit / Debit Card
-                                    </label>
+            {{-- Global errors --}}
+            @if ($errors->any())
+                <div class="alert alert-danger mb-4" role="alert">
+                    <strong>Please fix the following errors:</strong>
+                    <ul class="mb-0 mt-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST" novalidate>
+                @csrf
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="checkout-form">
+
+                            {{-- â”€â”€â”€ Billing Details â”€â”€â”€ --}}
+                            <div class="form-section">
+                                <h4 class="section-title-small">Billing Details</h4>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="first_name" class="form-label">First Name *</label>
+                                            <input type="text"
+                                                   class="form-control @error('first_name') is-invalid @enderror"
+                                                   id="first_name" name="first_name"
+                                                   value="{{ old('first_name', $prefill['first_name']) }}"
+                                                   required>
+                                            @error('first_name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="last_name" class="form-label">Last Name *</label>
+                                            <input type="text"
+                                                   class="form-control @error('last_name') is-invalid @enderror"
+                                                   id="last_name" name="last_name"
+                                                   value="{{ old('last_name', $prefill['last_name']) }}"
+                                                   required>
+                                            @error('last_name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="payment-option">
-                                    <label>
-                                        <input type="radio" name="payment" value="paypal">
-                                        <i class="fab fa-paypal"></i>
-                                        PayPal
-                                    </label>
+
+                                <div class="form-group">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email"
+                                           class="form-control @error('email') is-invalid @enderror"
+                                           id="email" name="email"
+                                           value="{{ old('email', $prefill['email']) }}"
+                                           required>
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                <div class="payment-option">
-                                    <label>
-                                        <input type="radio" name="payment" value="cod">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                        Cash on Delivery
-                                    </label>
+
+                                <div class="form-group">
+                                    <label for="phone" class="form-label">Phone Number *</label>
+                                    <input type="tel"
+                                           class="form-control @error('phone') is-invalid @enderror"
+                                           id="phone" name="phone"
+                                           value="{{ old('phone', $prefill['phone']) }}"
+                                           required>
+                                    @error('phone')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="company_name" class="form-label">Company Name <span class="text-muted">(Optional)</span></label>
+                                    <input type="text"
+                                           class="form-control @error('company_name') is-invalid @enderror"
+                                           id="company_name" name="company_name"
+                                           value="{{ old('company_name') }}">
+                                    @error('company_name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="country" class="form-label">Country *</label>
+                                    <select class="form-control @error('country') is-invalid @enderror"
+                                            id="country" name="country" required>
+                                        <option value="">Select Country</option>
+                                        <option value="US" {{ old('country', $prefill['country']) === 'US' ? 'selected' : '' }}>United States</option>
+                                        <option value="GB" {{ old('country', $prefill['country']) === 'GB' ? 'selected' : '' }}>United Kingdom</option>
+                                        <option value="CA" {{ old('country', $prefill['country']) === 'CA' ? 'selected' : '' }}>Canada</option>
+                                        <option value="AU" {{ old('country', $prefill['country']) === 'AU' ? 'selected' : '' }}>Australia</option>
+                                        <option value="BD" {{ old('country', $prefill['country']) === 'BD' ? 'selected' : '' }}>Bangladesh</option>
+                                        <option value="IN" {{ old('country', $prefill['country']) === 'IN' ? 'selected' : '' }}>India</option>
+                                        <option value="DE" {{ old('country', $prefill['country']) === 'DE' ? 'selected' : '' }}>Germany</option>
+                                        <option value="FR" {{ old('country', $prefill['country']) === 'FR' ? 'selected' : '' }}>France</option>
+                                        <option value="AE" {{ old('country', $prefill['country']) === 'AE' ? 'selected' : '' }}>United Arab Emirates</option>
+                                    </select>
+                                    @error('country')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="street_address" class="form-label">Street Address *</label>
+                                    <input type="text"
+                                           class="form-control @error('street_address') is-invalid @enderror"
+                                           id="street_address" name="street_address"
+                                           placeholder="House number and street name"
+                                           value="{{ old('street_address', $prefill['street_address']) }}"
+                                           required>
+                                    @error('street_address')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text"
+                                           class="form-control @error('apartment') is-invalid @enderror"
+                                           name="apartment"
+                                           placeholder="Apartment, suite, unit, etc. (optional)"
+                                           value="{{ old('apartment') }}">
+                                    @error('apartment')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="city" class="form-label">City *</label>
+                                            <input type="text"
+                                                   class="form-control @error('city') is-invalid @enderror"
+                                                   id="city" name="city"
+                                                   value="{{ old('city', $prefill['city']) }}"
+                                                   required>
+                                            @error('city')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="state" class="form-label">State *</label>
+                                            <input type="text"
+                                                   class="form-control @error('state') is-invalid @enderror"
+                                                   id="state" name="state"
+                                                   value="{{ old('state') }}"
+                                                   required>
+                                            @error('state')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="zip_code" class="form-label">ZIP Code *</label>
+                                            <input type="text"
+                                                   class="form-control @error('zip_code') is-invalid @enderror"
+                                                   id="zip_code" name="zip_code"
+                                                   value="{{ old('zip_code') }}"
+                                                   required>
+                                            @error('zip_code')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="order_notes" class="form-label">Order Notes <span class="text-muted">(Optional)</span></label>
+                                    <textarea class="form-control @error('order_notes') is-invalid @enderror"
+                                              id="order_notes" name="order_notes" rows="4"
+                                              placeholder="Notes about your order, e.g. special notes for delivery">{{ old('order_notes') }}</textarea>
+                                    @error('order_notes')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="terms-checkbox">
-                            <input type="checkbox" id="terms" required>
-                            <label for="terms">
-                                I have read and agree to the website <a href="{{ route('terms.of.condition') }}">Terms & Conditions</a> *
-                            </label>
+                            {{-- â”€â”€â”€ Ship to Different Address â”€â”€â”€ --}}
+                            <div class="form-section">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="shipping_toggle"
+                                           {{ old('shipping_same_as_billing', '1') === '0' ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-semibold" for="shipping_toggle">
+                                        Ship to a different address?
+                                    </label>
+                                </div>
+
+                                <div id="shipping-address-fields" style="{{ old('shipping_same_as_billing', '1') === '0' ? '' : 'display:none' }}">
+                                    {{-- Hidden field â€” 1 when same, 0 when different --}}
+                                    <input type="hidden" name="shipping_same_as_billing" id="shipping_same_as_billing_field" value="{{ old('shipping_same_as_billing', '1') }}">
+
+                                    <h4 class="section-title-small mt-3">Shipping Address</h4>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">First Name *</label>
+                                                <input type="text"
+                                                       class="form-control @error('shipping_first_name') is-invalid @enderror"
+                                                       name="shipping_first_name"
+                                                       value="{{ old('shipping_first_name') }}">
+                                                @error('shipping_first_name')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Last Name *</label>
+                                                <input type="text"
+                                                       class="form-control @error('shipping_last_name') is-invalid @enderror"
+                                                       name="shipping_last_name"
+                                                       value="{{ old('shipping_last_name') }}">
+                                                @error('shipping_last_name')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Phone *</label>
+                                        <input type="tel"
+                                               class="form-control @error('shipping_phone') is-invalid @enderror"
+                                               name="shipping_phone"
+                                               value="{{ old('shipping_phone') }}">
+                                        @error('shipping_phone')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Country *</label>
+                                        <select class="form-control @error('shipping_country') is-invalid @enderror"
+                                                name="shipping_country">
+                                            <option value="">Select Country</option>
+                                            <option value="US" {{ old('shipping_country') === 'US' ? 'selected' : '' }}>United States</option>
+                                            <option value="GB" {{ old('shipping_country') === 'GB' ? 'selected' : '' }}>United Kingdom</option>
+                                            <option value="CA" {{ old('shipping_country') === 'CA' ? 'selected' : '' }}>Canada</option>
+                                            <option value="AU" {{ old('shipping_country') === 'AU' ? 'selected' : '' }}>Australia</option>
+                                            <option value="BD" {{ old('shipping_country') === 'BD' ? 'selected' : '' }}>Bangladesh</option>
+                                            <option value="IN" {{ old('shipping_country') === 'IN' ? 'selected' : '' }}>India</option>
+                                            <option value="DE" {{ old('shipping_country') === 'DE' ? 'selected' : '' }}>Germany</option>
+                                            <option value="FR" {{ old('shipping_country') === 'FR' ? 'selected' : '' }}>France</option>
+                                            <option value="AE" {{ old('shipping_country') === 'AE' ? 'selected' : '' }}>United Arab Emirates</option>
+                                        </select>
+                                        @error('shipping_country')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Street Address *</label>
+                                        <input type="text"
+                                               class="form-control @error('shipping_street_address') is-invalid @enderror"
+                                               name="shipping_street_address"
+                                               placeholder="House number and street name"
+                                               value="{{ old('shipping_street_address') }}">
+                                        @error('shipping_street_address')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <input type="text"
+                                               class="form-control @error('shipping_apartment') is-invalid @enderror"
+                                               name="shipping_apartment"
+                                               placeholder="Apartment, suite, unit, etc. (optional)"
+                                               value="{{ old('shipping_apartment') }}">
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">City *</label>
+                                                <input type="text"
+                                                       class="form-control @error('shipping_city') is-invalid @enderror"
+                                                       name="shipping_city"
+                                                       value="{{ old('shipping_city') }}">
+                                                @error('shipping_city')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">State *</label>
+                                                <input type="text"
+                                                       class="form-control @error('shipping_state') is-invalid @enderror"
+                                                       name="shipping_state"
+                                                       value="{{ old('shipping_state') }}">
+                                                @error('shipping_state')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">ZIP Code *</label>
+                                                <input type="text"
+                                                       class="form-control @error('shipping_zip_code') is-invalid @enderror"
+                                                       name="shipping_zip_code"
+                                                       value="{{ old('shipping_zip_code') }}">
+                                                @error('shipping_zip_code')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- â”€â”€â”€ Payment Method â”€â”€â”€ --}}
+                            <div class="form-section">
+                                <h4 class="section-title-small">Payment Method</h4>
+                                <div class="payment-methods">
+                                    <div class="payment-option {{ old('payment_method', 'cash_on_delivery') === 'credit_card' ? 'active' : '' }}">
+                                        <label>
+                                            <input type="radio" name="payment_method" value="credit_card"
+                                                   {{ old('payment_method', 'cash_on_delivery') === 'credit_card' ? 'checked' : '' }}>
+                                            <i class="fas fa-credit-card"></i>
+                                            Credit / Debit Card
+                                        </label>
+                                    </div>
+                                    <div class="payment-option {{ old('payment_method', 'cash_on_delivery') === 'paypal' ? 'active' : '' }}">
+                                        <label>
+                                            <input type="radio" name="payment_method" value="paypal"
+                                                   {{ old('payment_method', 'cash_on_delivery') === 'paypal' ? 'checked' : '' }}>
+                                            <i class="fab fa-paypal"></i>
+                                            PayPal
+                                        </label>
+                                    </div>
+                                    <div class="payment-option {{ old('payment_method', 'cash_on_delivery') === 'cash_on_delivery' ? 'active' : '' }}">
+                                        <label>
+                                            <input type="radio" name="payment_method" value="cash_on_delivery"
+                                                   {{ old('payment_method', 'cash_on_delivery') === 'cash_on_delivery' ? 'checked' : '' }}>
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            Cash on Delivery
+                                        </label>
+                                    </div>
+                                </div>
+                                @error('payment_method')
+                                    <div class="text-danger mt-2 small">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="terms" name="terms" value="1"
+                                       {{ old('terms') ? 'checked' : '' }}>
+                                <label for="terms">
+                                    I have read and agree to the website <a href="{{ route('terms.of.condition') }}">Terms &amp; Conditions</a> *
+                                </label>
+                                @error('terms')
+                                    <div class="text-danger mt-1 small">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {{-- â”€â”€â”€ Order Summary â”€â”€â”€ --}}
+                    <div class="col-lg-4">
+                        <div class="order-summary-box">
+                            <h4 class="summary-title">Your Order</h4>
+
+                            @forelse ($cartItems as $item)
+                                @php
+                                    $itemImage = $item->image && ! str_starts_with($item->image, 'http')
+                                        ? asset('storage/' . ltrim($item->image, '/'))
+                                        : $item->image;
+                                    $itemTotal = number_format((float) $item->price * $item->quantity, 2);
+                                @endphp
+                                <div class="summary-item">
+                                    <div class="summary-item-image">
+                                        <img src="{{ $itemImage ?: 'https://via.placeholder.com/80x80?text=Item' }}"
+                                             alt="{{ $item->product_name }}">
+                                    </div>
+                                    <div class="summary-item-info">
+                                        <h6>{{ $item->product_name }}</h6>
+                                        <p class="summary-item-meta">
+                                            @if ($item->variant_label)
+                                                {{ $item->variant_label }} |
+                                            @endif
+                                            Qty: {{ $item->quantity }}
+                                        </p>
+                                    </div>
+                                    <div class="summary-item-price">${{ $itemTotal }}</div>
+                                </div>
+                            @empty
+                                <p class="text-muted text-center py-3">Your cart is empty.</p>
+                            @endforelse
+
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span class="value">${{ number_format($subtotal, 2) }}</span>
+                            </div>
+
+                            @if ($discount > 0)
+                                <div class="summary-row">
+                                    <span>
+                                        Discount
+                                        @if ($coupon)
+                                            <small class="text-success">({{ $coupon['code'] }})</small>
+                                        @endif
+                                    </span>
+                                    <span class="value text-success">-${{ number_format($discount, 2) }}</span>
+                                </div>
+                            @endif
+
+                            <div class="summary-row">
+                                <span>Shipping</span>
+                                <span class="value">
+                                    {{ $shippingAmount > 0 ? '$' . number_format($shippingAmount, 2) : 'Free' }}
+                                </span>
+                            </div>
+
+                            @if ($taxAmount > 0)
+                                <div class="summary-row">
+                                    <span>Tax ({{ $taxRate }}%)</span>
+                                    <span class="value">${{ number_format($taxAmount, 2) }}</span>
+                                </div>
+                            @endif
+
+                            <div class="summary-row total">
+                                <span>Total</span>
+                                <span class="value">${{ number_format($grandTotal, 2) }}</span>
+                            </div>
+
+                            <div class="summary-buttons">
+                                <button id="place-order-btn" type="submit" class="btn btn-primary">Place Order</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-4">
-                    <div class="order-summary-box">
-                        <h4 class="summary-title">Your Order</h4>
-
-                        <div class="summary-item">
-                            <div class="summary-item-image">
-                                <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400"
-                                    alt="Product">
-                            </div>
-                            <div class="summary-item-info">
-                                <h6>Elegant Summer Dress</h6>
-                                <p class="summary-item-meta">Size: M | Qty: 1</p>
-                            </div>
-                            <div class="summary-item-price">$129.99</div>
-                        </div>
-
-                        <div class="summary-item">
-                            <div class="summary-item-image">
-                                <img src="https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=400"
-                                    alt="Product">
-                            </div>
-                            <div class="summary-item-info">
-                                <h6>Designer Handbag</h6>
-                                <p class="summary-item-meta">Qty: 1</p>
-                            </div>
-                            <div class="summary-item-price">$199.99</div>
-                        </div>
-
-                        <div class="summary-item">
-                            <div class="summary-item-image">
-                                <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400"
-                                    alt="Product">
-                            </div>
-                            <div class="summary-item-info">
-                                <h6>Classic White Sneakers</h6>
-                                <p class="summary-item-meta">Size: 42 | Qty: 2</p>
-                            </div>
-                            <div class="summary-item-price">$159.98</div>
-                        </div>
-
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-                            <span class="value">$489.96</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Shipping</span>
-                            <span class="value">$10.00</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Tax (10%)</span>
-                            <span class="value">$49.00</span>
-                        </div>
-                        <div class="summary-row total">
-                            <span>Total</span>
-                            <span class="value">$548.96</span>
-                        </div>
-
-                        <div class="summary-buttons">
-                            <button class="btn btn-primary">Place Order</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
     </section>
 
     @push('js')
         <script>
+            const checkoutForm = document.getElementById('checkout-form');
+            const placeOrderButton = document.getElementById('place-order-btn');
+
+            // Payment method active toggle
             document.querySelectorAll('.payment-option').forEach(option => {
-                option.addEventListener('click', function() {
+                option.addEventListener('click', function () {
                     document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
                     this.classList.add('active');
                     this.querySelector('input[type="radio"]').checked = true;
                 });
+            });
+
+            // Ship to different address toggle
+            const shippingToggle = document.getElementById('shipping_toggle');
+            const shippingFields = document.getElementById('shipping-address-fields');
+            const shippingField  = document.getElementById('shipping_same_as_billing_field');
+
+            shippingToggle.addEventListener('change', function () {
+                if (this.checked) {
+                    shippingFields.style.display = '';
+                    shippingField.value = '0';
+                } else {
+                    shippingFields.style.display = 'none';
+                    shippingField.value = '1';
+                }
+            });
+
+            function setLoadingState(isLoading) {
+                placeOrderButton.disabled = isLoading;
+                placeOrderButton.textContent = isLoading ? 'Processing...' : 'Place Order';
+            }
+
+            checkoutForm.addEventListener('submit', function (event) {
+                // Allow normal form submission - server will handle redirect
+                setLoadingState(true);
             });
         </script>
     @endpush

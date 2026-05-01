@@ -27,6 +27,8 @@ class BagResource extends Resource
 
     protected static ?string $modelLabel = 'Bag';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $pluralModelLabel = 'Product Bags';
 
     protected static string|UnitEnum|null $navigationGroup = 'Catalog Management';

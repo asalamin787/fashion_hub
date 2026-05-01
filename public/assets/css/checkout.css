@@ -86,10 +86,12 @@
     padding: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
+    background-color: #fff;
 }
 
 .payment-option:hover {
     border-color: var(--primary-color);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
 
 .payment-option.active {
@@ -99,6 +101,7 @@
 
 .payment-option input[type="radio"] {
     margin-right: 15px;
+    accent-color: var(--primary-color);
 }
 
 .payment-option label {
@@ -114,6 +117,94 @@
     margin-right: 10px;
     font-size: 1.5rem;
     color: var(--primary-color);
+}
+
+.stripe-payment-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+}
+
+.stripe-card-hint {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 14px;
+}
+
+.stripe-tools {
+    margin-bottom: 10px;
+}
+
+.stripe-focus-btn {
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #374151;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 6px 12px;
+    line-height: 1;
+}
+
+.stripe-focus-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.stripe-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.stripe-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stripe-field-group-wide {
+    grid-column: 1 / -1;
+}
+
+.stripe-field-label {
+    color: #374151;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.stripe-card-shell {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background-color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: text;
+    position: relative;
+    z-index: 2;
+    padding: 14px 12px;
+}
+
+.stripe-card-shell:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(134, 87, 73, 0.12);
+}
+
+.stripe-card-element {
+    min-height: 52px;
+    width: 100%;
+}
+
+.stripe-card-status {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background-color: #fef2f2;
+    color: #b91c1c;
+    font-size: 0.88rem;
+    font-weight: 600;
 }
 
 .order-summary-box {
@@ -360,5 +451,9 @@
 
     .footer h5 {
         margin-top: 30px;
+    }
+
+    .stripe-grid {
+        grid-template-columns: 1fr;
     }
 }

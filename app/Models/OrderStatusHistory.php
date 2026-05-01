@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\OrderStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class OrderStatusHistory extends Model
+{
+    use HasFactory;
+
+    public $timestamps = false;
+
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'order_id',
+        'old_status',
+        'new_status',
+        'note',
+        'changed_by',
+        'created_at',
+    ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'order_id' => 'integer',
+            'old_status' => OrderStatus::class,
+            'new_status' => OrderStatus::class,
+            'changed_by' => 'integer',
+            'created_at' => 'datetime',
+        ];
+    }
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function changedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'changed_by');
+    }
+}
