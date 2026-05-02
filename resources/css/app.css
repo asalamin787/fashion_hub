@@ -9,3 +9,12 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+.fi-ta-record.fi-ta-record-actions-top {
+    align-items: flex-start !important;
+}
+
+.fi-ta-record.fi-ta-record-actions-top .fi-ta-actions,
+.fi-ta-record.fi-ta-record-actions-top .fi-ta-record-collapse-btn {
+    align-self: flex-start !important;
+}
