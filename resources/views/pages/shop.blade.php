@@ -278,8 +278,14 @@
                                 el.textContent = data.count;
                                 el.style.display = data.count > 0 ? 'inline-flex' : 'none';
                             });
+
+                            window.showToast(
+                                data.in_wishlist ? 'Added to wishlist.' : 'Removed from wishlist.',
+                                'success'
+                            );
                         } catch (e) {
                             console.error('Wishlist toggle failed:', e);
+                            window.showToast('Unable to update wishlist.', 'error');
                         }
                     });
                 });

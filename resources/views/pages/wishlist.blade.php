@@ -147,6 +147,11 @@
                         el.style.display = data.count > 0 ? 'inline-flex' : 'none';
                     });
 
+                    window.showToast(
+                        data.in_wishlist ? 'Added to wishlist.' : 'Removed from wishlist.',
+                        'success'
+                    );
+
                     // Remove card from page
                     if (!data.in_wishlist && btnEl) {
                         const colEl = btnEl.closest('.wishlist-item');
@@ -159,6 +164,7 @@
                     }
                 } catch (e) {
                     console.error('Wishlist toggle failed:', e);
+                    window.showToast('Unable to update wishlist.', 'error');
                 }
             }
 

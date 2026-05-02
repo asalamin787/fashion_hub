@@ -98,7 +98,7 @@
                                             <div class="cart-subtotal" data-line-subtotal>${{ $lineTotal }}</div>
                                         </td>
                                         <td>
-                                            <form action="{{ route('cart.item.remove', $item->id) }}" method="POST">
+                                            <form action="{{ route('cart.item.remove', $item->id) }}" method="POST" data-ajax-cart-remove>
                                                 @csrf
                                                 @method('DELETE')
                                                 <button class="cart-remove" type="submit" aria-label="Remove item">
@@ -176,7 +176,7 @@
                                             <div class="cart-subtotal" data-line-subtotal>${{ $lineTotal }}</div>
                                         </div>
 
-                                        <form action="{{ route('cart.item.remove', $item->id) }}" method="POST">
+                                        <form action="{{ route('cart.item.remove', $item->id) }}" method="POST" data-ajax-cart-remove>
                                             @csrf
                                             @method('DELETE')
                                             <button class="cart-remove" type="submit" aria-label="Remove item">
@@ -209,7 +209,7 @@
                                 </form>
                             </div>
                             
-                            <form action="{{ route('cart.clear') }}" method="POST">
+                            <form action="{{ route('cart.clear') }}" method="POST" data-ajax-cart-clear>
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-secondary w-100">Clear Cart</button>
@@ -404,9 +404,11 @@
                     if (offcanvasContent && data.cart_offcanvas_html) {
                         offcanvasContent.innerHTML = data.cart_offcanvas_html;
                     }
+
+                    window.showToast(data.message || 'Quantity updated.', 'success');
                 } catch (error) {
                     console.error('Cart quantity update failed:', error);
-                    window.alert(error.message || 'Unable to update quantity.');
+                    window.showToast(error.message || 'Unable to update quantity.', 'error');
                 } finally {
                     form.dataset.loading = '0';
                     allButtons.forEach(btn => {
@@ -465,6 +467,124 @@
                     return data;
                 }
 
+                document.addEventListener('submit', async function(event) {
+                    const removeForm = event.target.closest('[data-ajax-cart-remove]');
+
+                    if (!removeForm) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    const btn = removeForm.querySelector('button[type="submit"]');
+                    if (btn) { btn.disabled = true; }
+
+                    try {
+                        const fd = new FormData(removeForm);
+                        const response = await fetch(removeForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                            body: fd,
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(data.message || 'Unable to remove item.');
+                        }
+
+                        const row = removeForm.closest('tr[data-cart-item-id], .cart-mobile-item[data-cart-item-id]');
+                        if (row) {
+                            row.style.transition = 'opacity 0.3s';
+                            row.style.opacity = '0';
+                            setTimeout(() => row.remove(), 300);
+                        }
+
+                        document.querySelectorAll('.cart-badge, .mobile-nav-badge').forEach(el => {
+                            el.textContent = String(data.cart_count ?? 0);
+                        });
+
+                        const offcanvasContent = document.querySelector('[data-cart-offcanvas-content]');
+                        if (offcanvasContent && data.cart_offcanvas_html) {
+                            offcanvasContent.innerHTML = data.cart_offcanvas_html;
+                        }
+
+                        updateCouponState(data);
+
+                        const totalItemsEl = document.querySelector('[data-cart-summary-items]');
+                        if (totalItemsEl) {
+                            totalItemsEl.textContent = String(data.cart_total_items ?? 0);
+                        }
+
+                        const subtotalEl = document.querySelector('[data-cart-summary-subtotal]');
+                        if (subtotalEl) {
+                            subtotalEl.textContent = `$${data.cart_subtotal}`;
+                        }
+
+                        window.showToast(data.message || 'Item removed from cart.', 'success');
+                    } catch (error) {
+                        console.error('Cart remove failed:', error);
+                        window.showToast(error.message || 'Unable to remove item.', 'error');
+                        if (btn) { btn.disabled = false; }
+                    }
+                });
+
+                document.addEventListener('submit', async function(event) {
+                    const clearForm = event.target.closest('[data-ajax-cart-clear]');
+
+                    if (!clearForm) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    const btn = clearForm.querySelector('button[type="submit"]');
+                    if (btn) { btn.disabled = true; }
+
+                    try {
+                        const fd = new FormData(clearForm);
+                        const response = await fetch(clearForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                            body: fd,
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(data.message || 'Unable to clear cart.');
+                        }
+
+                        document.querySelectorAll('tr[data-cart-item-id]').forEach(r => r.remove());
+                        document.querySelectorAll('.cart-mobile-item[data-cart-item-id]').forEach(r => r.remove());
+
+                        document.querySelectorAll('.cart-badge, .mobile-nav-badge').forEach(el => {
+                            el.textContent = '0';
+                        });
+
+                        const offcanvasContent = document.querySelector('[data-cart-offcanvas-content]');
+                        if (offcanvasContent && data.cart_offcanvas_html) {
+                            offcanvasContent.innerHTML = data.cart_offcanvas_html;
+                        }
+
+                        window.showToast(data.message || 'Cart cleared.', 'success');
+
+                        setTimeout(() => window.location.reload(), 600);
+                    } catch (error) {
+                        console.error('Cart clear failed:', error);
+                        window.showToast(error.message || 'Unable to clear cart.', 'error');
+                        if (btn) { btn.disabled = false; }
+                    }
+                });
+
                 const couponApplyForm = document.querySelector('[data-coupon-apply-form]');
                 if (couponApplyForm) {
                     couponApplyForm.addEventListener('submit', async function(event) {
@@ -473,8 +593,10 @@
                         try {
                             const data = await submitCouponForm(this, 'POST');
                             showCouponFeedback(data.message || 'Coupon applied successfully.', 'success');
+                            window.showToast(data.message || 'Coupon applied successfully.', 'success');
                         } catch (error) {
                             showCouponFeedback(error.message || 'Unable to apply coupon.', 'error');
+                            window.showToast(error.message || 'Unable to apply coupon.', 'error');
                         }
                     });
                 }
@@ -491,8 +613,10 @@
                     try {
                         const data = await submitCouponForm(removeForm, 'DELETE');
                         showCouponFeedback(data.message || 'Coupon removed successfully.', 'success');
+                        window.showToast(data.message || 'Coupon removed successfully.', 'success');
                     } catch (error) {
                         showCouponFeedback(error.message || 'Unable to remove coupon.', 'error');
+                        window.showToast(error.message || 'Unable to remove coupon.', 'error');
                     }
                 });
             });

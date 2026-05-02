@@ -207,8 +207,79 @@
         </div>
     </nav>
 
+    <!-- Toast Notifications -->
+    <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            max-width: 340px;
+        }
+
+        .fh-toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+            pointer-events: auto;
+            animation: fhToastIn 0.3s ease;
+            min-width: 240px;
+        }
+
+        .fh-toast.fh-toast-success { background: linear-gradient(135deg, #865749, #6d3f35); }
+        .fh-toast.fh-toast-error   { background: linear-gradient(135deg, #dc3545, #b02030); }
+        .fh-toast.fh-toast-info    { background: linear-gradient(135deg, #0d6efd, #0a58ca); }
+
+        .fh-toast-icon { font-size: 16px; flex-shrink: 0; }
+        .fh-toast-msg  { flex: 1; line-height: 1.4; }
+        .fh-toast-fade { opacity: 0; transition: opacity 0.35s ease; }
+
+        @keyframes fhToastIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to   { opacity: 1; transform: translateX(0);    }
+        }
+    </style>
+
+    <script>
+        window.showToast = function(message, type) {
+            type = type || 'success';
+
+            const container = document.getElementById('toastContainer');
+
+            if (!container) {
+                return;
+            }
+
+            const iconMap = { success: '✓', error: '✕', info: 'ℹ' };
+            const toast = document.createElement('div');
+            toast.className = 'fh-toast fh-toast-' + type;
+            toast.innerHTML =
+                '<span class="fh-toast-icon">' + (iconMap[type] || '✓') + '</span>' +
+                '<span class="fh-toast-msg">' + message + '</span>';
+
+            container.appendChild(toast);
+
+            setTimeout(function() {
+                toast.classList.add('fh-toast-fade');
+                setTimeout(function() { toast.remove(); }, 370);
+            }, 3000);
+        };
+    </script>
 
     <script>
         document.addEventListener('submit', async function(event) {
@@ -262,6 +333,8 @@
                     offcanvasContent.innerHTML = data.cart_offcanvas_html;
                 }
 
+                window.showToast(data.message || 'Product added to cart.', 'success');
+
                 if (data.removed_from_wishlist && data.product_id) {
                     document.querySelectorAll(`.wishlist-toggle-btn[data-product-id="${data.product_id}"] i`).forEach(function(icon) {
                         icon.classList.add('far');
@@ -285,7 +358,7 @@
                 }
             } catch (error) {
                 console.error('Cart add failed:', error);
-                window.alert(error.message || 'Unable to add product to cart.');
+                window.showToast(error.message || 'Unable to add product to cart.', 'error');
             } finally {
                 if (submitButton) {
                     submitButton.disabled = false;

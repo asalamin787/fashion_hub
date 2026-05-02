@@ -112,20 +112,36 @@ class CartController extends Controller
         }
     }
 
-    public function remove(int $id): RedirectResponse
+    public function remove(Request $request, int $id): RedirectResponse|JsonResponse
     {
         try {
             $this->cartService->removeItem($id);
 
+            if ($request->expectsJson()) {
+                return response()->json(array_merge([
+                    'message' => 'Item removed from cart.',
+                ], $this->buildCartUiPayload()));
+            }
+
             return back()->with('success', 'Item removed from cart.');
         } catch (\Throwable) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unable to remove cart item.'], 422);
+            }
+
             return back()->with('error', 'Unable to remove cart item.');
         }
     }
 
-    public function clear(): RedirectResponse
+    public function clear(Request $request): RedirectResponse|JsonResponse
     {
         $this->cartService->clearCart();
+
+        if ($request->expectsJson()) {
+            return response()->json(array_merge([
+                'message' => 'Cart cleared.',
+            ], $this->buildCartUiPayload()));
+        }
 
         return back()->with('success', 'Cart cleared.');
     }
