@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Stripe\Charge;
 use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
 use Stripe\StripeClient;
@@ -243,7 +244,17 @@ class StripePaymentService
 
             $mappedStatus = $this->mapIntentStatusToPaymentStatus((string) $intent->status);
             $isPaid = $mappedStatus === PaymentStatus::Paid;
-            $paymentMethod = $this->resolvePaymentMethodFromIntent($intent);
+
+            // Safely extract the Charge object — latest_charge is expanded via retrieve()
+            $charge = $intent->latest_charge instanceof Charge ? $intent->latest_charge : null;
+
+            // Extract only Stripe IDs — never cast the full object to string
+            $chargeId = $charge?->id ?? (is_string($intent->latest_charge) ? $intent->latest_charge : null);
+            $pmId = $charge?->payment_method;
+
+            // Detect Google Pay vs card from charge wallet data
+            $paymentMethod = $this->resolvePaymentMethodFromCharge($charge)
+                ?? $this->resolvePaymentMethodFromIntent($intent);
 
             $orderUpdate = [
                 'payment_gateway' => 'stripe',
@@ -254,7 +265,8 @@ class StripePaymentService
 
             if ($isPaid) {
                 $orderUpdate['paid_at'] = now();
-                $orderUpdate['transaction_id'] = (string) ($intent->latest_charge ?? $lockedOrder->transaction_id);
+                $orderUpdate['transaction_id'] = $chargeId ?? $lockedOrder->transaction_id;
+                $orderUpdate['payment_method_id'] = $pmId ?? $lockedOrder->payment_method_id;
 
                 if ($lockedOrder->order_status === OrderStatus::Pending) {
                     $orderUpdate['order_status'] = OrderStatus::Confirmed;
@@ -268,7 +280,9 @@ class StripePaymentService
             }
 
             if ($mappedStatus === PaymentStatus::Failed) {
-                $orderUpdate['transaction_id'] = (string) ($intent->last_payment_error->charge ?? $lockedOrder->transaction_id);
+                // last_payment_error->charge is a charge ID string, not an object
+                $failedChargeId = data_get($intent->toArray(), 'last_payment_error.charge');
+                $orderUpdate['transaction_id'] = $failedChargeId ?? $lockedOrder->transaction_id;
             }
 
             $lockedOrder->update($orderUpdate);
@@ -283,15 +297,19 @@ class StripePaymentService
                 $payment = new Payment(['order_id' => $lockedOrder->id]);
             }
 
+            // Store full charge payload in payments.payload — NOT in transaction_id
+            $chargePayload = $charge ? $charge->toArray() : [];
+
             $payment->fill([
                 'method' => $paymentMethod->value,
                 'gateway' => 'stripe',
-                'transaction_id' => (string) ($intent->latest_charge ?? $payment->transaction_id),
+                'transaction_id' => $chargeId ?? $payment->transaction_id,
                 'payment_intent_id' => $intent->id,
+                'payment_method_id' => $pmId ?? $payment->payment_method_id,
                 'amount' => round(((int) $intent->amount) / 100, 2),
                 'currency' => strtoupper((string) $intent->currency),
                 'status' => $mappedStatus->value,
-                'payload' => $payload,
+                'payload' => $chargePayload ?: $payload,
                 'paid_at' => $isPaid ? now() : null,
             ]);
 
@@ -299,6 +317,24 @@ class StripePaymentService
 
             return $lockedOrder->refresh();
         });
+    }
+
+    /**
+     * Resolve PaymentMethod from a Stripe Charge object (most accurate).
+     */
+    private function resolvePaymentMethodFromCharge(?Charge $charge): ?PaymentMethod
+    {
+        if (! $charge) {
+            return null;
+        }
+
+        $walletType = (string) data_get($charge->toArray(), 'payment_method_details.card.wallet.type', '');
+
+        return match ($walletType) {
+            'google_pay' => PaymentMethod::GooglePay,
+            '' => null,
+            default => PaymentMethod::CreditCard,
+        };
     }
 
     private function mapIntentStatusToPaymentStatus(string $intentStatus): PaymentStatus
@@ -345,6 +381,7 @@ class StripePaymentService
 
     private function resolvePaymentMethodFromIntent(PaymentIntent $intent): PaymentMethod
     {
+        // Fallback: read wallet type from the expanded intent array
         $walletType = (string) data_get($intent->toArray(), 'latest_charge.payment_method_details.card.wallet.type', '');
 
         return match ($walletType) {

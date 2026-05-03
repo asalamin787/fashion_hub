@@ -23,6 +23,7 @@ class Payment extends Model
         'gateway',
         'transaction_id',
         'payment_intent_id',
+        'payment_method_id',
         'amount',
         'currency',
         'status',

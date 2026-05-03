@@ -46,7 +46,7 @@ Route::get('/terms-of-condition', [PageController::class, 'termsOfCondition'])->
 
 Auth::routes();
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+// Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/orders/{order}/invoice/print', InvoicePrintController::class)->name('admin.orders.invoice.print');

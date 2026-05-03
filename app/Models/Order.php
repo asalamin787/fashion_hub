@@ -50,6 +50,7 @@ class Order extends Model
         'payment_status',
         'transaction_id',
         'stripe_payment_intent_id',
+        'payment_method_id',
         'payment_gateway',
         'subtotal',
         'shipping_amount',
