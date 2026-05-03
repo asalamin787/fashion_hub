@@ -833,7 +833,7 @@
                     try {
                         expressCheckoutElement = elements.create('expressCheckout', {
                             buttonTheme: {
-                                googlePay: 'dark',
+                                googlePay: 'black',
                             },
                             paymentMethods: {
                                 googlePay: 'always',
