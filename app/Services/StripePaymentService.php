@@ -61,8 +61,12 @@ class StripePaymentService
             /** @var Order $lockedOrder */
             $lockedOrder = Order::query()->lockForUpdate()->findOrFail($order->id);
 
+            $selectedStripeMethod = in_array($lockedOrder->payment_method, [PaymentMethod::CreditCard, PaymentMethod::GooglePay], true)
+                ? $lockedOrder->payment_method
+                : PaymentMethod::CreditCard;
+
             $lockedOrder->update([
-                'payment_method' => PaymentMethod::CreditCard,
+                'payment_method' => $selectedStripeMethod,
                 'payment_status' => PaymentStatus::Pending,
                 'payment_gateway' => 'stripe',
                 'stripe_payment_intent_id' => $intent->id,
@@ -78,7 +82,7 @@ class StripePaymentService
             }
 
             $payment->fill([
-                'method' => PaymentMethod::CreditCard->value,
+                'method' => $selectedStripeMethod->value,
                 'gateway' => 'stripe',
                 'transaction_id' => null,
                 'payment_intent_id' => $intent->id,
@@ -116,13 +120,15 @@ class StripePaymentService
     /**
      * @param  array<string, mixed>  $event
      */
-    public function handleWebhookEvent(array $event): void
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    public function handleWebhook(array $payload): void
     {
-        $type = (string) ($event['type'] ?? '');
-        $payload = $event;
+        $type = (string) ($payload['type'] ?? '');
 
         if ($type === 'payment_intent.succeeded' || $type === 'payment_intent.payment_failed') {
-            $intentPayload = data_get($event, 'data.object');
+            $intentPayload = data_get($payload, 'data.object');
 
             if (! is_array($intentPayload) || ! isset($intentPayload['id'])) {
                 return;
@@ -141,7 +147,7 @@ class StripePaymentService
         }
 
         if ($type === 'charge.refunded') {
-            $charge = data_get($event, 'data.object');
+            $charge = data_get($payload, 'data.object');
 
             if (! is_array($charge)) {
                 return;
@@ -195,6 +201,14 @@ class StripePaymentService
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    public function handleWebhookEvent(array $event): void
+    {
+        $this->handleWebhook($event);
+    }
+
     private function findOrderByIntentPayload(array $intentPayload): ?Order
     {
         $intentId = (string) ($intentPayload['id'] ?? '');
@@ -229,11 +243,13 @@ class StripePaymentService
 
             $mappedStatus = $this->mapIntentStatusToPaymentStatus((string) $intent->status);
             $isPaid = $mappedStatus === PaymentStatus::Paid;
+            $paymentMethod = $this->resolvePaymentMethodFromIntent($intent);
 
             $orderUpdate = [
                 'payment_gateway' => 'stripe',
                 'stripe_payment_intent_id' => $intent->id,
                 'payment_status' => $mappedStatus,
+                'payment_method' => $paymentMethod,
             ];
 
             if ($isPaid) {
@@ -268,7 +284,7 @@ class StripePaymentService
             }
 
             $payment->fill([
-                'method' => PaymentMethod::CreditCard->value,
+                'method' => $paymentMethod->value,
                 'gateway' => 'stripe',
                 'transaction_id' => (string) ($intent->latest_charge ?? $payment->transaction_id),
                 'payment_intent_id' => $intent->id,
@@ -294,10 +310,12 @@ class StripePaymentService
         };
     }
 
-    private function retrievePaymentIntent(string $paymentIntentId): PaymentIntent
+    public function retrievePaymentIntent(string $paymentIntentId): PaymentIntent
     {
         try {
-            return $this->stripe()->paymentIntents->retrieve($paymentIntentId, []);
+            return $this->stripe()->paymentIntents->retrieve($paymentIntentId, [
+                'expand' => ['latest_charge.payment_method_details'],
+            ]);
         } catch (ApiErrorException $e) {
             Log::error('Stripe PaymentIntent retrieval failed.', [
                 'payment_intent_id' => $paymentIntentId,
@@ -323,5 +341,15 @@ class StripePaymentService
         $this->client = new StripeClient($secret);
 
         return $this->client;
+    }
+
+    private function resolvePaymentMethodFromIntent(PaymentIntent $intent): PaymentMethod
+    {
+        $walletType = (string) data_get($intent->toArray(), 'latest_charge.payment_method_details.card.wallet.type', '');
+
+        return match ($walletType) {
+            'google_pay' => PaymentMethod::GooglePay,
+            default => PaymentMethod::CreditCard,
+        };
     }
 }

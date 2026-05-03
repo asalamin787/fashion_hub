@@ -204,6 +204,30 @@
             .card-details-wrap {
                 padding-top: 16px;
             }
+            .stripe-element-shell {
+                border: 1px solid #d9c2ba;
+                border-radius: 8px;
+                background: #fff;
+                padding: 14px;
+            }
+            .stripe-divider {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 18px 0;
+                color: #86736c;
+                font-size: 0.82rem;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                font-family: 'Be Vietnam Pro', sans-serif;
+            }
+            .stripe-divider::before,
+            .stripe-divider::after {
+                content: '';
+                height: 1px;
+                background: #e7dbd6;
+                flex: 1;
+            }
             .card-details-header {
                 display: flex;
                 align-items: center;
@@ -580,7 +604,9 @@
                     <div class="form-section p-0 mb-4 border-0 bg-transparent">
                         <div class="pm-header-card">
                             <div class="pm-header-left">
-                                @if($order->payment_method === \App\Enums\PaymentMethod::CreditCard)
+                                @if($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
+                                    <div class="pm-header-icon"><i class="fab fa-google-pay"></i></div>
+                                @elseif($order->payment_method === \App\Enums\PaymentMethod::CreditCard)
                                     <div class="pm-header-icon"><i class="fas fa-credit-card"></i></div>
                                 @elseif($order->payment_method === \App\Enums\PaymentMethod::Paypal)
                                     <div class="pm-header-icon"><i class="fab fa-paypal"></i></div>
@@ -593,7 +619,12 @@
                                 </div>
                             </div>
 
-                            @if($order->payment_method === \App\Enums\PaymentMethod::CreditCard)
+                            @if($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
+                                <div class="pm-selection-pill">
+                                    <input type="radio" class="pm-radio" checked readonly>
+                                    <span>Google Pay</span>
+                                </div>
+                            @elseif($order->payment_method === \App\Enums\PaymentMethod::CreditCard)
                                 <div class="pm-selection-pill">
                                     <input type="radio" class="pm-radio" checked readonly>
                                     <span>Credit / Debit Card</span>
@@ -616,58 +647,42 @@
                         </div>
                     </div>
 
-                    @if($order->payment_method === \App\Enums\PaymentMethod::CreditCard)
+                    @php
+                        $isStripePayment = in_array($order->payment_method, [\App\Enums\PaymentMethod::CreditCard, \App\Enums\PaymentMethod::GooglePay], true);
+                    @endphp
+
+                    @if($isStripePayment)
                         <form id="payment-form" class="card-details-wrap">
                             @csrf
 
                             <div class="card-details-header">
-                                <div class="cd-icon-wrap"><i class="fas fa-credit-card"></i></div>
+                                @if($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
+                                    <div class="cd-icon-wrap"><i class="fab fa-google-pay"></i></div>
+                                @else
+                                    <div class="cd-icon-wrap"><i class="fas fa-credit-card"></i></div>
+                                @endif
                                 <div>
-                                    <h4>Card Details</h4>
-                                    <p>Enter your card information securely</p>
+                                    <h4>Secure Checkout</h4>
+                                    <p>Use Google Pay or enter your card details below</p>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="stripe-field-label">Card number</label>
-                                <div class="stripe-number-wrapper">
-                                    <div class="stripe-card-shell" id="stripe-card-number-shell">
-                                        <div id="stripe-card-number-element" class="stripe-card-element"></div>
-                                    </div>
-                                    <div class="stripe-number-brand-icons">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="Visa">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard">
-                                    </div>
+                            <div class="form-group mb-0">
+                                <label class="stripe-field-label">Google Pay</label>
+                                <div class="stripe-element-shell" id="express-checkout-element-wrapper">
+                                    <div id="express-checkout-element"></div>
                                 </div>
-                                <div id="stripe-card-status" class="stripe-ready-status" style="display:none;">
-                                    <i class="fas fa-lock"></i>
-                                    <span>Secure card field is ready. Start typing card number.</span>
-                                </div>
+                                <div id="google-pay-unavailable" class="alert alert-info mt-2 mb-0" style="display:none;"></div>
                             </div>
 
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-7">
-                                    <label class="stripe-field-label">Cardholder name</label>
-                                    <input
-                                        type="text"
-                                        id="cardholder-name"
-                                        class="payment-input"
-                                        placeholder="Name on card"
-                                        autocomplete="cc-name"
-                                    >
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="stripe-field-label">CVC</label>
-                                    <div class="stripe-card-shell" id="stripe-card-cvc-shell">
-                                        <div id="stripe-card-cvc-element" class="stripe-card-element"></div>
-                                    </div>
-                                </div>
+                            <div class="stripe-divider">
+                                <span>Or pay another way</span>
                             </div>
 
-                            <div class="form-group">
-                                <label class="stripe-field-label">Expiry date</label>
-                                <div class="stripe-card-shell" id="stripe-card-expiry-shell">
-                                    <div id="stripe-card-expiry-element" class="stripe-card-element"></div>
+                            <div class="form-group mb-0">
+                                <label class="stripe-field-label">Card payment</label>
+                                <div class="stripe-element-shell" id="payment-element-wrapper">
+                                    <div id="payment-element"></div>
                                 </div>
                             </div>
 
@@ -684,8 +699,12 @@
                             </div>
 
                             <div id="payment-error" class="alert alert-danger mt-3 mb-3" style="display:none;"></div>
+                            <div id="payment-processing" class="stripe-ready-status mt-3" style="display:none;">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                                <span>Processing your payment securely...</span>
+                            </div>
 
-                            <button id="pay-button" type="button" class="pay-btn mt-4">
+                            <button id="pay-button" type="submit" class="pay-btn mt-4">
                                 <i class="fas fa-lock"></i>
                                 Pay ${{ number_format($order->total_amount, 2) }}
                             </button>
@@ -723,24 +742,27 @@
         </div>
     </section>
 
-    @if($order->payment_method === \App\Enums\PaymentMethod::CreditCard)
+    @if($isStripePayment)
         @push('js')
             <script src="https://js.stripe.com/v3/"></script>
             <script>
+                const paymentForm = document.getElementById('payment-form');
                 const payButton = document.getElementById('pay-button');
                 const paymentErrorEl = document.getElementById('payment-error');
                 const stripeConfigWarning = document.getElementById('stripe-config-warning');
-                const stripeCardStatusEl = document.getElementById('stripe-card-status');
+                const paymentProcessingEl = document.getElementById('payment-processing');
+                const googlePayUnavailableEl = document.getElementById('google-pay-unavailable');
                 const stripePublishableKey = @json($stripePublishableKey);
                 const clientSecret = @json($clientSecret);
-                const orderNumber = @json($order->order_number);
                 const processPaymentUrl = @json(route('payment.process.stripe', ['orderNumber' => $order->order_number]));
+                const paymentPageUrl = @json(route('payment.show', ['orderNumber' => $order->order_number]));
+                const canonicalPaymentUrl = @json(rtrim((string) config('app.url'), '/') . '/payment/' . $order->order_number);
+                const successUrl = @json(route('checkout.payment.success', ['orderNumber' => $order->order_number]));
 
                 let stripe = null;
-                let cardNumberElement = null;
-                let cardExpiryElement = null;
-                let cardCvcElement = null;
-                let stripeElementMounted = false;
+                let elements = null;
+                let expressCheckoutElement = null;
+                let paymentElement = null;
 
                 if (stripePublishableKey) {
                     stripe = Stripe(stripePublishableKey);
@@ -748,63 +770,118 @@
                     stripeConfigWarning.style.display = '';
                 }
 
-                function mountStripeCardElement() {
-                    if (!stripe || stripeElementMounted) {
+                function mountStripeElements() {
+                    if (!stripe || !clientSecret || elements) {
                         return;
                     }
 
-                    const stripeElements = stripe.elements();
+                    const expressWrapper = document.getElementById('express-checkout-element-wrapper');
+                    const stripeDivider = document.querySelector('.stripe-divider');
 
-                    const elementStyle = {
-                        base: {
-                            fontSize: '16px',
-                            color: '#111827',
-                            fontFamily: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif',
-                            fontWeight: '500',
-                            '::placeholder': { color: '#9ca3af' },
+                    function showGooglePayUnavailable(message, details = null) {
+                        if (expressWrapper) {
+                            expressWrapper.style.display = 'none';
+                        }
+
+                        if (stripeDivider) {
+                            stripeDivider.style.display = 'none';
+                        }
+
+                        if (googlePayUnavailableEl) {
+                            googlePayUnavailableEl.textContent = details ? `${message} (${details})` : message;
+                            googlePayUnavailableEl.style.display = '';
+                        }
+                    }
+
+                    elements = stripe.elements({
+                        clientSecret,
+                        appearance: {
+                            theme: 'stripe',
+                            variables: {
+                                colorPrimary: '#86452a',
+                                borderRadius: '8px',
+                                fontFamily: 'Be Vietnam Pro, sans-serif',
+                            },
                         },
-                        invalid: { color: '#b91c1c' },
-                    };
+                    });
 
-                    cardNumberElement = stripeElements.create('cardNumber', { style: elementStyle, showIcon: true });
-                    cardExpiryElement = stripeElements.create('cardExpiry', { style: elementStyle });
-                    cardCvcElement    = stripeElements.create('cardCvc',    { style: elementStyle });
+                    // Mount card/payment element first — must always render
+                    paymentElement = elements.create('payment', {
+                        layout: {
+                            type: 'tabs',
+                            defaultCollapsed: false,
+                        },
+                    });
 
-                    cardNumberElement.mount('#stripe-card-number-element');
-                    cardExpiryElement.mount('#stripe-card-expiry-element');
-                    cardCvcElement.mount('#stripe-card-cvc-element');
+                    paymentElement.mount('#payment-element');
 
-                    // click-to-focus shells
-                    document.getElementById('stripe-card-number-shell')?.addEventListener('click', () => cardNumberElement.focus());
-                    document.getElementById('stripe-card-expiry-shell')?.addEventListener('click', () => cardExpiryElement.focus());
-                    document.getElementById('stripe-card-cvc-shell')?.addEventListener('click', () => cardCvcElement.focus());
-
-                    const onStripeChange = (event) => {
+                    paymentElement.on('change', (event) => {
                         if (event.error) {
                             showPaymentError(event.error.message);
-                            stripeCardStatusEl.style.display = '';
-                            stripeCardStatusEl.querySelector('span').textContent = event.error.message;
-                            stripeCardStatusEl.style.background = '#fef2f2';
-                            stripeCardStatusEl.style.color = '#b91c1c';
-                            stripeCardStatusEl.querySelector('i').className = 'fas fa-exclamation-circle';
                             return;
                         }
                         clearPaymentError();
-                    };
-
-                    cardNumberElement.on('change', onStripeChange);
-                    cardExpiryElement.on('change', onStripeChange);
-                    cardCvcElement.on('change', onStripeChange);
-
-                    cardNumberElement.on('ready', () => {
-                        stripeCardStatusEl.style.display = '';
                     });
 
-                    stripeElementMounted = true;
+                    if (window.location.hostname.includes('_')) {
+                        showGooglePayUnavailable(
+                            `Google Pay does not support hostnames with underscore. Open this page using: ${canonicalPaymentUrl}`
+                        );
+                        return;
+                    }
+
+                    try {
+                        expressCheckoutElement = elements.create('expressCheckout', {
+                            buttonTheme: {
+                                googlePay: 'dark',
+                            },
+                            paymentMethods: {
+                                googlePay: 'always',
+                                applePay: 'never',
+                            },
+                        });
+                    } catch (error) {
+                        showGooglePayUnavailable(
+                            'Google Pay is not available in this environment. Please use card payment or try in Chrome over HTTPS.',
+                            error?.message || 'unknown error'
+                        );
+                        return;
+                    }
+
+                    expressCheckoutElement.on('ready', ({ availablePaymentMethods }) => {
+                        const googlePayAvailable = Boolean(availablePaymentMethods && availablePaymentMethods.googlePay);
+
+                        if (!googlePayAvailable) {
+                            if (!window.isSecureContext) {
+                                showGooglePayUnavailable('Google Pay requires HTTPS. Open checkout on https://fashion-hub.test instead of http://127.0.0.1:8000.');
+                                return;
+                            }
+
+                            showGooglePayUnavailable('Google Pay is unavailable in this browser/profile. Use Chrome signed into Google with a saved card, and make sure Google Pay is enabled in your Stripe account.');
+                        }
+                    });
+
+                    expressCheckoutElement.on('loaderror', () => {
+                        showGooglePayUnavailable('Google Pay could not be loaded on this device/browser. Please use card payment or try a different browser.');
+                    });
+
+                    expressCheckoutElement.on('confirm', async () => {
+                        await confirmStripePayment();
+                    });
+
+                    try {
+                        expressCheckoutElement.mount('#express-checkout-element');
+                    } catch (error) {
+                        showGooglePayUnavailable(
+                            'Google Pay could not be mounted on this browser/session. Please use card payment or try another browser profile.',
+                            error?.message || 'unknown error'
+                        );
+                    }
                 }
 
                 function setLoadingState(isLoading) {
                     payButton.disabled = isLoading;
+                    paymentProcessingEl.style.display = isLoading ? '' : 'none';
                     payButton.innerHTML = isLoading
                         ? '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Processing Payment...'
                         : '<i class="fas fa-lock me-2"></i>Pay ${{ number_format($order->total_amount, 2) }}';
@@ -830,21 +907,22 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'X-Requested-With': 'XMLHttpRequest',
                         },
-                        body: JSON.stringify({ order_number: orderNumber, payment_intent_id: paymentIntentId }),
+                        body: JSON.stringify({ payment_intent_id: paymentIntentId }),
                     });
+
                     const payload = await response.json();
+
                     if (!response.ok) {
                         throw new Error(payload.message || 'Unable to verify payment status.');
                     }
+
                     return payload;
                 }
 
-                mountStripeCardElement();
-
-                payButton.addEventListener('click', async function () {
+                async function confirmStripePayment() {
                     clearPaymentError();
 
-                    if (!stripe || !cardNumberElement) {
+                    if (!stripe || !elements || !clientSecret) {
                         showPaymentError('Stripe configuration is missing. Please contact support.');
                         return;
                     }
@@ -852,34 +930,84 @@
                     try {
                         setLoadingState(true);
 
-                        const cardholderName = document.getElementById('cardholder-name')?.value?.trim() || '';
+                        const submitResult = await elements.submit();
 
-                        const stripeResult = await stripe.confirmCardPayment(clientSecret, {
-                            payment_method: {
-                                card: cardNumberElement,
-                                billing_details: { name: cardholderName },
+                        if (submitResult.error) {
+                            showPaymentError(submitResult.error.message || 'Unable to prepare wallet payment.');
+                            return;
+                        }
+
+                        const stripeResult = await stripe.confirmPayment({
+                            elements,
+                            clientSecret,
+                            confirmParams: {
+                                return_url: paymentPageUrl,
                             },
+                            redirect: 'if_required',
                         });
 
                         if (stripeResult.error) {
                             showPaymentError(stripeResult.error.message || 'Card payment failed.');
-                            setLoadingState(false);
                             return;
                         }
 
-                        const confirmPayload = await confirmOrderPayment(stripeResult.paymentIntent.id);
+                        const paymentIntentId = stripeResult.paymentIntent?.id;
+
+                        if (!paymentIntentId) {
+                            throw new Error('Unable to read payment result from Stripe.');
+                        }
+
+                        const confirmPayload = await confirmOrderPayment(paymentIntentId);
 
                         if (confirmPayload.redirect_url) {
                             window.location.href = confirmPayload.redirect_url;
                             return;
                         }
 
-                        showPaymentError('Payment was processed, but redirect failed. Please refresh your orders page.');
+                        window.location.href = successUrl;
                     } catch (error) {
                         showPaymentError(error.message || 'Unable to process card payment.');
                     } finally {
                         setLoadingState(false);
                     }
+                }
+
+                async function handleReturnFromStripe() {
+                    const paymentIntentId = new URLSearchParams(window.location.search).get('payment_intent');
+
+                    if (!paymentIntentId) {
+                        return;
+                    }
+
+                    try {
+                        setLoadingState(true);
+
+                        const confirmPayload = await confirmOrderPayment(paymentIntentId);
+
+                        if (confirmPayload.redirect_url) {
+                            window.location.href = confirmPayload.redirect_url;
+                            return;
+                        }
+
+                        window.location.href = successUrl;
+                    } catch (error) {
+                        showPaymentError(error.message || 'Unable to verify payment.');
+                        window.history.replaceState({}, document.title, paymentPageUrl);
+                    } finally {
+                        setLoadingState(false);
+                    }
+                }
+
+                if (!stripePublishableKey || !clientSecret) {
+                    showPaymentError('Unable to initialize Stripe payment. Please refresh and try again.');
+                } else {
+                    mountStripeElements();
+                    handleReturnFromStripe();
+                }
+
+                paymentForm.addEventListener('submit', async function (event) {
+                    event.preventDefault();
+                    await confirmStripePayment();
                 });
             </script>
         @endpush

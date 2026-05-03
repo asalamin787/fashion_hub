@@ -97,16 +97,19 @@ class OrdersTable
                     ->badge()
                     ->formatStateUsing(fn (PaymentMethod $state): string => match ($state) {
                         PaymentMethod::CreditCard => 'Credit Card',
+                        PaymentMethod::GooglePay => 'Google Pay',
                         PaymentMethod::Paypal => 'PayPal',
                         PaymentMethod::CashOnDelivery => 'Cash on Delivery',
                     })
                     ->color(fn (PaymentMethod $state): string => match ($state) {
                         PaymentMethod::CreditCard => 'primary',
+                        PaymentMethod::GooglePay => 'success',
                         PaymentMethod::Paypal => 'info',
                         PaymentMethod::CashOnDelivery => 'warning',
                     })
                     ->icon(fn (PaymentMethod $state): string => match ($state) {
                         PaymentMethod::CreditCard => 'heroicon-o-credit-card',
+                        PaymentMethod::GooglePay => 'heroicon-o-device-phone-mobile',
                         PaymentMethod::Paypal => 'heroicon-o-globe-alt',
                         PaymentMethod::CashOnDelivery => 'heroicon-o-banknotes',
                     }),
@@ -159,6 +162,7 @@ class OrdersTable
                         collect(PaymentMethod::cases())
                             ->mapWithKeys(fn (PaymentMethod $m): array => [$m->value => match ($m) {
                                 PaymentMethod::CreditCard => 'Credit Card',
+                                PaymentMethod::GooglePay => 'Google Pay',
                                 PaymentMethod::Paypal => 'PayPal',
                                 PaymentMethod::CashOnDelivery => 'Cash on Delivery',
                             }])

@@ -351,6 +351,14 @@
                                             Credit / Debit Card
                                         </label>
                                     </div>
+                                    <div class="payment-option {{ old('payment_method', 'cash_on_delivery') === 'google_pay' ? 'active' : '' }}">
+                                        <label>
+                                            <input type="radio" name="payment_method" value="google_pay"
+                                                   {{ old('payment_method', 'cash_on_delivery') === 'google_pay' ? 'checked' : '' }}>
+                                            <i class="fab fa-google-pay"></i>
+                                            Google Pay
+                                        </label>
+                                    </div>
                                     <div class="payment-option {{ old('payment_method', 'cash_on_delivery') === 'paypal' ? 'active' : '' }}">
                                         <label>
                                             <input type="radio" name="payment_method" value="paypal"

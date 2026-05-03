@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Services\StripePaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -18,15 +19,27 @@ class PaymentController extends Controller
         private readonly StripePaymentService $stripePaymentService,
     ) {}
 
-    public function show(string $orderNumber): View|RedirectResponse
+    public function show(Request $request, string $orderNumber): View|RedirectResponse
     {
-        $order = Order::query()
-            ->where('order_number', $orderNumber)
-            ->when(Auth::check(), fn ($q) => $q->where('user_id', Auth::id()))
-            ->first();
+        $order = $this->resolveAccessibleOrder($orderNumber);
 
         if (! $order) {
             return redirect()->route('home');
+        }
+
+        $this->rememberOrderForGuest($order);
+
+        if ($request->filled('payment_intent')) {
+            try {
+                $order = $this->stripePaymentService->syncPaymentIntentForOrder(
+                    $order,
+                    (string) $request->string('payment_intent')
+                );
+            } catch (\RuntimeException $e) {
+                return redirect()
+                    ->route('checkout.payment.failed', ['orderNumber' => $order->order_number])
+                    ->with('error', $e->getMessage());
+            }
         }
 
         // If order is already paid, redirect to success
@@ -34,11 +47,13 @@ class PaymentController extends Controller
             return redirect()->route('checkout.payment.success', ['orderNumber' => $orderNumber]);
         }
 
-        // Prepare Stripe details if payment method is credit card
+        // Prepare Stripe details if payment method is Stripe-based (card or Google Pay)
         $stripePublishableKey = null;
         $clientSecret = null;
 
-        if ($order->payment_method === PaymentMethod::CreditCard) {
+        $isStripePayment = in_array($order->payment_method, [PaymentMethod::CreditCard, PaymentMethod::GooglePay], true);
+
+        if ($isStripePayment) {
             $stripePublishableKey = config('services.stripe.publishable_key');
 
             try {
@@ -64,24 +79,24 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function processStripePayment(): JsonResponse
+    public function processStripePayment(Request $request, string $orderNumber): JsonResponse
     {
-        $validated = request()->validate([
-            'order_number' => ['required', 'string', 'max:50'],
+        $validated = $request->validate([
             'payment_intent_id' => ['required', 'string', 'max:191'],
         ]);
 
-        $order = Order::query()
-            ->where('order_number', $validated['order_number'])
-            ->when(Auth::check(), fn ($q) => $q->where('user_id', Auth::id()))
-            ->first();
+        $order = $this->resolveAccessibleOrder($orderNumber);
 
         if (! $order) {
             return response()->json(['message' => 'Order not found.'], 404);
         }
 
-        if ($order->payment_method !== PaymentMethod::CreditCard) {
-            return response()->json(['message' => 'This order is not a card payment.'], 422);
+        $this->rememberOrderForGuest($order);
+
+        $isStripePayment = in_array($order->payment_method, [PaymentMethod::CreditCard, PaymentMethod::GooglePay], true);
+
+        if (! $isStripePayment) {
+            return response()->json(['message' => 'This order is not a Stripe payment.'], 422);
         }
 
         if ($order->payment_status === PaymentStatus::Paid) {
@@ -108,29 +123,61 @@ class PaymentController extends Controller
 
     public function success(string $orderNumber): View|RedirectResponse
     {
-        $order = Order::query()
-            ->where('order_number', $orderNumber)
-            ->when(Auth::check(), fn ($q) => $q->where('user_id', Auth::id()))
-            ->first();
+        $order = $this->resolveAccessibleOrder($orderNumber);
 
         if (! $order) {
             return redirect()->route('home');
         }
+
+        $this->rememberOrderForGuest($order);
 
         return view('pages.payment_success', compact('order'));
     }
 
     public function failed(string $orderNumber): View|RedirectResponse
     {
-        $order = Order::query()
-            ->where('order_number', $orderNumber)
-            ->when(Auth::check(), fn ($q) => $q->where('user_id', Auth::id()))
-            ->first();
+        $order = $this->resolveAccessibleOrder($orderNumber);
 
         if (! $order) {
             return redirect()->route('home');
         }
 
+        $this->rememberOrderForGuest($order);
+
         return view('pages.payment_failed', compact('order'));
+    }
+
+    private function resolveAccessibleOrder(string $orderNumber): ?Order
+    {
+        $query = Order::query()
+            ->with('items')
+            ->where('order_number', $orderNumber);
+
+        if (Auth::check()) {
+            return $query->where('user_id', Auth::id())->first();
+        }
+
+        $allowedOrderNumbers = collect(session('checkout_order_numbers', []));
+
+        if (! $allowedOrderNumbers->contains($orderNumber)) {
+            return null;
+        }
+
+        return $query->first();
+    }
+
+    private function rememberOrderForGuest(Order $order): void
+    {
+        if (Auth::check()) {
+            return;
+        }
+
+        $allowedOrderNumbers = collect(session('checkout_order_numbers', []))
+            ->push($order->order_number)
+            ->unique()
+            ->values()
+            ->all();
+
+        session(['checkout_order_numbers' => $allowedOrderNumbers]);
     }
 }

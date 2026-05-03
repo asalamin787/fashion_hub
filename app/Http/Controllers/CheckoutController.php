@@ -7,6 +7,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
 use App\Services\CartService;
 use App\Services\CheckoutService;
+use App\Services\StripePaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,7 @@ class CheckoutController extends Controller
     public function __construct(
         private readonly CartService $cartService,
         private readonly CheckoutService $checkoutService,
+        private readonly StripePaymentService $stripePaymentService,
     ) {}
 
     public function index(): View|RedirectResponse
@@ -61,9 +63,12 @@ class CheckoutController extends Controller
     {
         try {
             $order = $this->checkoutService->placeOrder($request);
+            $this->rememberOrderForGuest($order);
 
-            // Redirect to payment page for credit card, or confirmation for other methods
-            if ($order->payment_method === PaymentMethod::CreditCard) {
+            // Redirect to payment page for Stripe-based methods (card & Google Pay)
+            if (in_array($order->payment_method, [PaymentMethod::CreditCard, PaymentMethod::GooglePay], true)) {
+                $this->stripePaymentService->createPaymentIntent($order);
+
                 return redirect()->route('payment.show', ['orderNumber' => $order->order_number]);
             }
         } catch (\RuntimeException $e) {
@@ -83,15 +88,44 @@ class CheckoutController extends Controller
 
     public function confirmation(string $orderNumber): View|RedirectResponse
     {
-        $order = Order::with('items')
-            ->where('order_number', $orderNumber)
-            ->when(Auth::check(), fn ($q) => $q->where('user_id', Auth::id()))
-            ->first();
+        $order = $this->resolveAccessibleOrder($orderNumber);
 
         if (! $order) {
             return redirect()->route('home');
         }
 
         return view('pages.order_confirmation', compact('order'));
+    }
+
+    private function resolveAccessibleOrder(string $orderNumber): ?Order
+    {
+        $query = Order::with('items')->where('order_number', $orderNumber);
+
+        if (Auth::check()) {
+            return $query->where('user_id', Auth::id())->first();
+        }
+
+        $allowedOrderNumbers = collect(session('checkout_order_numbers', []));
+
+        if (! $allowedOrderNumbers->contains($orderNumber)) {
+            return null;
+        }
+
+        return $query->first();
+    }
+
+    private function rememberOrderForGuest(Order $order): void
+    {
+        if (Auth::check()) {
+            return;
+        }
+
+        $allowedOrderNumbers = collect(session('checkout_order_numbers', []))
+            ->push($order->order_number)
+            ->unique()
+            ->values()
+            ->all();
+
+        session(['checkout_order_numbers' => $allowedOrderNumbers]);
     }
 }

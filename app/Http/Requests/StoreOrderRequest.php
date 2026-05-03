@@ -50,7 +50,15 @@ class StoreOrderRequest extends FormRequest
 
             // Order extras
             'order_notes' => ['nullable', 'string', 'max:2000'],
-            'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
+            'payment_method' => [
+                'required',
+                Rule::in([
+                    PaymentMethod::CreditCard->value,
+                    PaymentMethod::GooglePay->value,
+                    PaymentMethod::Paypal->value,
+                    PaymentMethod::CashOnDelivery->value,
+                ]),
+            ],
             'terms' => ['accepted'],
         ];
     }
