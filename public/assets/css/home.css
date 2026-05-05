@@ -344,6 +344,47 @@
     padding: 40px 0;
 }
 
+/* Keep home product cards visually aligned like shop cards */
+.featured-products .col-6,
+.new-arrivals-section .col-6,
+.best-sellers-section .col-6 {
+    display: flex;
+}
+
+.featured-products .product-card,
+.new-arrivals-section .product-card,
+.best-sellers-section .product-card {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.featured-products .product-info,
+.new-arrivals-section .product-info,
+.best-sellers-section .product-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.featured-products .product-title,
+.new-arrivals-section .product-title,
+.best-sellers-section .product-title {
+    min-height: 48px;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.featured-products .product-price,
+.new-arrivals-section .product-price,
+.best-sellers-section .product-price {
+    margin-top: auto;
+}
+
 @media (min-width: 768px) {
     .col-md-5th {
         flex: 0 0 20%;
@@ -1111,6 +1152,19 @@
 
     .category-item-card {
         height: 220px;
+    }
+
+    .featured-products .product-title,
+    .new-arrivals-section .product-title,
+    .best-sellers-section .product-title {
+        min-height: 42px;
+        font-size: 0.95rem;
+    }
+
+    .featured-products .product-info,
+    .new-arrivals-section .product-info,
+    .best-sellers-section .product-info {
+        padding: 14px;
     }
 }
 

@@ -66,7 +66,9 @@
                 <p>Explore our fashion collections</p>
             </div>
             @php($categorySlides = $homeCategories->chunk(4))
-            <div id="categoriesCarousel" class="carousel slide category-carousel" data-bs-ride="carousel">
+            @php($categoryMobileSlides = $homeCategories->chunk(1))
+
+            <div id="categoriesCarousel" class="carousel slide category-carousel d-none d-md-block" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @foreach ($categorySlides as $slide)
                         <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
@@ -117,6 +119,59 @@
                     <div class="carousel-indicators category-carousel-indicators">
                         @foreach ($categorySlides as $slide)
                             <button type="button" data-bs-target="#categoriesCarousel"
+                                data-bs-slide-to="{{ $loop->index }}"
+                                class="{{ $loop->first ? 'active' : '' }}"></button>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <div id="categoriesCarouselMobile" class="carousel slide category-carousel d-md-none" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach ($categoryMobileSlides as $slide)
+                        <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                            <div class="row justify-content-center">
+                                @foreach ($slide as $category)
+                                    <div class="col-12 mb-4">
+                                        <a href="{{ route('shop', ['categories' => ($category->slug ?? $category->id)]) }}"
+                                            class="category-item-card">
+                                            <div class="category-item-image"
+                                                style="background-image: url('{{ $category->image_url }}');">
+                                                <div class="category-item-overlay">
+                                                    <div class="category-item-content">
+                                                        <i class="{{ $category->icon ?: 'fas fa-tag' }} category-item-icon"></i>
+                                                        <h3 class="category-item-title">{{ $category->name }}</h3>
+                                                        <p class="category-item-count">
+                                                            {{ number_format((int) $category->products_count) }}
+                                                            {{ (int) $category->products_count === 1 ? 'Product' : 'Products' }}
+                                                        </p>
+                                                        <span class="category-item-btn">Shop Now <i class="fas fa-arrow-right"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                @if ($categoryMobileSlides->count() > 1)
+                    <button class="carousel-control-prev category-carousel-control-prev" type="button"
+                        data-bs-target="#categoriesCarouselMobile" data-bs-slide="prev">
+                        <i class="fas fa-chevron-left"></i>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next category-carousel-control-next" type="button"
+                        data-bs-target="#categoriesCarouselMobile" data-bs-slide="next">
+                        <i class="fas fa-chevron-right"></i>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+
+                    <div class="carousel-indicators category-carousel-indicators">
+                        @foreach ($categoryMobileSlides as $slide)
+                            <button type="button" data-bs-target="#categoriesCarouselMobile"
                                 data-bs-slide-to="{{ $loop->index }}"
                                 class="{{ $loop->first ? 'active' : '' }}"></button>
                         @endforeach
@@ -204,7 +259,9 @@
                 <p>Fresh styles just landed</p>
             </div>
             @php($newArrivalSlides = $newArrivalsProducts->chunk(5))
-            <div id="newArrivalsCarousel" class="carousel slide" data-bs-ride="carousel">
+            @php($newArrivalMobileSlides = $newArrivalsProducts->chunk(2))
+
+            <div id="newArrivalsCarousel" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @foreach ($newArrivalSlides as $slide)
                         <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
@@ -281,6 +338,84 @@
                 </button>
                 @endif
             </div>
+
+            <div id="newArrivalsCarouselMobile" class="carousel slide d-md-none" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach ($newArrivalMobileSlides as $slide)
+                        <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                            <div class="row">
+                                @foreach ($slide as $product)
+                                    <div class="col-6 mb-4">
+                                        <div class="product-card">
+                                            <div class="product-image">
+                                                <img src="{{ $product->featured_image_url }}" alt="{{ $product->name }}">
+                                                @if ($product->badge)
+                                                    <span class="product-badge">{{ filled($product->badge) ? $product->badge : '' }}</span>
+                                                @endif
+                                                <div class="product-overlay">
+                                                    <a href="{{ route('product.details', $product->slug) }}"
+                                                        class="btn btn-sm btn-primary product-action-btn"
+                                                        aria-label="Quick view">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @if ($product->has_variants)
+                                                        <a href="{{ route('product.details', $product->slug) }}"
+                                                            class="btn btn-sm btn-secondary product-action-btn"
+                                                            aria-label="Select options">
+                                                            <i class="fas fa-cart-plus"></i>
+                                                        </a>
+                                                    @else
+                                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block ajax-add-to-cart-form">
+                                                            @csrf
+                                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                            <input type="hidden" name="quantity" value="1">
+                                                            <button type="submit" class="btn btn-sm btn-secondary product-action-btn"
+                                                                aria-label="Add to cart">
+                                                                <i class="fas fa-cart-plus"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                                        data-product-id="{{ $product->id }}"
+                                                        data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
+                                                        aria-label="Add to wishlist">
+                                                        <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="product-info">
+                                                <h5 class="product-title">{{ $product->name }}</h5>
+                                                <div class="product-rating">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i>
+                                                </div>
+                                                <div class="product-price">
+                                                    ${{ number_format((float) ($product->sale_price ?? $product->base_price ?? 0), 2) }}
+                                                    @if ((float) ($product->sale_price ?? 0) > 0 && (float) ($product->base_price ?? 0) > (float) ($product->sale_price ?? 0))
+                                                        <span class="product-price-old">${{ number_format((float) $product->base_price, 2) }}</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                @if ($newArrivalMobileSlides->count() > 1)
+                    <button class="carousel-control-prev" type="button" data-bs-target="#newArrivalsCarouselMobile"
+                        data-bs-slide="prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#newArrivalsCarouselMobile"
+                        data-bs-slide="next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                @endif
+            </div>
         </div>
     </section>
 
@@ -343,7 +478,9 @@
                 <p>Our customers' top picks</p>
             </div>
             @php($bestSellerSlides = $bestSellersProducts->chunk(5))
-            <div id="bestSellersCarousel" class="carousel slide" data-bs-ride="carousel">
+            @php($bestSellerMobileSlides = $bestSellersProducts->chunk(2))
+
+            <div id="bestSellersCarousel" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @foreach ($bestSellerSlides as $slide)
                         <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
@@ -417,6 +554,84 @@
                     data-bs-slide="next">
                     <i class="fas fa-chevron-right"></i>
                 </button>
+            </div>
+
+            <div id="bestSellersCarouselMobile" class="carousel slide d-md-none" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach ($bestSellerMobileSlides as $slide)
+                        <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                            <div class="row">
+                                @foreach ($slide as $product)
+                                    <div class="col-6 mb-4">
+                                        <div class="product-card">
+                                            <div class="product-image">
+                                                <img src="{{ $product->featured_image_url }}" alt="{{ $product->name }}">
+                                                @if ($product->badge)
+                                                    <span class="product-badge best-seller-badge">{{ filled($product->badge) ? $product->badge : '' }}</span>
+                                                @endif
+                                                <div class="product-overlay">
+                                                    <a href="{{ route('product.details', $product->slug) }}"
+                                                        class="btn btn-sm btn-primary product-action-btn"
+                                                        aria-label="Quick view">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @if ($product->has_variants)
+                                                        <a href="{{ route('product.details', $product->slug) }}"
+                                                            class="btn btn-sm btn-secondary product-action-btn"
+                                                            aria-label="Select options">
+                                                            <i class="fas fa-cart-plus"></i>
+                                                        </a>
+                                                    @else
+                                                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline-block ajax-add-to-cart-form">
+                                                            @csrf
+                                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                            <input type="hidden" name="quantity" value="1">
+                                                            <button type="submit" class="btn btn-sm btn-secondary product-action-btn"
+                                                                aria-label="Add to cart">
+                                                                <i class="fas fa-cart-plus"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-secondary product-action-btn wishlist-toggle-btn"
+                                                        data-product-id="{{ $product->id }}"
+                                                        data-toggle-url="{{ route('wishlist.toggle', ['product' => $product->slug]) }}"
+                                                        aria-label="Add to wishlist">
+                                                        <i class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="product-info">
+                                                <h5 class="product-title">{{ $product->name }}</h5>
+                                                <div class="product-rating">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star-half-alt"></i>
+                                                </div>
+                                                <div class="product-price">
+                                                    ${{ number_format((float) ($product->sale_price ?? $product->base_price ?? 0), 2) }}
+                                                    @if ((float) ($product->sale_price ?? 0) > 0 && (float) ($product->base_price ?? 0) > (float) ($product->sale_price ?? 0))
+                                                        <span class="product-price-old">${{ number_format((float) $product->base_price, 2) }}</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                @if ($bestSellerMobileSlides->count() > 1)
+                    <button class="carousel-control-prev" type="button" data-bs-target="#bestSellersCarouselMobile"
+                        data-bs-slide="prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#bestSellersCarouselMobile"
+                        data-bs-slide="next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                @endif
             </div>
         </div>
     </section>
