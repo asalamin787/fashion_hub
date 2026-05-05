@@ -1,16 +1,7 @@
 <x-app>
-    @push('meta')
-        <title>Contact Us | FashionHub</title>
-        <meta name="description" content="Get in touch with FashionHub for support, order help, partnership inquiries, or general questions.">
-        <meta name="keywords" content="contact fashionhub, customer support, fashion store contact, help center">
-        <meta property="og:title" content="Contact Us | FashionHub">
-        <meta property="og:description" content="Get in touch with FashionHub for support, order help, partnership inquiries, or general questions.">
-        <meta property="og:url" content="{{ request()->fullUrl() }}">
-        <meta property="og:type" content="website">
-        <meta name="twitter:title" content="Contact Us | FashionHub">
-        <meta name="twitter:description" content="Get in touch with FashionHub for support, order help, partnership inquiries, or general questions.">
-    @endpush
-
+    @php
+        $siteLinks = \App\Models\Setting::group('site');
+    @endphp
     @push('css')
         <link rel="stylesheet" href="{{ asset('assets/css/contact.css') }}">
     @endpush
@@ -37,9 +28,7 @@
                                 <i class="fas fa-map-marker-alt"></i>
                             </div>
                             <h4>Visit Us</h4>
-                            <p>123 Fashion Street</p>
-                            <p>New York, NY 10001</p>
-                            <p>United States</p>
+                            <p>{{ $siteLinks->get('address') ?? '123 Fashion St, NY 10001' }}</p>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 mb-4">
@@ -48,9 +37,9 @@
                                 <i class="fas fa-phone"></i>
                             </div>
                             <h4>Call Us</h4>
-                            <p><a href="tel:+15551234567">+1 (555) 123-4567</a></p>
-                            <p><a href="tel:+15559876543">+1 (555) 987-6543</a></p>
-                            <p>Mon-Fri: 9AM - 6PM EST</p>
+                            <p><a href="tel:{{ $siteLinks->get('phone') ?? '+1 (555) 123-4567' }}">{{ $siteLinks->get('phone') ?? '+1 (555) 123-4567' }}</a></p>
+                            <p><a href="tel:{{ $siteLinks->get('phone_alt') ?? '+1 (555) 987-6543' }}">{{ $siteLinks->get('phone_alt') ?? '+1 (555) 987-6543' }}</a></p>
+                            {{-- <p>Mon-Fri: 9AM - 6PM EST</p> --}}
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 mb-4">
@@ -59,8 +48,8 @@
                                 <i class="fas fa-envelope"></i>
                             </div>
                             <h4>Email Us</h4>
-                            <p><a href="mailto:info@fashionhub.com">info@fashionhub.com</a></p>
-                            <p><a href="mailto:support@fashionhub.com">support@fashionhub.com</a></p>
+                            <p><a href="mailto:{{ $siteLinks->get('site-email') ?? 'info@fashionhub.com' }}">{{ $siteLinks->get('site-email') ?? 'info@fashionhub.com' }}</a></p>
+                            <p><a href="mailto:{{ $siteLinks->get('support-email') ?? 'support@fashionhub.com' }}">{{ $siteLinks->get('support-email') ?? 'support@fashionhub.com' }}</a></p>
                             <p>We reply within 24 hours</p>
                         </div>
                     </div>
