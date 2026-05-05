@@ -62,6 +62,25 @@ class AdminPanelProvider extends PanelProvider
                 letter-spacing: 0.5px;
             }
 
+            /* Orders list: dark segmented tabs similar to requested dashboard style. */
+            .fi-resource-orders .fi-tabs {
+                border-radius: 14px;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                background: linear-gradient(180deg, rgba(30, 32, 38, 0.9), rgba(24, 25, 30, 0.9));
+                padding: 0.35rem;
+            }
+
+            .fi-resource-orders .fi-tabs .fi-tabs-item-btn {
+                border-radius: 10px;
+                color: rgba(235, 238, 245, 0.75);
+                font-weight: 600;
+            }
+
+            .fi-resource-orders .fi-tabs .fi-tabs-item-btn.fi-active {
+                background: rgba(59, 130, 246, 0.18);
+                color: #dbeafe;
+            }
+
             /* Keep row actions and collapse button pinned to top for tall records. */
             .fi-ta-content-ctn .fi-ta-content .fi-ta-record.fi-ta-record-actions-top {
                 align-items: flex-start !important;
