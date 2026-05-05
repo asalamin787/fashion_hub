@@ -7,6 +7,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
 use App\Services\CartService;
 use App\Services\CheckoutService;
+use App\Services\OrderNotificationService;
 use App\Services\StripePaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,7 @@ class CheckoutController extends Controller
     public function __construct(
         private readonly CartService $cartService,
         private readonly CheckoutService $checkoutService,
+        private readonly OrderNotificationService $orderNotificationService,
         private readonly StripePaymentService $stripePaymentService,
     ) {}
 
@@ -82,6 +84,8 @@ class CheckoutController extends Controller
         }
 
         // For non-card payments (PayPal, Cash on Delivery), redirect to confirmation
+        $this->orderNotificationService->sendOrderSuccessEmail($order);
+
         return redirect()->route('order.confirmation', ['orderNumber' => $order->order_number])
             ->with('success', 'Your order has been placed successfully!');
     }

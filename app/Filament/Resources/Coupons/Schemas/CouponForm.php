@@ -44,7 +44,7 @@ class CouponForm
                                             ->required()
                                             ->maxLength(100)
                                             ->unique(ignoreRecord: true)
-                                            ->dehydrateStateUsing(fn(?string $state): string => mb_strtoupper(trim((string) $state)))
+                                            ->dehydrateStateUsing(fn (?string $state): string => mb_strtoupper(trim((string) $state)))
                                             ->placeholder('NEWYEAR50'),
 
                                         TextInput::make('usage_limit')
@@ -84,19 +84,19 @@ class CouponForm
                                                 'fixed' => 'Fixed amount ($)',
                                             ]),
                                         TextInput::make('value')
-                                            ->label(fn(Get $get): string => $get('type') === 'percentage' ? 'Discount (%)' : 'Discount amount ($)')
+                                            ->label(fn (Get $get): string => $get('type') === 'percentage' ? 'Discount (%)' : 'Discount amount ($)')
                                             ->required()
                                             ->numeric()
                                             ->inputMode('decimal')
                                             ->minValue(0.01)
-                                            ->placeholder(fn(Get $get): string => $get('type') === 'percentage' ? '10' : '100.00'),
+                                            ->placeholder(fn (Get $get): string => $get('type') === 'percentage' ? '10' : '100.00'),
                                         TextInput::make('max_discount_amount')
                                             ->label('Max discount cap ($)')
                                             ->numeric()
                                             ->inputMode('decimal')
                                             ->minValue(0)
                                             ->placeholder('500.00')
-                                            ->visible(fn(Get $get): bool => $get('type') === 'percentage'),
+                                            ->visible(fn (Get $get): bool => $get('type') === 'percentage'),
                                         TextInput::make('min_order_amount')
                                             ->label('Minimum order amount ($)')
                                             ->numeric()

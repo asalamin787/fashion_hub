@@ -75,7 +75,7 @@
                 </ul>
                 <div class="navbar-icons">
                     <a href="#"><i class="fas fa-search"></i></a>
-                    <a href="{{ route('login') }}"><i class="fas fa-user"></i></a>
+                    <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}"><i class="fas fa-user"></i></a>
                     <a href="{{ route('wishlist') }}" title="WishList" class="position-relative">
                         <i class="fas fa-heart"></i>
                         @php $wishlistCount = count(session('wishlist', [])); @endphp
@@ -99,6 +99,10 @@
             </div>
         </div>
     </nav>
+
+    {{-- <div class="container">
+        <x-flash-messages />
+    </div> --}}
 
     {{ $slot }}
 
@@ -142,10 +146,10 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h5><i class="fas fa-headset"></i> Support</h5>
                     <ul>
-                        <li><a href="#">Track Order</a></li>
+                        <li><a href="{{ auth()->check() ? route('account.orders') : route('login') }}">Track Order</a></li>
                         <li><a href="#">Returns</a></li>
                         <li><a href="#">Shipping Info</a></li>
-                        <li><a href="#">FAQ</a></li>
+                        <li><a href="{{ route('faq') }}">FAQ</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4">
@@ -153,7 +157,7 @@
                     <ul>
                         <li><a href="{{ route('terms.of.condition') }}">Terms & Conditions</a></li>
                         <li><a href="{{ route('privacy.policy') }}">Privacy Policy</a></li>
-                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="{{ route('cookie.policy') }}">Cookie Policy</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4">
@@ -200,7 +204,7 @@
             </button>
         </div>
         <div class="nav-item">
-            <a href="{{ route('login') }}" class="nav-link">
+            <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}" class="nav-link">
                 <i class="fas fa-user"></i>
                 <span>Account</span>
             </a>
@@ -244,6 +248,72 @@
         .fh-toast.fh-toast-success { background: linear-gradient(135deg, #865749, #6d3f35); }
         .fh-toast.fh-toast-error   { background: linear-gradient(135deg, #dc3545, #b02030); }
         .fh-toast.fh-toast-info    { background: linear-gradient(135deg, #0d6efd, #0a58ca); }
+        .fh-toast.fh-toast-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .fh-flash-stack {
+            display: grid;
+            gap: 12px;
+        }
+
+        .fh-inline-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            border: 1px solid transparent;
+            box-shadow: 0 14px 30px rgba(63, 34, 26, 0.08);
+            background: #fff;
+        }
+
+        .fh-inline-alert-icon {
+            font-size: 18px;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .fh-inline-alert-copy {
+            flex: 1;
+            color: #4a342f;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .fh-inline-alert-success {
+            background: #f5f0ec;
+            border-color: rgba(134, 87, 73, 0.2);
+        }
+
+        .fh-inline-alert-success .fh-inline-alert-icon {
+            color: #865749;
+        }
+
+        .fh-inline-alert-error {
+            background: #fff4f4;
+            border-color: rgba(220, 53, 69, 0.18);
+        }
+
+        .fh-inline-alert-error .fh-inline-alert-icon {
+            color: #dc3545;
+        }
+
+        .fh-inline-alert-warning {
+            background: #fff9ed;
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .fh-inline-alert-warning .fh-inline-alert-icon {
+            color: #d97706;
+        }
+
+        .fh-inline-alert-info {
+            background: #f4f8ff;
+            border-color: rgba(13, 110, 253, 0.18);
+        }
+
+        .fh-inline-alert-info .fh-inline-alert-icon {
+            color: #0d6efd;
+        }
 
         .fh-toast-icon { font-size: 16px; flex-shrink: 0; }
         .fh-toast-msg  { flex: 1; line-height: 1.4; }
@@ -265,7 +335,7 @@
                 return;
             }
 
-            const iconMap = { success: '✓', error: '✕', info: 'ℹ' };
+            const iconMap = { success: '✓', error: '✕', info: 'ℹ', warning: '!' };
             const toast = document.createElement('div');
             toast.className = 'fh-toast fh-toast-' + type;
             toast.innerHTML =
@@ -279,6 +349,17 @@
                 setTimeout(function() { toast.remove(); }, 370);
             }, 3000);
         };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[data-flash-toast="true"]').forEach(function(element) {
+                const message = element.getAttribute('data-flash-message');
+                const type = element.getAttribute('data-flash-type') || 'info';
+
+                if (message) {
+                    window.showToast(message, type);
+                }
+            });
+        });
     </script>
 
     <script>

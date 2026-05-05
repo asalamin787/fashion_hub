@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\InvoicePrintController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProductReviewController;
+use App\Http\Controllers\StaticPageController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -41,8 +44,12 @@ Route::post('/blog-details/{blogPost:slug}/comments', [PageController::class, 's
     ->middleware('throttle:10,1')
     ->name('blog.comments.store');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy.policy');
-Route::get('/terms-of-condition', [PageController::class, 'termsOfCondition'])->name('terms.of.condition');
+Route::get('/privacy-policy', [StaticPageController::class, 'show'])->defaults('slug', 'privacy-policy')->name('privacy.policy');
+Route::get('/terms-and-conditions', [StaticPageController::class, 'show'])->defaults('slug', 'terms-and-conditions')->name('terms.of.condition');
+Route::get('/terms-of-condition', [StaticPageController::class, 'show'])->defaults('slug', 'terms-and-conditions');
+Route::get('/cookie-policy', [StaticPageController::class, 'show'])->defaults('slug', 'cookie-policy')->name('cookie.policy');
+Route::get('/faq', [StaticPageController::class, 'faq'])->name('faq');
+Route::get('/pages/{slug}', [StaticPageController::class, 'show'])->name('pages.show');
 
 Auth::routes();
 
@@ -50,4 +57,19 @@ Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/orders/{order}/invoice/print', InvoicePrintController::class)->name('admin.orders.invoice.print');
+
+    Route::prefix('account')->name('account.')->group(function (): void {
+        Route::get('/', [AccountController::class, 'overview'])->name('dashboard');
+        Route::get('/orders', [AccountController::class, 'orders'])->name('orders');
+        Route::get('/orders/{orderNumber}', [AccountController::class, 'orderDetails'])->name('orders.show');
+        Route::get('/profile', [AccountController::class, 'profile'])->name('profile');
+        Route::put('/profile', [AccountController::class, 'updateProfile'])->name('profile.update');
+        Route::get('/address-book', [AccountController::class, 'addressBook'])->name('address');
+        Route::put('/address-book', [AccountController::class, 'updateAddress'])->name('address.update');
+        Route::get('/security', [AccountController::class, 'security'])->name('security');
+        Route::put('/security', [AccountController::class, 'updatePassword'])->name('security.update');
+    });
+
+    Route::post('/products/{product:slug}/reviews', [ProductReviewController::class, 'store'])
+        ->name('product.reviews.store');
 });

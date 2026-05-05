@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             SettingSeeder::class,
+            StaticContentSeeder::class,
             CategorySeeder::class,
             BagSeeder::class,
             BrandSeeder::class,

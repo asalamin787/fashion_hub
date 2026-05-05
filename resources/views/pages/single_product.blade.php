@@ -357,6 +357,10 @@
                         </li>
                     @endif
                     <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
+                            type="button">Reviews ({{ $approvedReviews->count() }})</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link" id="shipping-tab" data-bs-toggle="tab" data-bs-target="#shipping"
                             type="button">Shipping Info</button>
                     </li>
@@ -429,6 +433,159 @@
                             </div>
                         </div>
                     @endif
+
+                    <div class="tab-pane fade" id="reviews">
+
+                        {{-- Rating summary bar --}}
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-4 border-bottom">
+                            <div class="d-flex align-items-center gap-4">
+                                <div class="text-center">
+                                    <div class="display-4 fw-bold lh-1" style="color:var(--primary-color)">{{ number_format($product->approved_review_average, 1) }}</div>
+                                    <div class="review-stars mt-1">
+                                        @php $avg = (float) $product->approved_review_average; @endphp
+                                        @for ($s = 1; $s <= 5; $s++)
+                                            @if ($s <= floor($avg))
+                                                <i class="fas fa-star" style="color:var(--primary-color)"></i>
+                                            @elseif ($s - $avg < 1 && $s - $avg > 0)
+                                                <i class="fas fa-star-half-alt" style="color:var(--primary-color)"></i>
+                                            @else
+                                                <i class="far fa-star" style="color:var(--primary-color)"></i>
+                                            @endif
+                                        @endfor
+                                    </div>
+                                    <div class="small text-muted mt-1">{{ $approvedReviews->count() }} {{ Str::plural('review', $approvedReviews->count()) }}</div>
+                                </div>
+                            </div>
+
+                            @auth
+                                @if ($eligibleReviewItems->isNotEmpty())
+                                    <button class="btn btn-primary rounded-pill px-4"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#reviewFormCollapse"
+                                        aria-expanded="false"
+                                        aria-controls="reviewFormCollapse">
+                                        <i class="fas fa-pen me-2"></i>Write a Review
+                                    </button>
+                                @elseif (auth()->user()->orders()->exists())
+                                    <span class="text-muted small">You have already reviewed this product.</span>
+                                @else
+                                    <span class="text-muted small">Purchase this product to leave a review.</span>
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                                    <i class="fas fa-user me-2"></i>Sign in to Review
+                                </a>
+                            @endauth
+                        </div>
+
+                        {{-- Review submission form (collapsible) --}}
+                        @auth
+                            @if ($eligibleReviewItems->isNotEmpty())
+                                <div class="collapse mb-4" id="reviewFormCollapse">
+                                    <div class="p-4 rounded-4 border" style="background:#fdf9f6;">
+                                        <h3 class="h5 mb-4">Share Your Experience</h3>
+                                        <form action="{{ route('product.reviews.store', $product) }}" method="POST" enctype="multipart/form-data" id="reviewForm">
+                                            @csrf
+
+                                            @if ($eligibleReviewItems->count() > 1)
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Reviewing Order</label>
+                                                    <select name="order_item_id" class="form-select" required>
+                                                        <option value="">Select order</option>
+                                                        @foreach ($eligibleReviewItems as $eligibleItem)
+                                                            <option value="{{ $eligibleItem->id }}">
+                                                                {{ $eligibleItem->order->order_number ?? 'Order' }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            @else
+                                                <input type="hidden" name="order_item_id" value="{{ $eligibleReviewItems->first()->id }}">
+                                            @endif
+
+                                            {{-- Star rating picker --}}
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Your Rating <span class="text-danger">*</span></label>
+                                                <div class="star-picker d-flex gap-1" id="starPicker">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <button type="button"
+                                                            class="star-pick-btn border-0 bg-transparent p-0 fs-3"
+                                                            data-value="{{ $i }}"
+                                                            aria-label="{{ $i }} star{{ $i > 1 ? 's' : '' }}"
+                                                            style="color:#ddd; cursor:pointer; transition:color .15s;">
+                                                            <i class="fas fa-star"></i>
+                                                        </button>
+                                                    @endfor
+                                                </div>
+                                                <input type="hidden" name="rating" id="ratingInput" required>
+                                                <div class="invalid-feedback d-block" id="ratingError" style="display:none!important"></div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
+                                                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
+                                                    placeholder="Sum up your experience in a line"
+                                                    maxlength="150" value="{{ old('title') }}" required>
+                                                @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Review <span class="text-danger">*</span></label>
+                                                <textarea name="review" class="form-control @error('review') is-invalid @enderror"
+                                                    rows="4" placeholder="Tell others what you think about this product..."
+                                                    maxlength="2000" required>{{ old('review') }}</textarea>
+                                                @error('review')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label class="form-label fw-semibold">Photos <span class="text-muted fw-normal">(optional)</span></label>
+                                                <input type="file" name="images[]" class="form-control" accept="image/*" multiple>
+                                                <div class="form-text">Up to 5 images, max 2 MB each.</div>
+                                            </div>
+
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary rounded-pill px-4">
+                                                    <i class="fas fa-check me-1"></i>Submit Review
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                                    data-bs-toggle="collapse" data-bs-target="#reviewFormCollapse">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
+                        @endauth
+
+                        {{-- Reviews list --}}
+                        @forelse ($approvedReviews as $review)
+                            @php
+                                $ratingVal = (int) $review->rating;
+                            @endphp
+                            <div class="border rounded-4 p-4 mb-3">
+                                <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                                    <div>
+                                        <h4 class="h6 mb-1">{{ $review->title }}</h4>
+                                        <div class="small text-muted">{{ $review->user?->name }} &bull; {{ $review->created_at->format('d M Y') }}</div>
+                                    </div>
+                                    <div class="review-stars text-nowrap">
+                                        @for ($s = 1; $s <= 5; $s++)
+                                            <i class="{{ $s <= $ratingVal ? 'fas' : 'far' }} fa-star small" style="color:var(--primary-color)"></i>
+                                        @endfor
+                                    </div>
+                                </div>
+                                <p class="mb-0 text-muted">{{ $review->review }}</p>
+                            </div>
+                        @empty
+                            <div class="border rounded-4 p-5 text-center text-muted">
+                                <i class="far fa-star fa-2x mb-3 d-block" style="color:var(--primary-color); opacity:.4"></i>
+                                <h4 class="h6 mb-1">No reviews yet</h4>
+                                <p class="mb-0 small">Be the first verified customer to share your experience.</p>
+                            </div>
+                        @endforelse
+                    </div>
 
                     {{-- Shipping --}}
                     <div class="tab-pane fade" id="shipping">
@@ -740,6 +897,43 @@
                         variantInput.value = '';
                     }
                 }
+            })();
+
+            // Star rating picker
+            (function () {
+                const picker = document.getElementById('starPicker');
+                if (!picker) return;
+                const input = document.getElementById('ratingInput');
+                const btns = picker.querySelectorAll('.star-pick-btn');
+                const primary = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#865749';
+
+                function paint(count) {
+                    btns.forEach((b, idx) => {
+                        b.style.color = idx < count ? primary : '#ddd';
+                    });
+                }
+
+                btns.forEach((btn, idx) => {
+                    btn.addEventListener('mouseenter', () => paint(idx + 1));
+                    btn.addEventListener('mouseleave', () => paint(parseInt(input.value) || 0));
+                    btn.addEventListener('click', () => {
+                        input.value = idx + 1;
+                        paint(idx + 1);
+                    });
+                });
+
+                // Auto-open form if there are validation errors
+                @if ($errors->any())
+                    const collapse = document.getElementById('reviewFormCollapse');
+                    if (collapse) {
+                        new bootstrap.Collapse(collapse, { show: true });
+                    }
+                    const savedRating = '{{ old('rating') }}';
+                    if (savedRating) {
+                        input.value = savedRating;
+                        paint(parseInt(savedRating));
+                    }
+                @endif
             })();
 
             // Wishlist toggle

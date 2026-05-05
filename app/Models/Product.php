@@ -91,6 +91,34 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function approvedReviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class)->where('status', 'approved');
+    }
+
+    public function getApprovedReviewCountAttribute(): int
+    {
+        if (array_key_exists('approved_reviews_count', $this->attributes)) {
+            return (int) $this->attributes['approved_reviews_count'];
+        }
+
+        return (int) $this->approvedReviews()->count();
+    }
+
+    public function getApprovedReviewAverageAttribute(): float
+    {
+        if (array_key_exists('approved_reviews_avg_rating', $this->attributes)) {
+            return round((float) $this->attributes['approved_reviews_avg_rating'], 1);
+        }
+
+        return round((float) $this->approvedReviews()->avg('rating'), 1);
+    }
+
     /**
      * @return array<string, mixed>|null
      */

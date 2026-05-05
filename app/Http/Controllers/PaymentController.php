@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
+use App\Services\OrderNotificationService;
 use App\Services\StripePaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +17,7 @@ use Illuminate\View\View;
 class PaymentController extends Controller
 {
     public function __construct(
+        private readonly OrderNotificationService $orderNotificationService,
         private readonly StripePaymentService $stripePaymentService,
     ) {}
 
@@ -130,6 +132,7 @@ class PaymentController extends Controller
         }
 
         $this->rememberOrderForGuest($order);
+        $this->orderNotificationService->sendOrderSuccessEmail($order);
 
         return view('pages.payment_success', compact('order'));
     }

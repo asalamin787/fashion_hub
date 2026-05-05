@@ -141,6 +141,9 @@
 }
 
 .password-toggle {
+    border: none;
+    background: transparent;
+    padding: 0;
     position: absolute;
     right: 18px;
     top: 50%;

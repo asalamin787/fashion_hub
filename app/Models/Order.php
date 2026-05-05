@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Policies\OrderPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
+#[UsePolicy(OrderPolicy::class)]
 class Order extends Model
 {
     use HasFactory;
@@ -165,5 +168,50 @@ class Order extends Model
     public function shipments(): HasMany
     {
         return $this->hasMany(OrderShipment::class);
+    }
+
+    public function getCustomerNameAttribute(): string
+    {
+        return trim($this->customer_first_name.' '.$this->customer_last_name);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function billingAddress(): array
+    {
+        return [
+            'name' => $this->customer_name,
+            'line_1' => $this->street_address,
+            'line_2' => (string) ($this->apartment ?? ''),
+            'city' => $this->city,
+            'state' => $this->state,
+            'postal_code' => $this->zip_code,
+            'country' => $this->country,
+            'email' => $this->customer_email,
+            'phone' => $this->customer_phone,
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function shippingAddress(): array
+    {
+        if ($this->shipping_same_as_billing) {
+            return $this->billingAddress();
+        }
+
+        return [
+            'name' => trim(($this->shipping_first_name ?? '').' '.($this->shipping_last_name ?? '')),
+            'line_1' => (string) $this->shipping_street_address,
+            'line_2' => (string) ($this->shipping_apartment ?? ''),
+            'city' => (string) $this->shipping_city,
+            'state' => (string) $this->shipping_state,
+            'postal_code' => (string) $this->shipping_zip_code,
+            'country' => (string) $this->shipping_country,
+            'email' => $this->customer_email,
+            'phone' => (string) ($this->shipping_phone ?? $this->customer_phone),
+        ];
     }
 }

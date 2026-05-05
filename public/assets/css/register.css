@@ -169,6 +169,9 @@
     right: 16px;
     top: 50%;
     transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    padding: 0;
     cursor: pointer;
     color: var(--grey-light);
     transition: color 0.3s ease;

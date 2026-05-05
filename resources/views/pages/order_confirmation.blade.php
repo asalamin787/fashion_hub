@@ -138,7 +138,7 @@
                     <div class="text-center">
                         <a href="{{ route('home') }}" class="btn btn-primary me-3">Continue Shopping</a>
                         @auth
-                            <a href="{{ route('home') }}" class="btn btn-outline-secondary">My Orders</a>
+                            <a href="{{ route('account.orders.show', $order->order_number) }}" class="btn btn-outline-secondary">View Order</a>
                         @endauth
                     </div>
 

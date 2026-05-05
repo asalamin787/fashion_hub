@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\Slider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -389,7 +390,7 @@ class PageController extends Controller
             ->byPriceRange($minPrice, $maxPrice)
             ->sort($sortBy)
             ->with(['category', 'brand'])
-            ->select(['id', 'name', 'slug', 'featured_image', 'base_price', 'sale_price', 'badge', 'category_id', 'brand_id', 'created_at', 'is_featured', 'sales_count', 'rating', 'stock', 'has_variants', ])
+            ->select(['id', 'name', 'slug', 'featured_image', 'base_price', 'sale_price', 'badge', 'category_id', 'brand_id', 'created_at', 'is_featured', 'sales_count', 'rating', 'stock', 'has_variants'])
             ->paginate($perPage)
             ->withQueryString();
 
@@ -433,7 +434,24 @@ class PageController extends Controller
     {
         abort_if($product->status !== 'active', 404);
 
-        $product->load(['category', 'brand']);
+        $product->load([
+            'category',
+            'brand',
+            'approvedReviews.user',
+        ]);
+
+        $eligibleReviewItems = collect();
+
+        if (Auth::check()) {
+            $eligibleReviewItems = $product->orderItems()
+                ->with(['order', 'reviews'])
+                ->whereHas('order', fn (Builder $query) => $query->where('user_id', Auth::id()))
+                ->get()
+                ->filter(function ($item): bool {
+                    return ! $item->reviews->contains('user_id', Auth::id());
+                })
+                ->values();
+        }
 
         $relatedProducts = Product::query()
             ->active()
@@ -449,6 +467,8 @@ class PageController extends Controller
         return view('pages.single_product', [
             'product' => $product,
             'relatedProducts' => $relatedProducts,
+            'approvedReviews' => $product->approvedReviews,
+            'eligibleReviewItems' => $eligibleReviewItems,
         ]);
     }
 
