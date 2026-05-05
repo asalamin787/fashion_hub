@@ -62,25 +62,31 @@
                 <img src="{{ Storage::url($siteLinks->get('nav_logo') ?? 'assets/images/logo/logo.png') }}"
                     width="auto" height="54px" alt="FashionHub Logo" class="navbar-logo">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            {{-- <button class="navbar-toggler d-none d-md-flex" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            </button> --}}
+            <div class="collapse navbar-collapse d-none d-md-flex" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('home') }}">Home</a>
+                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
+                            href="{{ route('home') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('shop') }}">Shop</a>
+                        <a class="nav-link {{ request()->routeIs('shop*') ? 'active' : '' }}"
+                            href="{{ route('shop') }}">Shop</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('about') }}">About</a>
+                        <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}"
+                            href="{{ route('about') }}">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('blog') }}">Blog</a>
+                        <a class="nav-link {{ request()->routeIs('blog*') ? 'active' : '' }}"
+                            href="{{ route('blog') }}">Blogs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('contact') }}">Contact</a>
+                        <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}"
+                            href="{{ route('contact') }}">Contact</a>
                     </li>
                 </ul>
                 <div class="navbar-icons">
@@ -169,6 +175,7 @@
                         <li><a href="{{ route('home') }}">Home</a></li>
                         <li><a href="{{ route('shop') }}">Shop</a></li>
                         <li><a href="{{ route('about') }}">About Us</a></li>
+                        <li><a href="{{ route('blog') }}">Blogs</a></li>
                         <li><a href="{{ route('contact') }}">Contact</a></li>
                     </ul>
                 </div>
@@ -205,39 +212,56 @@
         </div>
     </footer>
 
+    @php
+        $isShopRoute = request()->routeIs('shop*');
+        $isWishlistRoute = request()->routeIs('wishlist');
+        $isHomeRoute = request()->routeIs('home');
+        $isAccountRoute = request()->routeIs('account.*') || request()->routeIs('login') || request()->routeIs('register');
+    @endphp
+
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-bottom-nav">
+        <div class="mobile-bottom-nav-inner">
         <div class="nav-item">
-            <a href="{{ route('shop') }}" class="nav-link">
+            <a href="{{ route('shop') }}" class="nav-link {{ $isShopRoute ? 'active' : '' }}"
+                aria-current="{{ $isShopRoute ? 'page' : 'false' }}">
                 <i class="fas fa-store"></i>
                 <span>Shop</span>
             </a>
         </div>
         <div class="nav-item">
-            <a href="{{ route('wishlist') }}" class="nav-link">
+            <a href="{{ route('wishlist') }}" class="nav-link {{ $isWishlistRoute ? 'active' : '' }}"
+                aria-current="{{ $isWishlistRoute ? 'page' : 'false' }}">
                 <i class="fas fa-heart"></i>
+                <span class="mobile-nav-badge mobile-wishlist-badge"
+                    style="display: {{ $wishlistCount > 0 ? 'inline-flex' : 'none' }};">{{ $wishlistCount }}</span>
                 <span>Wishlist</span>
             </a>
         </div>
         <div class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fas fa-bars"></i>
-                <span>Menu</span>
+            <a href="{{ route('home') }}" class="nav-link {{ $isHomeRoute ? 'active' : '' }}"
+                aria-current="{{ $isHomeRoute ? 'page' : 'false' }}">
+                <i class="fas fa-house"></i>
+                <span>Home</span>
             </a>
         </div>
         <div class="nav-item">
-            <button type="button" class="nav-link cart-toggle-btn-mobile" data-bs-toggle="offcanvas"
-                data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" aria-label="Open cart">
+            <button type="button" class="nav-link cart-toggle-btn-mobile {{ request()->routeIs('cart') ? 'active' : '' }}"
+                data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas"
+                aria-label="Open cart">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="mobile-nav-badge">{{ $cartCount }}</span>
                 <span>Cart</span>
             </button>
         </div>
         <div class="nav-item">
-            <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}" class="nav-link">
-                <i class="fas fa-user"></i>
-                <span>Account</span>
+            <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}"
+                class="nav-link {{ $isAccountRoute ? 'active' : '' }}"
+                aria-current="{{ $isAccountRoute ? 'page' : 'false' }}">
+                <i class="fas {{ auth()->check() ? 'fa-user-circle' : 'fa-right-to-bracket' }}"></i>
+                <span>{{ auth()->check() ? 'Account' : 'Login' }}</span>
             </a>
+        </div>
         </div>
     </nav>
 
@@ -382,6 +406,104 @@
                 transform: translateX(0);
             }
         }
+
+        @media (max-width: 767.98px) {
+            .navbar {
+                padding: 10px 0;
+            }
+
+            .navbar .container {
+                justify-content: center;
+            }
+
+            .navbar-brand {
+                margin: 0 auto;
+                padding: 0;
+            }
+
+            .navbar-brand .navbar-logo {
+                height: 44px;
+                width: auto;
+            }
+
+            .mobile-bottom-nav {
+                background: rgba(255, 255, 255, 0.92);
+                border-top: 1px solid rgba(134, 87, 73, 0.16);
+                box-shadow: 0 -8px 30px rgba(40, 22, 17, 0.14);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+            }
+
+            .mobile-bottom-nav-inner {
+                width: min(560px, 100%);
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .mobile-bottom-nav .nav-item {
+                padding: 0;
+                min-width: 0;
+            }
+
+            .mobile-bottom-nav .nav-link {
+                width: 100%;
+                min-height: 58px;
+                justify-content: center;
+                border-radius: 14px;
+                color: #5f4a45;
+                transition: all 0.22s ease;
+                position: relative;
+                padding: 8px 4px;
+            }
+
+            .mobile-bottom-nav .nav-link i {
+                font-size: 18px;
+            }
+
+            .mobile-bottom-nav .nav-link span {
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 0.2px;
+            }
+
+            .mobile-bottom-nav .nav-link.active {
+                color: #fff;
+                background: linear-gradient(135deg, #865749 0%, #a76048 100%);
+                box-shadow: 0 8px 16px rgba(134, 87, 73, 0.28);
+                transform: translateY(-2px);
+            }
+
+            .mobile-bottom-nav .nav-link:active {
+                transform: scale(0.97);
+            }
+
+            .mobile-bottom-nav .cart-toggle-btn-mobile {
+                border: 0;
+                background: transparent;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mobile-bottom-nav .mobile-nav-badge {
+                width: 18px;
+                height: 18px;
+                top: 4px;
+                right: 14px;
+                font-size: 10px;
+                font-weight: 700;
+                border: 1px solid #fff;
+                z-index: 2;
+            }
+
+            .mobile-bottom-nav .mobile-wishlist-badge {
+                background-color: #dc3545;
+            }
+        }
     </style>
 
     <script>
@@ -468,7 +590,7 @@
                     element.textContent = data.cart_count ?? 0;
                 });
 
-                document.querySelectorAll('.wishlist-badge').forEach(function(element) {
+                document.querySelectorAll('.wishlist-badge, .mobile-wishlist-badge').forEach(function(element) {
                     const wishlistCount = data.wishlist_count ?? 0;
                     element.textContent = wishlistCount;
                     element.style.display = wishlistCount > 0 ? 'inline-flex' : 'none';

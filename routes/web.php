@@ -38,7 +38,7 @@ Route::post('/webhooks/stripe', StripeWebhookController::class)
     ->withoutMiddleware([VerifyCsrfToken::class])
     ->name('stripe.webhook');
 Route::get('/about', [PageController::class, 'about'])->name('about');
-Route::get('/blog', [PageController::class, 'blog'])->name('blog');
+Route::get('/blogs', [PageController::class, 'blog'])->name('blog');
 Route::get('/blog-details/{blogPost:slug?}', [PageController::class, 'blogDetails'])->name('blog.details');
 Route::post('/blog-details/{blogPost:slug}/comments', [PageController::class, 'storeBlogComment'])
     ->middleware('throttle:10,1')
