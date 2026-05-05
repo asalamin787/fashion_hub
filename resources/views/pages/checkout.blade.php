@@ -359,14 +359,14 @@
                                             Google Pay
                                         </label>
                                     </div>
-                                    <div class="payment-option {{ old('payment_method', 'cash_on_delivery') === 'paypal' ? 'active' : '' }}">
+                                    {{-- <div class="payment-option {{ old('payment_method', 'cash_on_delivery') === 'paypal' ? 'active' : '' }}">
                                         <label>
                                             <input type="radio" name="payment_method" value="paypal"
                                                    {{ old('payment_method', 'cash_on_delivery') === 'paypal' ? 'checked' : '' }}>
                                             <i class="fab fa-paypal"></i>
                                             PayPal
                                         </label>
-                                    </div>
+                                    </div> --}}
                                     <div class="payment-option {{ old('payment_method', 'cash_on_delivery') === 'cash_on_delivery' ? 'active' : '' }}">
                                         <label>
                                             <input type="radio" name="payment_method" value="cash_on_delivery"

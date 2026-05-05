@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Http\Requests\StoreOrderRequest;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderStatusHistory;
@@ -132,6 +133,22 @@ class CheckoutService
                 'note' => 'Order placed by customer.',
                 'changed_by' => Auth::id(),
             ]);
+
+            // Increment coupon used_count (with lock to prevent race conditions)
+            $couponCode = $totals['coupon']['code'] ?? null;
+            if ($couponCode) {
+                /** @var Coupon|null $coupon */
+                $coupon = Coupon::query()
+                    ->lockForUpdate()
+                    ->whereRaw('LOWER(code) = ?', [mb_strtolower($couponCode)])
+                    ->first();
+
+                if (! $coupon || ! $coupon->isAvailable()) {
+                    throw new \RuntimeException('The coupon "'.$couponCode.'" is no longer valid or has reached its usage limit.');
+                }
+
+                $coupon->increment('used_count');
+            }
 
             // Clear cart immediately only for non-card flows (e.g., COD).
             // For card payments we keep cart until payment succeeds.

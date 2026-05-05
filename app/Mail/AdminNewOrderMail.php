@@ -10,45 +10,32 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class OrderSuccessMail extends Mailable
+class AdminNewOrderMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(public Order $order) {}
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your FashionHub order '.$this->order->order_number.' is confirmed',
+            subject: '[New Order] '.$this->order->order_number.' — '.$this->order->customer_name,
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
-            view: 'emails.orders.success',
+            view: 'emails.admin.new_order',
             with: [
                 'order' => $this->order,
                 'billingAddress' => $this->order->billingAddress(),
                 'shippingAddress' => $this->order->shippingAddress(),
-                'supportEmail' => setting('site.support_email', config('mail.from.address')),
-                'supportPhone' => setting('site.phone', '+1 (555) 123-4567'),
-                'shopUrl' => route('shop'),
-                'shopAddress' => setting('site.address', '450 Fifth Avenue, Suite 4, New York, NY 10018'),
-                'orderUrl' => $this->order->user_id ? route('account.orders.show', $this->order->order_number) : route('order.confirmation', $this->order->order_number),
             ],
         );
     }
 
     /**
-     * Get the attachments for the message.
-     *
      * @return array<int, Attachment>
      */
     public function attachments(): array

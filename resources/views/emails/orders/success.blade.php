@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>FashionHub · Order Confirmation | Elegant Style Update</title>
+    <title>FashionHub · Order Confirmation #{{ $order->order_number }}</title>
     <!-- Bootstrap 5 + Icons + Google Fonts (Minimal luxury aesthetic) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -223,11 +223,11 @@
                 style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
                 <div>
                     <p style="margin: 0; font-size: 0.7rem; color: #7E6E5D;">ORDER REFERENCE</p>
-                    <p style="font-weight: 800; font-size: 1rem; margin: 0;">#FH-4289-7XM</p>
+                    <p style="font-weight: 800; font-size: 1rem; margin: 0;">#{{ $order->order_number }}</p>
                 </div>
                 <div style="background: #F3EFE9; padding: 5px 16px; border: 1px solid #E3DACF;">
                     <span style="font-weight: 600; color: #A67C4A; font-size: 0.7rem;"><i
-                            class="bi bi-check2-circle"></i> PAID & DISPATCHING SOON</span>
+                            class="bi bi-check2-circle"></i> {{ strtoupper($order->order_status?->name ?? $order->order_status) }}</span>
                 </div>
             </div>
 
@@ -235,19 +235,19 @@
             <div style="margin: 16px 0 12px 0; background: #FCFAF5; padding: 20px 24px; border: 1px solid #EFE9E1;">
                 <h2 style="font-weight: 700; font-size: 1.5rem; margin: 0 0 8px 0; color: #232120;">Your edit is on the
                     way</h2>
-                <p style="margin-bottom: 6px; font-size: 0.9rem; color: #4C4238;">We received your order today
-                    <strong>May 4, 2026</strong> and it will arrive in <strong>2–4 business days</strong> (Express DHL).
+                <p style="margin-bottom: 6px; font-size: 0.9rem; color: #4C4238;">We received your order on
+                    <strong>{{ $order->placed_at?->format('M j, Y') }}</strong>. We'll update you once it ships.
                 </p>
                 <div class="divider-gold" style="height: 2px; background: #D4B88C; width: 45px; margin: 14px 0 12px 0;">
                 </div>
-                <p style="font-size: 0.85rem;"><span style="font-weight: 700;">Order number: #FH-4289-7XM</span>
-                    &nbsp;|&nbsp; Est. delivery: May 7–9, 2026</p>
+                <p style="font-size: 0.85rem;"><span style="font-weight: 700;">Order number: #{{ $order->order_number }}</span>
+                    &nbsp;|&nbsp; Placed: {{ $order->placed_at?->format('M j, Y · h:i A') }}</p>
             </div>
 
             <!-- Track CTA button (minimal, elevated) -->
             <div style="margin: 14px 0 12px 0;">
-                <a href="#" class="btn-track-flat"
-                    style="background: white; color: #1F1C19; border: 1.5px solid #D4B88C; padding: 11px 34px; font-weight: 600; text-decoration: none; display: inline-block;">TRACK
+                <a href="{{ $orderUrl }}" class="btn-track-flat"
+                    style="background: white; color: #1F1C19; border: 1.5px solid #D4B88C; padding: 11px 34px; font-weight: 600; text-decoration: none; display: inline-block;">VIEW
                     YOUR ORDER →</a>
             </div>
         </div>
@@ -267,38 +267,18 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach($order->items as $item)
                         <tr>
                             <td style="padding: 16px 12px;">
-                                <strong>Cashmere Blend Wrap Coat</strong>
-                                <div style="font-size: 0.7rem; color: #8B7A68;">Color: Camel · Size: M</div>
+                                <strong>{{ $item->product_name }}</strong>
+                                @if($item->variant_label)
+                                <div style="font-size: 0.7rem; color: #8B7A68;">{{ $item->variant_label }}</div>
+                                @endif
                             </td>
-                            <td style="text-align: center;">1</td>
-                            <td style="text-align: right;">$289.00</td>
+                            <td style="text-align: center;">{{ $item->quantity }}</td>
+                            <td style="text-align: right;">${{ number_format($item->line_total, 2) }}</td>
                         </tr>
-                        <tr>
-                            <td style="padding: 16px 12px;">
-                                <strong>Leather Stiletto Boots</strong>
-                                <div style="font-size: 0.7rem; color: #8B7A68;">Color: Black · Size: 38 EU</div>
-                            </td>
-                            <td style="text-align: center;">1</td>
-                            <td style="text-align: right;">$179.00</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 16px 12px;">
-                                <strong>Silk Satin Slip Dress</strong>
-                                <div style="font-size: 0.7rem; color: #8B7A68;">Color: Champagne · Size: S</div>
-                            </td>
-                            <td style="text-align: center;">1</td>
-                            <td style="text-align: right;">$149.00</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 16px 12px;">
-                                <strong>Gold-Toned Hoop Earrings</strong>
-                                <div style="font-size: 0.7rem; color: #8B7A68;">Limited Edition</div>
-                            </td>
-                            <td style="text-align: center;">2</td>
-                            <td style="text-align: right;">$98.00</td>
-                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -309,14 +289,22 @@
                 <div style="display: flex; justify-content: flex-end;">
                     <div style="min-width: 220px; text-align: right;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span
-                                style="color:#6F5E4D;">Subtotal</span> <strong>$715.00</strong></div>
+                                style="color:#6F5E4D;">Subtotal</span> <strong>${{ number_format($order->subtotal, 2) }}</strong></div>
+                        @if($order->shipping_amount > 0)
                         <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span
-                                style="color:#6F5E4D;">Express Shipping</span> <strong>$15.00</strong></div>
+                                style="color:#6F5E4D;">Shipping</span> <strong>${{ number_format($order->shipping_amount, 2) }}</strong></div>
+                        @endif
+                        @if($order->tax_amount > 0)
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span
-                                style="color:#6F5E4D;">Tax (7.5%)</span> <strong>$54.75</strong></div>
+                                style="color:#6F5E4D;">Tax</span> <strong>${{ number_format($order->tax_amount, 2) }}</strong></div>
+                        @endif
+                        @if($order->discount_amount > 0)
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span
+                                style="color:#6F5E4D;">Discount @if($order->coupon_code)({{ $order->coupon_code }})@endif</span> <strong style="color:#c0392b;">-${{ number_format($order->discount_amount, 2) }}</strong></div>
+                        @endif
                         <div style="height: 1px; background: #E1D8CD; margin: 8px 0 10px;"></div>
                         <div style="font-size: 1.2rem; font-weight: 800;">Total: <span
-                                style="font-size: 1.6rem; color: #A67C4A; font-weight: 800;">$784.75</span></div>
+                                style="font-size: 1.6rem; color: #A67C4A; font-weight: 800;">${{ number_format($order->total_amount, 2) }}</span></div>
                         <p style="margin: 6px 0 0; font-size: 0.6rem; color: #8F7E6B;">Free 30-day returns &
                             carbon-neutral shipping</p>
                     </div>
@@ -341,9 +329,8 @@
                 <h4 style="font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;"><i
                         class="bi bi-chat-quote-fill"></i> Fashion Concierge</h4>
                 <p style="margin-bottom: 12px; font-size: 0.85rem;">Need assistance with sizing, returns, or gift
-                    options? Reach us at <a href="mailto:style@fashionhub.com"
-                        style="color: #A67C4A; text-decoration: underline;">style@fashionhub.com</a> or call +1 (212)
-                    555 8273.</p>
+                    options? Reach us at <a href="mailto:{{ $supportEmail }}"
+                        style="color: #A67C4A; text-decoration: underline;">{{ $supportEmail }}</a>@if($supportPhone) or call {{ $supportPhone }}@endif.</p>
                 <div style="font-size: 0.7rem;">🕊️ Available Mon–Sun, 10am–9pm EST. Complimentary styling advice.</div>
             </div>
         </div>
@@ -360,13 +347,13 @@
                             class="bi bi-spotify"></i> Fashion Playlist</a>
                 </div>
                 <p style="font-size: 0.7rem; color: #8E7A64; margin-bottom: 8px;">
-                    Copyright © 2026 FashionHub. All rights reserved.
+                    Copyright &copy; {{ date('Y') }} FashionHub. All rights reserved.
                 </p>
                 <p
                     style="font-size: 0.68rem; color: #9C8A74; max-width: 480px; margin-left: auto; margin-right: auto;">
-                    You are receiving this because you placed an order on <a href="#"
-                        style="color: #A67C4A;">fashionhub.com</a>.
-                    <br>450 Fifth Avenue, Suite 4, New York, NY 10018
+                    You are receiving this because you placed an order on <a href="{{ $shopUrl }}"
+                        style="color: #A67C4A;">FashionHub</a>.
+                    <br>{{ $shopAddress }}
                 </p>
                 <p style="font-size: 0.6rem; margin-top: 16px;">
                     <a href="#" style="color: #8E7A64;">Update preferences</a> | <a href="#"

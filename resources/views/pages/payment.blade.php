@@ -3,20 +3,25 @@
         <link rel="stylesheet" href="{{ asset('assets/css/checkout.css') }}">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap"
+            rel="stylesheet">
         <style>
             .checkout-section {
                 padding: 84px 0;
                 background: linear-gradient(180deg, #fcf9f8 0%, #f4efec 100%);
             }
+
             .checkout-shell {
                 display: grid;
                 grid-template-columns: 1fr;
                 gap: 36px;
             }
+
             .review-panel {
                 order: 2;
             }
+
             .payment-panel {
                 order: 1;
                 border-radius: 14px;
@@ -26,6 +31,7 @@
                 box-shadow: 0 20px 40px rgba(164, 92, 64, 0.05);
                 padding: 28px 24px;
             }
+
             .premium-title {
                 margin: 0 0 26px;
                 font-family: 'Noto Serif', serif;
@@ -34,16 +40,19 @@
                 color: #1c1b1b;
                 line-height: 1.2;
             }
+
             .review-list {
                 display: flex;
                 flex-direction: column;
                 gap: 18px;
                 margin-bottom: 22px;
             }
+
             .review-item {
                 display: flex;
                 gap: 16px;
             }
+
             .review-item-image {
                 width: 84px;
                 height: 108px;
@@ -52,11 +61,13 @@
                 background: #ebe7e5;
                 flex-shrink: 0;
             }
+
             .review-item-image img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
             }
+
             .review-item-content {
                 min-width: 0;
                 display: flex;
@@ -64,6 +75,7 @@
                 justify-content: space-between;
                 flex: 1;
             }
+
             .review-item-content h5 {
                 margin: 0;
                 font-family: 'Noto Serif', serif;
@@ -72,6 +84,7 @@
                 color: #1c1b1b;
                 line-height: 1.25;
             }
+
             .review-item-meta {
                 margin: 3px 0 0;
                 font-family: 'Be Vietnam Pro', sans-serif;
@@ -80,6 +93,7 @@
                 text-transform: uppercase;
                 color: #86736c;
             }
+
             .review-item-bottom {
                 display: flex;
                 justify-content: space-between;
@@ -87,12 +101,14 @@
                 gap: 10px;
                 margin-top: 8px;
             }
+
             .review-item-qty {
                 margin: 0;
                 color: #6f6460;
                 font-size: 0.84rem;
                 font-style: italic;
             }
+
             .review-item-price {
                 margin: 0;
                 color: #86452a;
@@ -100,11 +116,13 @@
                 font-weight: 500;
                 font-family: 'Be Vietnam Pro', sans-serif;
             }
+
             .review-totals {
                 border-top: 1px solid #e7dbd6;
                 padding-top: 16px;
                 margin-top: 10px;
             }
+
             .review-totals .summary-row {
                 border: 0;
                 padding: 8px 0;
@@ -112,23 +130,28 @@
                 font-family: 'Be Vietnam Pro', sans-serif;
                 color: #1f1e1e;
             }
+
             .review-totals .summary-row span:first-child {
                 color: #86736c;
             }
+
             .review-totals .summary-row.total {
                 padding-top: 14px;
                 margin-top: 8px;
                 border-top: 0;
             }
+
             .review-totals .summary-row.total span {
                 font-family: 'Noto Serif', serif;
                 font-size: 2rem;
                 font-weight: 600;
                 color: #1c1b1b;
             }
+
             .review-totals .summary-row.total .value {
                 color: #86452a;
             }
+
             .payment-section-title {
                 margin: 0 0 20px;
                 font-family: 'Noto Serif', serif;
@@ -137,6 +160,7 @@
                 color: #1c1b1b;
                 line-height: 1.2;
             }
+
             .pm-header-card {
                 display: flex;
                 align-items: center;
@@ -145,11 +169,13 @@
                 padding-bottom: 14px;
                 border-bottom: 1px solid #ece3df;
             }
+
             .pm-header-left {
                 display: flex;
                 align-items: center;
                 gap: 12px;
             }
+
             .pm-header-icon {
                 width: 46px;
                 height: 46px;
@@ -161,6 +187,7 @@
                 justify-content: center;
                 font-size: 1.1rem;
             }
+
             .pm-header-text h5 {
                 margin: 0;
                 font-family: 'Noto Serif', serif;
@@ -168,12 +195,14 @@
                 font-weight: 600;
                 color: #1c1b1b;
             }
+
             .pm-header-text p {
                 margin: 1px 0 0;
                 color: #86736c;
                 font-size: 0.92rem;
                 font-family: 'Be Vietnam Pro', sans-serif;
             }
+
             .pm-selection-pill {
                 display: inline-flex;
                 align-items: center;
@@ -187,29 +216,35 @@
                 font-family: 'Be Vietnam Pro', sans-serif;
                 white-space: nowrap;
             }
+
             .pm-selection-pill .pm-radio {
                 width: 14px;
                 height: 14px;
                 accent-color: #86452a;
             }
+
             .pm-card-logos {
                 display: inline-flex;
                 align-items: center;
                 gap: 6px;
             }
+
             .pm-card-logos img {
                 height: 16px;
                 object-fit: contain;
             }
+
             .card-details-wrap {
                 padding-top: 16px;
             }
+
             .stripe-element-shell {
                 border: 1px solid #d9c2ba;
                 border-radius: 8px;
                 background: #fff;
                 padding: 14px;
             }
+
             .stripe-divider {
                 display: flex;
                 align-items: center;
@@ -221,6 +256,7 @@
                 letter-spacing: 0.1em;
                 font-family: 'Be Vietnam Pro', sans-serif;
             }
+
             .stripe-divider::before,
             .stripe-divider::after {
                 content: '';
@@ -228,12 +264,14 @@
                 background: #e7dbd6;
                 flex: 1;
             }
+
             .card-details-header {
                 display: flex;
                 align-items: center;
                 gap: 11px;
                 margin-bottom: 16px;
             }
+
             .card-details-header .cd-icon-wrap {
                 width: 40px;
                 height: 40px;
@@ -244,6 +282,7 @@
                 align-items: center;
                 justify-content: center;
             }
+
             .card-details-header h4 {
                 margin: 0;
                 font-family: 'Noto Serif', serif;
@@ -251,14 +290,17 @@
                 font-weight: 600;
                 color: #1c1b1b;
             }
+
             .card-details-header p {
                 margin: 2px 0 0;
                 color: #86736c;
                 font-size: 0.92rem;
             }
+
             .form-group {
                 margin-bottom: 16px;
             }
+
             .stripe-field-label {
                 display: block;
                 margin: 0 0 6px;
@@ -267,9 +309,11 @@
                 font-family: 'Be Vietnam Pro', sans-serif;
                 font-weight: 500;
             }
+
             .stripe-number-wrapper {
                 position: relative;
             }
+
             .stripe-card-shell {
                 display: flex;
                 align-items: center;
@@ -280,17 +324,21 @@
                 padding: 0 12px;
                 transition: border-color 0.2s ease, box-shadow 0.2s ease;
             }
+
             .stripe-card-shell:focus-within {
                 border-color: #86452a;
                 box-shadow: 0 0 0 3px rgba(134, 69, 42, 0.12);
             }
+
             .stripe-card-element {
                 width: 100%;
                 padding: 12px 0;
             }
+
             .stripe-number-wrapper .stripe-card-shell {
                 padding-right: 80px;
             }
+
             .stripe-number-brand-icons {
                 position: absolute;
                 right: 10px;
@@ -301,10 +349,12 @@
                 gap: 6px;
                 pointer-events: none;
             }
+
             .stripe-number-brand-icons img {
                 height: 18px;
                 object-fit: contain;
             }
+
             .payment-input {
                 width: 100%;
                 min-height: 44px;
@@ -317,10 +367,12 @@
                 color: #1f1e1e;
                 transition: border-color 0.2s ease, box-shadow 0.2s ease;
             }
+
             .payment-input:focus {
                 border-color: #86452a;
                 box-shadow: 0 0 0 3px rgba(134, 69, 42, 0.12);
             }
+
             .stripe-ready-status {
                 margin-top: 10px;
                 border-radius: 6px;
@@ -333,6 +385,7 @@
                 font-size: 0.76rem;
                 font-family: 'Be Vietnam Pro', sans-serif;
             }
+
             .security-trust-badge {
                 margin-top: 12px;
                 border: 1px solid #eadfd9;
@@ -343,6 +396,7 @@
                 gap: 10px;
                 padding: 11px 12px;
             }
+
             .security-trust-badge .stb-icon {
                 width: 28px;
                 height: 28px;
@@ -355,6 +409,7 @@
                 font-size: 0.82rem;
                 flex-shrink: 0;
             }
+
             .security-trust-badge h6 {
                 margin: 0;
                 color: #2a2929;
@@ -362,12 +417,14 @@
                 font-family: 'Be Vietnam Pro', sans-serif;
                 font-weight: 500;
             }
+
             .security-trust-badge p {
                 margin: 2px 0 0;
                 color: #7a706c;
                 font-size: 0.78rem;
                 font-family: 'Be Vietnam Pro', sans-serif;
             }
+
             .pay-btn {
                 width: 100%;
                 min-height: 52px;
@@ -386,21 +443,25 @@
                 box-shadow: 0 8px 20px rgba(110, 55, 33, 0.3);
                 transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
+
             .pay-btn:hover,
             .pay-btn:focus {
                 transform: translateY(-1px);
                 box-shadow: 0 12px 24px rgba(110, 55, 33, 0.34);
                 color: #fff;
             }
+
             .pay-btn i {
                 font-size: 1.1rem;
             }
+
             .stripe-footer {
                 margin-top: 16px;
                 padding-top: 12px;
                 border-top: 1px solid #ece3df;
                 text-align: center;
             }
+
             .stripe-footer .stripe-brand {
                 display: inline-flex;
                 align-items: center;
@@ -409,9 +470,11 @@
                 font-size: 0.86rem;
                 font-family: 'Be Vietnam Pro', sans-serif;
             }
+
             .stripe-footer .stripe-brand img {
                 height: 19px;
             }
+
             .stripe-footer .stripe-badges {
                 margin-top: 8px;
                 display: flex;
@@ -420,6 +483,7 @@
                 color: #86736c;
                 font-size: 0.78rem;
             }
+
             .summary-trust-badge {
                 margin-top: 18px;
                 border: 1px solid #eadfd9;
@@ -430,6 +494,7 @@
                 gap: 10px;
                 padding: 13px 14px;
             }
+
             .summary-trust-badge .stb-icon {
                 width: 28px;
                 height: 28px;
@@ -441,6 +506,7 @@
                 justify-content: center;
                 flex-shrink: 0;
             }
+
             .summary-trust-badge h6 {
                 margin: 0;
                 color: #2a2929;
@@ -448,12 +514,14 @@
                 font-family: 'Be Vietnam Pro', sans-serif;
                 font-weight: 500;
             }
+
             .summary-trust-badge p {
                 margin: 2px 0 0;
                 color: #7a706c;
                 font-size: 0.79rem;
                 font-family: 'Be Vietnam Pro', sans-serif;
             }
+
             .payment-info-card {
                 border: 1px solid #e7dbd6;
                 border-radius: 12px;
@@ -461,6 +529,7 @@
                 text-align: center;
                 background: #fff;
             }
+
             .payment-info-card .pic-icon {
                 width: 58px;
                 height: 58px;
@@ -473,37 +542,45 @@
                 margin: 0 auto 16px;
                 font-size: 1.4rem;
             }
+
             @media (min-width: 992px) {
                 .checkout-shell {
                     grid-template-columns: minmax(360px, 42%) minmax(0, 58%);
                     gap: 62px;
                     align-items: start;
                 }
+
                 .review-panel {
                     order: 1;
                 }
+
                 .payment-panel {
                     order: 2;
                     padding: 38px;
                 }
             }
+
             @media (max-width: 767.98px) {
                 .checkout-section {
                     padding: 56px 0;
                 }
+
                 .premium-title,
                 .payment-section-title,
                 .card-details-header h4,
                 .review-totals .summary-row.total span {
                     font-size: 1.65rem;
                 }
+
                 .pay-btn {
                     font-size: 1.55rem;
                 }
+
                 .pm-header-card {
                     align-items: flex-start;
                     flex-direction: column;
                 }
+
                 .pm-selection-pill {
                     white-space: normal;
                 }
@@ -534,9 +611,10 @@
                     <div class="review-list">
                         @forelse ($order->items as $item)
                             @php
-                                $itemImage = $item->image && ! str_starts_with($item->image, 'http')
-                                    ? asset('storage/' . $item->image)
-                                    : $item->image;
+                                $itemImage =
+                                    $item->image && !str_starts_with($item->image, 'http')
+                                        ? asset('storage/' . $item->image)
+                                        : $item->image;
                             @endphp
                             <article class="review-item">
                                 <div class="review-item-image">
@@ -549,7 +627,7 @@
                                     </div>
                                     <div class="review-item-bottom">
                                         <p class="review-item-qty">Qty {{ $item->quantity }}</p>
-                                        <p class="review-item-price">${{ number_format($item->price * $item->quantity, 2) }}</p>
+                                        <p class="review-item-price">${{ number_format($item->line_total, 2) }}</p>
                                     </div>
                                 </div>
                             </article>
@@ -564,19 +642,21 @@
                             <span class="value">${{ number_format($order->subtotal ?? 0, 2) }}</span>
                         </div>
 
-                        @if($order->discount_amount > 0)
+                        @if ($order->discount_amount > 0)
                             <div class="summary-row">
                                 <span>Discount</span>
-                                <span class="value text-success">-${{ number_format($order->discount_amount, 2) }}</span>
+                                <span
+                                    class="value text-success">-${{ number_format($order->discount_amount, 2) }}</span>
                             </div>
                         @endif
 
                         <div class="summary-row">
                             <span>Shipping</span>
-                            <span class="value">{{ $order->shipping_amount > 0 ? '$' . number_format($order->shipping_amount, 2) : '$0.00' }}</span>
+                            <span
+                                class="value">{{ $order->shipping_amount > 0 ? '$' . number_format($order->shipping_amount, 2) : '$0.00' }}</span>
                         </div>
 
-                        @if($order->tax_amount > 0)
+                        @if ($order->tax_amount > 0)
                             <div class="summary-row">
                                 <span>Tax</span>
                                 <span class="value">${{ number_format($order->tax_amount, 2) }}</span>
@@ -604,7 +684,7 @@
                     <div class="form-section p-0 mb-4 border-0 bg-transparent">
                         <div class="pm-header-card">
                             <div class="pm-header-left">
-                                @if($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
+                                @if ($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
                                     <div class="pm-header-icon"><i class="fab fa-google-pay"></i></div>
                                 @elseif($order->payment_method === \App\Enums\PaymentMethod::CreditCard)
                                     <div class="pm-header-icon"><i class="fas fa-credit-card"></i></div>
@@ -619,7 +699,7 @@
                                 </div>
                             </div>
 
-                            @if($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
+                            @if ($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
                                 <div class="pm-selection-pill">
                                     <input type="radio" class="pm-radio" checked readonly>
                                     <span>Google Pay</span>
@@ -629,8 +709,10 @@
                                     <input type="radio" class="pm-radio" checked readonly>
                                     <span>Credit / Debit Card</span>
                                     <div class="pm-card-logos">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="Visa">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png"
+                                            alt="Visa">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png"
+                                            alt="Mastercard">
                                     </div>
                                 </div>
                             @elseif($order->payment_method === \App\Enums\PaymentMethod::Paypal)
@@ -648,32 +730,39 @@
                     </div>
 
                     @php
-                        $isStripePayment = in_array($order->payment_method, [\App\Enums\PaymentMethod::CreditCard, \App\Enums\PaymentMethod::GooglePay], true);
+                        $isStripePayment = in_array(
+                            $order->payment_method,
+                            [\App\Enums\PaymentMethod::CreditCard, \App\Enums\PaymentMethod::GooglePay],
+                            true,
+                        );
                     @endphp
 
-                    @if($isStripePayment)
+                    @if ($isStripePayment)
                         <form id="payment-form" class="card-details-wrap">
                             @csrf
 
                             <div class="card-details-header">
-                                @if($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
+                                @if ($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
                                     <div class="cd-icon-wrap"><i class="fab fa-google-pay"></i></div>
                                 @else
                                     <div class="cd-icon-wrap"><i class="fas fa-credit-card"></i></div>
                                 @endif
                                 <div>
                                     <h4>Secure Checkout</h4>
-                                    <p>Use Google Pay or enter your card details below</p>
+                                    <p>Use Google Pay </p>
                                 </div>
                             </div>
+                            @if ($order->payment_method === \App\Enums\PaymentMethod::GooglePay)
+                                <div class="form-group mb-0">
+                                    <label class="stripe-field-label">Google Pay</label>
+                                    <div class="stripe-element-shell" id="express-checkout-element-wrapper">
+                                        <div id="express-checkout-element"></div>
+                                    </div>
 
-                            <div class="form-group mb-0">
-                                <label class="stripe-field-label">Google Pay</label>
-                                <div class="stripe-element-shell" id="express-checkout-element-wrapper">
-                                    <div id="express-checkout-element"></div>
+                                    <div id="google-pay-unavailable" class="alert alert-info mt-2 mb-0"
+                                        style="display:none;"></div>
                                 </div>
-                                <div id="google-pay-unavailable" class="alert alert-info mt-2 mb-0" style="display:none;"></div>
-                            </div>
+                            @endif
 
                             <div class="stripe-divider">
                                 <span>Or pay another way</span>
@@ -694,8 +783,10 @@
                                 </div>
                             </div>
 
-                            <div id="stripe-config-warning" class="alert alert-warning mt-3 mb-0" style="display:none;">
-                                Stripe publishable key is missing. Please configure <strong>STRIPE_PUBLISHABLE_KEY</strong> in .env.
+                            <div id="stripe-config-warning" class="alert alert-warning mt-3 mb-0"
+                                style="display:none;">
+                                Stripe publishable key is missing. Please configure
+                                <strong>STRIPE_PUBLISHABLE_KEY</strong> in .env.
                             </div>
 
                             <div id="payment-error" class="alert alert-danger mt-3 mb-3" style="display:none;"></div>
@@ -712,7 +803,8 @@
                             <div class="stripe-footer">
                                 <div class="stripe-brand">
                                     Payment processed securely by
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/2560px-Stripe_Logo%2C_revised_2016.svg.png" alt="Stripe">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/2560px-Stripe_Logo%2C_revised_2016.svg.png"
+                                        alt="Stripe">
                                 </div>
                                 <div class="stripe-badges">
                                     <span><i class="fas fa-check-circle"></i> PCI-DSS Compliant</span>
@@ -722,17 +814,20 @@
                         </form>
                     @else
                         <div class="payment-info-card">
-                            @if($order->payment_method === \App\Enums\PaymentMethod::Paypal)
+                            @if ($order->payment_method === \App\Enums\PaymentMethod::Paypal)
                                 <div class="pic-icon"><i class="fab fa-paypal"></i></div>
                                 <h5 class="fw-700 mb-2">PayPal Payment</h5>
-                                <p class="text-muted mb-4">You will be redirected to PayPal to complete your payment.</p>
+                                <p class="text-muted mb-4">You will be redirected to PayPal to complete your payment.
+                                </p>
                             @else
                                 <div class="pic-icon"><i class="fas fa-truck"></i></div>
                                 <h5 class="fw-700 mb-2">Cash on Delivery</h5>
-                                <p class="text-muted mb-4">Your order is confirmed! Please have the exact amount ready when the delivery arrives.</p>
+                                <p class="text-muted mb-4">Your order is confirmed! Please have the exact amount ready
+                                    when the delivery arrives.</p>
                             @endif
 
-                            <a href="{{ route('order.confirmation', ['orderNumber' => $order->order_number]) }}" class="btn btn-primary w-100 mt-2">
+                            <a href="{{ route('order.confirmation', ['orderNumber' => $order->order_number]) }}"
+                                class="btn btn-primary w-100 mt-2">
                                 Continue to Order Confirmation
                             </a>
                         </div>
@@ -742,7 +837,7 @@
         </div>
     </section>
 
-    @if($isStripePayment)
+    @if ($isStripePayment)
         @push('js')
             <script src="https://js.stripe.com/v3/"></script>
             <script>
@@ -848,21 +943,29 @@
                         return;
                     }
 
-                    expressCheckoutElement.on('ready', ({ availablePaymentMethods }) => {
+                    expressCheckoutElement.on('ready', ({
+                        availablePaymentMethods
+                    }) => {
                         const googlePayAvailable = Boolean(availablePaymentMethods && availablePaymentMethods.googlePay);
 
                         if (!googlePayAvailable) {
                             if (!window.isSecureContext) {
-                                showGooglePayUnavailable('Google Pay requires HTTPS. Open checkout on https://fashion-hub.test instead of http://127.0.0.1:8000.');
+                                showGooglePayUnavailable(
+                                    'Google Pay requires HTTPS. Open checkout on https://fashion-hub.test instead of http://127.0.0.1:8000.'
+                                );
                                 return;
                             }
 
-                            showGooglePayUnavailable('Google Pay is unavailable in this browser/profile. Use Chrome signed into Google with a saved card, and make sure Google Pay is enabled in your Stripe account.');
+                            showGooglePayUnavailable(
+                                'Google Pay is unavailable in this browser/profile. Use Chrome signed into Google with a saved card, and make sure Google Pay is enabled in your Stripe account.'
+                            );
                         }
                     });
 
                     expressCheckoutElement.on('loaderror', () => {
-                        showGooglePayUnavailable('Google Pay could not be loaded on this device/browser. Please use card payment or try a different browser.');
+                        showGooglePayUnavailable(
+                            'Google Pay could not be loaded on this device/browser. Please use card payment or try a different browser.'
+                        );
                     });
 
                     expressCheckoutElement.on('confirm', async () => {
@@ -882,15 +985,18 @@
                 function setLoadingState(isLoading) {
                     payButton.disabled = isLoading;
                     paymentProcessingEl.style.display = isLoading ? '' : 'none';
-                    payButton.innerHTML = isLoading
-                        ? '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Processing Payment...'
-                        : '<i class="fas fa-lock me-2"></i>Pay ${{ number_format($order->total_amount, 2) }}';
+                    payButton.innerHTML = isLoading ?
+                        '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Processing Payment...' :
+                        '<i class="fas fa-lock me-2"></i>Pay ${{ number_format($order->total_amount, 2) }}';
                 }
 
                 function showPaymentError(message) {
                     paymentErrorEl.style.display = '';
                     paymentErrorEl.textContent = message;
-                    paymentErrorEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    paymentErrorEl.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
                 }
 
                 function clearPaymentError() {
@@ -907,7 +1013,9 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'X-Requested-With': 'XMLHttpRequest',
                         },
-                        body: JSON.stringify({ payment_intent_id: paymentIntentId }),
+                        body: JSON.stringify({
+                            payment_intent_id: paymentIntentId
+                        }),
                     });
 
                     const payload = await response.json();
@@ -1005,7 +1113,7 @@
                     handleReturnFromStripe();
                 }
 
-                paymentForm.addEventListener('submit', async function (event) {
+                paymentForm.addEventListener('submit', async function(event) {
                     event.preventDefault();
                     await confirmStripePayment();
                 });

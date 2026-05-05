@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>FashionHub · Payment Confirmation | Transaction Receipt</title>
+    <title>FashionHub · Payment Confirmation #{{ $order->order_number }}</title>
     <!-- Bootstrap 5 + Icons + Google Fonts (Luxury, minimal) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -232,7 +232,7 @@
                 style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
                 <div>
                     <p style="margin: 0; font-size: 0.7rem; color: #7E6E5D;">TRANSACTION ID</p>
-                    <p style="font-weight: 800; font-size: 0.95rem; margin: 0; letter-spacing: 0.3px;">TXN-FH-4X9K-2M7P
+                    <p style="font-weight: 800; font-size: 0.95rem; margin: 0; letter-spacing: 0.3px;">{{ $order->transaction_id ?? $order->order_number }}
                     </p>
                 </div>
                 <div style="background: #E8F5E9; padding: 5px 16px; border: 1px solid #C8E6C9;">
@@ -246,17 +246,17 @@
                 <h2 style="font-weight: 700; font-size: 1.3rem; margin: 0 0 8px 0; color: #232120;">Thank you for your
                     payment</h2>
                 <p style="margin-bottom: 6px; font-size: 0.9rem; color: #4C4238;">Your payment of
-                    <strong>$784.75</strong> was successfully charged on <strong>May 4, 2026</strong> at 11:42 AM EST.
+                    <strong>${{ number_format($order->total_amount, 2) }}</strong> was successfully charged on <strong>{{ ($order->paid_at ?? $order->placed_at)?->format('M j, Y · h:i A') }}</strong>.
                 </p>
                 <div class="divider-gold" style="height: 2px; background: #D4B88C; width: 45px; margin: 16px 0 12px 0;">
                 </div>
                 <p style="font-size: 0.8rem; color: #5D6E5F;">A receipt has been sent to
-                    <strong>alex.morgan@fashionhub.com</strong>. Your order is now being prepared for shipment.</p>
+                    <strong>{{ $order->customer_email }}</strong>. Your order is now being prepared for shipment.</p>
             </div>
 
             <!-- View Order Button -->
             <div style="margin: 8px 0 16px 0;">
-                <a href="#" class="btn-view-order"
+                <a href="{{ $orderUrl }}" class="btn-view-order"
                     style="background: white; color: #1F1C19; border: 1.5px solid #D4B88C; padding: 11px 34px; font-weight: 600; text-decoration: none; display: inline-block;">VIEW
                     ORDER DETAILS →</a>
             </div>
@@ -272,27 +272,27 @@
                 <div class="info-row"
                     style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #EEF2F8;">
                     <span style="color: #5B6E8C;">Payment Method</span>
-                    <span><strong>Visa •••• 4242</strong> (Credit Card)</span>
+                    <span><strong>{{ $order->payment_method?->name ?? $order->payment_method }}</strong></span>
                 </div>
                 <div class="info-row"
                     style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #EEF2F8;">
                     <span style="color: #5B6E8C;">Transaction Date</span>
-                    <span>May 4, 2026 · 11:42 AM EST</span>
+                    <span>{{ ($order->paid_at ?? $order->placed_at)?->format('M j, Y · h:i A') }}</span>
                 </div>
                 <div class="info-row"
                     style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #EEF2F8;">
                     <span style="color: #5B6E8C;">Authorization Code</span>
-                    <span><strong>FH-AUTH-8723G</strong></span>
+                    <span><strong>{{ $order->transaction_id ?? '—' }}</strong></span>
                 </div>
                 <div class="info-row"
                     style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #EEF2F8;">
                     <span style="color: #5B6E8C;">Payment Status</span>
-                    <span style="color: #2E7D32; font-weight: 600;">✓ Captured / Settled</span>
+                    <span style="color: #2E7D32; font-weight: 600;">✓ {{ $order->payment_status?->name ?? $order->payment_status }}</span>
                 </div>
                 <div class="info-row" style="display: flex; justify-content: space-between; padding: 12px 0 4px 0;">
                     <span style="font-weight: 700; font-size: 1rem;">Total Charged</span>
                     <span class="total-amount-large"
-                        style="font-size: 1.5rem; font-weight: 800; color: #1A4D3A;">$784.75</span>
+                        style="font-size: 1.5rem; font-weight: 800; color: #1A4D3A;">${{ number_format($order->total_amount, 2) }}</span>
                 </div>
             </div>
         </div>
@@ -312,38 +312,18 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach($order->items as $item)
                         <tr>
                             <td style="padding: 14px 12px;">
-                                <strong>Cashmere Blend Wrap Coat</strong>
-                                <div style="font-size: 0.65rem; color: #8B7A68;">Camel · Size M</div>
+                                <strong>{{ $item->product_name }}</strong>
+                                @if($item->variant_label)
+                                <div style="font-size: 0.65rem; color: #8B7A68;">{{ $item->variant_label }}</div>
+                                @endif
                             </td>
-                            <td style="text-align: center;">1</td>
-                            <td style="text-align: right;">$289.00</td>
+                            <td style="text-align: center;">{{ $item->quantity }}</td>
+                            <td style="text-align: right;">${{ number_format($item->line_total, 2) }}</td>
                         </tr>
-                        <tr>
-                            <td style="padding: 14px 12px;">
-                                <strong>Leather Stiletto Boots</strong>
-                                <div style="font-size: 0.65rem; color: #8B7A68;">Black · Size 38 EU</div>
-                            </td>
-                            <td style="text-align: center;">1</td>
-                            <td style="text-align: right;">$179.00</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 14px 12px;">
-                                <strong>Silk Satin Slip Dress</strong>
-                                <div style="font-size: 0.65rem; color: #8B7A68;">Champagne · Size S</div>
-                            </td>
-                            <td style="text-align: center;">1</td>
-                            <td style="text-align: right;">$149.00</td>
-                        </tr>
-                        <tr style="border-bottom: none;">
-                            <td style="padding: 14px 12px;">
-                                <strong>Gold-Toned Hoop Earrings</strong>
-                                <div style="font-size: 0.65rem; color: #8B7A68;">Limited Edition</div>
-                            </td>
-                            <td style="text-align: center;">2</td>
-                            <td style="text-align: right;">$98.00</td>
-                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -353,14 +333,22 @@
                 <div style="display: flex; justify-content: flex-end;">
                     <div style="min-width: 220px; text-align: right;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span
-                                style="color:#6F5E4D;">Subtotal</span> <strong>$715.00</strong></div>
+                                style="color:#6F5E4D;">Subtotal</span> <strong>${{ number_format($order->subtotal, 2) }}</strong></div>
+                        @if($order->shipping_amount > 0)
                         <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span
-                                style="color:#6F5E4D;">Express Shipping</span> <strong>$15.00</strong></div>
+                                style="color:#6F5E4D;">Shipping</span> <strong>${{ number_format($order->shipping_amount, 2) }}</strong></div>
+                        @endif
+                        @if($order->tax_amount > 0)
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span
-                                style="color:#6F5E4D;">Tax (7.5%)</span> <strong>$54.75</strong></div>
+                                style="color:#6F5E4D;">Tax</span> <strong>${{ number_format($order->tax_amount, 2) }}</strong></div>
+                        @endif
+                        @if($order->discount_amount > 0)
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span
+                                style="color:#6F5E4D;">Discount @if($order->coupon_code)({{ $order->coupon_code }})@endif</span> <strong style="color:#c0392b;">-${{ number_format($order->discount_amount, 2) }}</strong></div>
+                        @endif
                         <div style="height: 1px; background: #E1D8CD; margin: 8px 0 10px;"></div>
                         <div style="font-size: 1.1rem; font-weight: 800;">Total Charged: <span
-                                style="font-size: 1.5rem; color: #1A4D3A; font-weight: 800;">$784.75</span></div>
+                                style="font-size: 1.5rem; color: #1A4D3A; font-weight: 800;">${{ number_format($order->total_amount, 2) }}</span></div>
                     </div>
                 </div>
             </div>
@@ -374,20 +362,20 @@
                     <p style="margin: 0 0 6px 0; font-size: 0.7rem; color: #7E6E5D; letter-spacing: 0.5px;">BILLING
                         ADDRESS</p>
                     <p style="margin: 0; font-size: 0.8rem; line-height: 1.4;">
-                        Alex Morgan<br>
-                        450 Fifth Avenue, Suite 4<br>
-                        New York, NY 10018<br>
-                        United States
+                        {{ $billingAddress['name'] }}<br>
+                        {{ $billingAddress['line_1'] }}@if($billingAddress['line_2']), {{ $billingAddress['line_2'] }}@endif<br>
+                        {{ $billingAddress['city'] }}, {{ $billingAddress['state'] }} {{ $billingAddress['postal_code'] }}<br>
+                        {{ $billingAddress['country'] }}
                     </p>
                 </div>
                 <div style="flex: 1;">
                     <p style="margin: 0 0 6px 0; font-size: 0.7rem; color: #7E6E5D; letter-spacing: 0.5px;">SHIPPING
                         ADDRESS</p>
                     <p style="margin: 0; font-size: 0.8rem; line-height: 1.4;">
-                        Alex Morgan<br>
-                        450 Fifth Avenue, Suite 4<br>
-                        New York, NY 10018<br>
-                        United States
+                        {{ $shippingAddress['name'] }}<br>
+                        {{ $shippingAddress['line_1'] }}@if($shippingAddress['line_2']), {{ $shippingAddress['line_2'] }}@endif<br>
+                        {{ $shippingAddress['city'] }}, {{ $shippingAddress['state'] }} {{ $shippingAddress['postal_code'] }}<br>
+                        {{ $shippingAddress['country'] }}
                     </p>
                 </div>
             </div>
@@ -401,9 +389,9 @@
                 <p style="margin-bottom: 8px; font-size: 0.85rem;">If you have any questions about your payment or
                     order, please contact our support team.</p>
                 <p style="margin: 0; font-size: 0.8rem;">
-                    📧 <a href="mailto:payments@fashionhub.com"
-                        style="color: #A67C4A; text-decoration: underline;">payments@fashionhub.com</a> &nbsp;|&nbsp;
-                    📞 +1 (212) 555 8273
+                    📧 <a href="mailto:{{ $supportEmail }}"
+                        style="color: #A67C4A; text-decoration: underline;">{{ $supportEmail }}</a>@if($supportPhone) &nbsp;|&nbsp;
+                    📞 {{ $supportPhone }}@endif
                 </p>
             </div>
         </div>
@@ -420,7 +408,7 @@
                             class="bi bi-envelope-fill"></i> Support</a>
                 </div>
                 <p style="font-size: 0.7rem; color: #8E7A64; margin-bottom: 8px;">
-                    Copyright © 2026 FashionHub. All rights reserved.
+                    Copyright &copy; {{ date('Y') }} FashionHub. All rights reserved.
                 </p>
                 <p
                     style="font-size: 0.68rem; color: #9C8A74; max-width: 480px; margin-left: auto; margin-right: auto;">

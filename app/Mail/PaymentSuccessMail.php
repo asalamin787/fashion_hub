@@ -32,13 +32,13 @@ class PaymentSuccessMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.orders.payment_success',
+            view: 'emails.orders.payment_success',
             with: [
                 'order' => $this->order,
                 'billingAddress' => $this->order->billingAddress(),
                 'shippingAddress' => $this->order->shippingAddress(),
-                'supportEmail' => setting('contact.email', config('mail.from.address')),
-                'supportPhone' => setting('contact.phone', '+1 (555) 123-4567'),
+                'supportEmail' => setting('site.support_email', config('mail.from.address')),
+                'supportPhone' => setting('site.phone', '+1 (555) 123-4567'),
                 'shopUrl' => route('shop'),
                 'orderUrl' => $this->order->user_id ? route('account.orders.show', $this->order->order_number) : route('order.confirmation', $this->order->order_number),
             ],
