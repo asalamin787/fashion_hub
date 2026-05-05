@@ -44,6 +44,7 @@ Route::post('/blog-details/{blogPost:slug}/comments', [PageController::class, 's
     ->middleware('throttle:10,1')
     ->name('blog.comments.store');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::post('/contact', [PageController::class, 'storeContact'])->middleware('throttle:5,1')->name('contact.store');
 Route::get('/privacy-policy', [StaticPageController::class, 'show'])->defaults('slug', 'privacy-policy')->name('privacy.policy');
 Route::get('/terms-and-conditions', [StaticPageController::class, 'show'])->defaults('slug', 'terms-and-conditions')->name('terms.of.condition');
 Route::get('/terms-of-condition', [StaticPageController::class, 'show'])->defaults('slug', 'terms-and-conditions');

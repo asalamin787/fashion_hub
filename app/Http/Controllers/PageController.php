@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBlogCommentRequest;
+use App\Http\Requests\StoreContactRequest;
+use App\Mail\ContactMail;
 use App\Models\AboutPage;
 use App\Models\BlogPost;
 use App\Models\Brand;
@@ -12,8 +14,10 @@ use App\Models\Offer;
 use App\Models\Product;
 use App\Models\Slider;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -819,6 +823,21 @@ class PageController extends Controller
     public function contact()
     {
         return view('pages.contact');
+    }
+
+    public function storeContact(StoreContactRequest $request): RedirectResponse
+    {
+        $adminEmail = setting('mail.contact_receive_mail', config('mail.from.address'));
+
+        Mail::to($adminEmail)->send(new ContactMail(
+            senderName: $request->validated('name'),
+            senderEmail: $request->validated('email'),
+            mailSubject: $request->validated('subject'),
+            messageBody: $request->validated('message'),
+            submittedAt: now()->format('M j, Y · h:i A'),
+        ));
+
+        return back()->with('contact_success', 'Your message has been sent. We\'ll get back to you within 24 hours.');
     }
 
     public function privacyPolicy()

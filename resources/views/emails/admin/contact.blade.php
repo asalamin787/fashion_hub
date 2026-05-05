@@ -216,8 +216,7 @@
                 style="background: #FFF8E7; border-left: 4px solid #D4B88C; padding: 12px 18px; margin-top: 8px;">
                 <span style="font-weight: 700; color: #8A6E3E;"><i class="bi bi-chat-dots-fill"></i> A customer has
                     submitted a support inquiry.</span>
-                <span style="font-size: 0.75rem; color: #6B5A4A; display: block; margin-top: 4px;">From: Alex Morgan ·
-                    Subject: Order #FH-4289-7XM status</span>
+                <span style="font-size: 0.75rem; color: #6B5A4A; display: block; margin-top: 4px;">From: {{ $senderName }} · Subject: {{ $mailSubject }}</span>
             </div>
         </div>
 
@@ -242,7 +241,7 @@
                 <div class="info-item" style="flex: 1; min-width: 140px;">
                     <div class="info-label" style="font-size: 0.65rem; text-transform: uppercase; color: #5B6E8C;">
                         Submitted On</div>
-                    <div class="info-value" style="font-weight: 600;">May 5, 2026 · 09:47 AM EST</div>
+                    <div class="info-value" style="font-weight: 600;">{{ $submittedAt }}</div>
                 </div>
                 <div class="info-item" style="flex: 1; min-width: 140px;">
                     <div class="info-label" style="font-size: 0.65rem; text-transform: uppercase; color: #5B6E8C;">
@@ -266,16 +265,12 @@
                 style="display: flex; flex-wrap: wrap; gap: 24px; background: #FCFAF5; border: 1px solid #EFE9E1; padding: 18px 24px;">
                 <div style="flex: 1;">
                     <p style="margin: 0 0 6px 0; font-size: 0.7rem; color: #7E6E5D;">FULL NAME</p>
-                    <p style="font-weight: 600; margin: 0;">Alex Morgan</p>
+                    <p style="font-weight: 600; margin: 0;">{{ $senderName }}</p>
                 </div>
                 <div style="flex: 1;">
                     <p style="margin: 0 0 6px 0; font-size: 0.7rem; color: #7E6E5D;">EMAIL ADDRESS</p>
-                    <p style="margin: 0;"><a href="mailto:alex.morgan@fashionhub.com"
-                            style="color: #A67C4A; text-decoration: underline;">alex.morgan@fashionhub.com</a></p>
-                </div>
-                <div style="flex: 1;">
-                    <p style="margin: 0 0 6px 0; font-size: 0.7rem; color: #7E6E5D;">PHONE NUMBER</p>
-                    <p style="margin: 0;">+1 (212) 555 1234</p>
+                    <p style="margin: 0;"><a href="mailto:{{ $senderEmail }}"
+                            style="color: #A67C4A; text-decoration: underline;">{{ $senderEmail }}</a></p>
                 </div>
             </div>
         </div>
@@ -284,8 +279,7 @@
         <div style="padding: 12px 32px 8px 32px;">
             <div style="background: #FCFAF5; border: 1px solid #EFE9E1; padding: 14px 20px;">
                 <div class="info-label" style="font-size: 0.7rem; margin-bottom: 6px;">SUBJECT</div>
-                <div class="info-value" style="font-weight: 700; font-size: 1rem;">Question about order status and
-                    delivery timeline</div>
+                <div class="info-value" style="font-weight: 700; font-size: 1rem;">{{ $mailSubject }}</div>
             </div>
         </div>
 
@@ -294,21 +288,14 @@
             <div class="message-box" style="background: #FCFAF5; border: 1px solid #EFE9E1; padding: 20px 24px;">
                 <div class="info-label" style="font-size: 0.7rem; margin-bottom: 10px;">MESSAGE CONTENT</div>
                 <div class="message-content"
-                    style="font-size: 0.9rem; line-height: 1.5; color: #2F2A24; background: #FFFFFF; padding: 18px; border: 1px solid #EDE6DF;">
-                    Hello FashionHub team,<br><br>
-                    I placed an order on May 4th (Order #FH-4289-7XM) and the tracking information hasn't been updated
-                    for the past 48 hours.<br><br>
-                    Could you please check the status of my shipment? I need the items for an event on May 10th. Also,
-                    is it possible to upgrade the shipping if it's delayed?<br><br>
-                    Thank you for your help.<br><br>
-                    Best regards,<br>
-                    Alex Morgan
+                    style="font-size: 0.9rem; line-height: 1.5; color: #2F2A24; background: #FFFFFF; padding: 18px; border: 1px solid #EDE6DF; white-space: pre-wrap;">
+                    {!! nl2br(e($messageBody)) !!}
                 </div>
             </div>
         </div>
 
         <!-- Additional Context (Order Reference) -->
-        <div style="padding: 8px 32px 12px 32px;">
+        {{-- <div style="padding: 8px 32px 12px 32px;">
             <div style="background: #F5F7FC; border: 1px solid #E9EDF2; padding: 16px 20px;">
                 <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between;">
                     <div>
@@ -329,7 +316,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Admin Actions Panel (Response Options) -->
         <div style="padding: 20px 32px 16px 32px;">
@@ -337,15 +324,9 @@
                 style="font-weight: 700; font-size: 0.9rem; margin-bottom: 14px; color: #2F2A24; border-left: 4px solid #D4B88C; padding-left: 14px;">
                 ADMIN RESPONSE ACTIONS</h3>
             <div class="admin-actions" style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <a href="#" class="btn-admin-primary"
+                <a href="mailto:{{ $senderEmail }}" class="btn-admin-primary"
                     style="background: #0F2B3D; color: white; padding: 10px 24px; text-decoration: none; font-weight: 600; display: inline-block;">✉️
                     REPLY TO CUSTOMER</a>
-                <a href="#" class="btn-admin-secondary"
-                    style="background: transparent; color: #0F2B3D; padding: 10px 24px; text-decoration: none; font-weight: 600; display: inline-block; border: 1px solid #C4B5A0;">📋
-                    VIEW IN CRM</a>
-                <a href="#" class="btn-admin-secondary"
-                    style="background: transparent; color: #0F2B3D; padding: 10px 24px; text-decoration: none; font-weight: 600; display: inline-block; border: 1px solid #C4B5A0;">🏷️
-                    MARK AS RESOLVED</a>
             </div>
         </div>
 
@@ -361,7 +342,7 @@
         </div>
 
         <!-- Support Ticket Info -->
-        <div style="padding: 8px 32px 20px 32px;">
+        {{-- <div style="padding: 8px 32px 20px 32px;">
             <div style="background: #F9F6F0; border-left: 4px solid #C4A06A; padding: 16px 20px;">
                 <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                     <div>
@@ -378,7 +359,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- ========= FOOTER ========= -->
         <div style="background: #FFFFFF; padding: 24px 32px 28px 32px; border-top: 1px solid #EDE6DF;">
@@ -392,7 +373,7 @@
                     Please do not reply to this email.
                 </p>
                 <p style="font-size: 0.6rem; margin-top: 12px;">
-                    <a href="#" style="color: #8E7A64;">Admin Dashboard</a> | <a href="#"
+                    <a href="{{ auth()->check() ? url('admin') : route('login') }}" style="color: #8E7A64;">Admin Dashboard</a> | <a href="#"
                         style="color: #8E7A64;">Support Settings</a> | <a href="#"
                         style="color: #8E7A64;">Response Templates</a>
                 </p>
