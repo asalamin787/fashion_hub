@@ -18,7 +18,7 @@
                 <div class="col-lg-9">
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body p-4 p-lg-5">
-                            <span class="badge rounded-pill text-bg-light mb-3">Customer Dashboard</span>
+                            <span class="badge text-bg-light mb-3">Customer Dashboard</span>
                             <h1 class="h2 fw-bold mb-2">Welcome back, {{ $user->name }}</h1>
                             <p class="text-muted mb-0">Track orders, update your details, and stay on top of every purchase from one polished account hub.</p>
                         </div>
@@ -35,14 +35,14 @@
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h2 class="h4 mb-0">Recent Orders</h2>
-                                <a href="{{ route('account.orders') }}" class="btn btn-outline-dark btn-sm rounded-pill px-3">View all orders</a>
+                                <a href="{{ route('account.orders') }}" class="btn btn-outline-dark btn-sm px-3">View all orders</a>
                             </div>
 
                             @if ($orders->isEmpty())
                                 <div class="text-center py-5">
                                     <h3 class="h5">No orders yet</h3>
                                     <p class="text-muted mb-4">Once you place your first order, it will appear here with live status tracking.</p>
-                                    <a href="{{ route('shop') }}" class="btn btn-primary rounded-pill px-4">Start shopping</a>
+                                    <a href="{{ route('shop') }}" class="btn btn-primary px-4">Start shopping</a>
                                 </div>
                             @else
                                 <div class="table-responsive">
@@ -65,7 +65,7 @@
                                                     <td>${{ number_format((float) $order->total_amount, 2) }}</td>
                                                     <td><span class="badge text-bg-{{ $statusColor($order->order_status->value) }}">{{ ucfirst($order->order_status->value) }}</span></td>
                                                     <td><span class="badge text-bg-{{ $statusColor($order->payment_status->value) }}">{{ ucfirst(str_replace('_', ' ', $order->payment_status->value)) }}</span></td>
-                                                    <td class="text-end"><a href="{{ route('account.orders.show', $order->order_number) }}" class="btn btn-sm btn-outline-dark rounded-pill">View</a></td>
+                                                    <td class="text-end"><a href="{{ route('account.orders.show', $order->order_number) }}" class="btn btn-sm btn-outline-dark">View</a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

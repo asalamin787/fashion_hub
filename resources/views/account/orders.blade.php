@@ -21,14 +21,14 @@
                                     <h1 class="h3 fw-bold mb-1">My Orders</h1>
                                     <p class="text-muted mb-0">A full history of your purchases, statuses, and totals.</p>
                                 </div>
-                                <a href="{{ route('shop') }}" class="btn btn-primary rounded-pill px-4">Continue shopping</a>
+                                <a href="{{ route('shop') }}" class="btn btn-primary px-4">Continue shopping</a>
                             </div>
 
                             @if ($orders->isEmpty())
                                 <div class="text-center py-5">
                                     <h2 class="h5">Your order history is empty</h2>
                                     <p class="text-muted mb-4">You have not placed any orders yet.</p>
-                                    <a href="{{ route('shop') }}" class="btn btn-outline-dark rounded-pill px-4">Browse products</a>
+                                    <a href="{{ route('shop') }}" class="btn btn-outline-dark px-4">Browse products</a>
                                 </div>
                             @else
                                 <div class="table-responsive">
@@ -53,7 +53,7 @@
                                                     <td>${{ number_format((float) $order->total_amount, 2) }}</td>
                                                     <td><span class="badge text-bg-{{ $statusColor($order->order_status->value) }}">{{ ucfirst($order->order_status->value) }}</span></td>
                                                     <td><span class="badge text-bg-{{ $statusColor($order->payment_status->value) }}">{{ ucfirst(str_replace('_', ' ', $order->payment_status->value)) }}</span></td>
-                                                    <td class="text-end"><a href="{{ route('account.orders.show', $order->order_number) }}" class="btn btn-sm btn-outline-dark rounded-pill">Details</a></td>
+                                                    <td class="text-end"><a href="{{ route('account.orders.show', $order->order_number) }}" class="btn btn-sm btn-outline-dark">Details</a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

@@ -46,7 +46,7 @@
                                                 <td>${{ number_format((float) $item->line_total, 2) }}</td>
                                                 <td class="text-end">
                                                     @if ($item->product)
-                                                        <a href="{{ route('product.details', $item->product->slug) }}" class="btn btn-sm btn-outline-dark rounded-pill">View product</a>
+                                                        <a href="{{ route('product.details', $item->product->slug) }}" class="btn btn-sm btn-outline-dark">View product</a>
                                                     @endif
                                                 </td>
                                             </tr>

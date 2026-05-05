@@ -63,11 +63,11 @@ class SettingForm
                                             ->live()
                                             ->default('text')
                                             ->options(SettingFieldRenderer::getTypeOptions()),
-                                        Textarea::make('details_json')
-                                            ->label('Details JSON')
-                                            ->rows(6)
-                                            ->columnSpanFull()
-                                            ->placeholder('{"help":"Shown under the input","options":{"cod":"Cash on Delivery"}}'),
+                                        // Textarea::make('details_json')
+                                        //     ->label('Details JSON')
+                                        //     ->rows(6)
+                                        //     ->columnSpanFull()
+                                        //     ->placeholder('{"help":"Shown under the input","options":{"cod":"Cash on Delivery"}}'),
                                     ]),
                                 Tab::make('Value')
                                     ->icon(Heroicon::AdjustmentsHorizontal)

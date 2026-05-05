@@ -16,7 +16,7 @@
                                     <div class="col-md-6"><label class="form-label">City</label><input name="city" value="{{ old('city', $user->city) }}" class="form-control" required></div>
                                     <div class="col-md-6"><label class="form-label">Country</label><input name="country" value="{{ old('country', $user->country) }}" class="form-control" required></div>
                                 </div>
-                                <button class="btn btn-primary rounded-pill px-4 mt-4">Save address</button>
+                                <button class="btn btn-primary px-4 mt-4">Save address</button>
                             </form>
                         </div>
                     </div>

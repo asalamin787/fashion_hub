@@ -54,8 +54,8 @@ class SettingFieldRenderer
             'textarea' => Textarea::make($statePath)->rows(4),
             'rich_text' => RichEditor::make($statePath)->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList', 'link', 'redo', 'undo']),
             'number' => TextInput::make($statePath)->numeric()->inputMode('decimal'),
-            'email' => TextInput::make($statePath)->email(),
-            'url' => TextInput::make($statePath)->url(),
+            'email' => TextInput::make($statePath)->extraInputAttributes(['type' => 'email']),
+            'url' => TextInput::make($statePath)->extraInputAttributes(['type' => 'url']),
             'password' => TextInput::make($statePath)->password()->revealable(),
             'checkbox' => Checkbox::make($statePath),
             'toggle' => Toggle::make($statePath)->inline(false),
@@ -84,11 +84,14 @@ class SettingFieldRenderer
             TextInput::make($valueName)
                 ->label('Value')
                 ->visible(fn (Get $get): bool => in_array((string) $get($typeName), ['text', 'number', 'email', 'url', 'password'], true))
-                ->email(fn (Get $get): bool => $get($typeName) === 'email')
-                ->url(fn (Get $get): bool => $get($typeName) === 'url')
                 ->numeric(fn (Get $get): bool => $get($typeName) === 'number')
                 ->password(fn (Get $get): bool => $get($typeName) === 'password')
-                ->revealable(fn (Get $get): bool => $get($typeName) === 'password'),
+                ->revealable(fn (Get $get): bool => $get($typeName) === 'password')
+                ->extraInputAttributes(fn (Get $get): array => match ((string) $get($typeName)) {
+                    'email' => ['type' => 'email'],
+                    'url' => ['type' => 'url'],
+                    default => [],
+                }),
             Textarea::make($valueName)
                 ->label('Value')
                 ->visible(fn (Get $get): bool => $get($typeName) === 'textarea')

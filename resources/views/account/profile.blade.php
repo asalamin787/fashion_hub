@@ -18,7 +18,7 @@
                                     <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-control" required></div>
                                     <div class="col-md-6"><label class="form-label">Phone</label><input name="phone" value="{{ old('phone', $user->phone) }}" class="form-control"></div>
                                 </div>
-                                <button class="btn btn-primary rounded-pill px-4 mt-4">Save profile</button>
+                                <button class="btn btn-primary px-4 mt-4">Save profile</button>
                             </form>
                         </div>
                     </div>

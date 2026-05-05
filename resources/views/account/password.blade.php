@@ -16,7 +16,7 @@
                                     <div class="col-md-6"><label class="form-label">New Password</label><input type="password" name="password" class="form-control" required><div class="form-text">Use at least 8 characters and mix cases, numbers, and symbols.</div></div>
                                     <div class="col-md-6"><label class="form-label">Confirm Password</label><input type="password" name="password_confirmation" class="form-control" required></div>
                                 </div>
-                                <button class="btn btn-primary rounded-pill px-4 mt-4">Update password</button>
+                                <button class="btn btn-primary px-4 mt-4">Update password</button>
                             </form>
                         </div>
                     </div>

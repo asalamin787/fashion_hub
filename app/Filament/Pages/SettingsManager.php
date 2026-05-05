@@ -252,7 +252,7 @@ class SettingsManager extends Page
                 ->size('sm')
                 ->modalWidth(Width::FiveExtraLarge)
                 ->stickyModalHeader()
-                ->fillForm($this->settingsService()->getSettingFormData($setting))
+                ->fillForm(fn (): array => $this->settingsService()->getSettingFormData($setting))
                 ->schema([
                     ...$this->getMetadataSchema(),
                     ...SettingFieldRenderer::makeDynamicValueFields(),
@@ -362,6 +362,7 @@ class SettingsManager extends Page
                     TextInput::make('display_name')
                         ->required()
                         ->maxLength(191)
+                        ->columnSpanFull()
                         ->placeholder('Site Title'),
                     Select::make('type')
                         ->required()
@@ -369,11 +370,11 @@ class SettingsManager extends Page
                         ->live()
                         ->options(SettingFieldRenderer::getTypeOptions())
                         ->default('text'),
-                    Textarea::make('details_json')
-                        ->label('Details JSON')
-                        ->rows(6)
-                        ->placeholder('{"help":"Shown below field","options":{"cod":"Cash on Delivery"}}')
-                        ->columnSpanFull(),
+                    // Textarea::make('details_json')
+                    //     ->label('Details JSON')
+                    //     ->rows(6)
+                    //     ->placeholder('{"help":"Shown below field","options":{"cod":"Cash on Delivery"}}')
+                    //     ->columnSpanFull(),
                     TextInput::make('order')
                         ->required()
                         ->numeric()

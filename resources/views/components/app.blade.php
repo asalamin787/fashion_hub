@@ -1,31 +1,41 @@
+@php
+    $socialLinks = \App\Models\Setting::group('social');
+    $siteLinks = \App\Models\Setting::group('site');
+    $seoLinks = \App\Models\Setting::group('seo');
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FashionHub - Premium Fashion for Everyone</title>
-    <meta name="description" content="FashionHub brings curated fashion trends, style guides, and premium wardrobe inspiration for modern shoppers.">
-    <meta name="keywords" content="fashion, style, fashion blog, trends, wardrobe, shopping">
+    <title>{{ $seoLinks->get('meta_title') ?? 'FashionHub - Premium Fashion for Everyone' }}</title>
+    <meta name="description"
+        content="{{ $seoLinks->get('meta_description') ?? 'FashionHub brings curated fashion trends, style guides, and premium wardrobe inspiration for modern shoppers.' }}">
+    <meta name="keywords" content="{{ $seoLinks->get('meta_keywords') ?? 'fashion, style, fashion blog, trends, wardrobe, shopping' }}">
     <meta name="robots" content="index, follow">
     <meta name="author" content="FashionHub">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="canonical" href="{{ url()->current() }}">
-    
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/fav-icon.png') }}">
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
-    <link rel="apple-touch-icon" href="{{ asset('assets/images/fav-icon.png') }}">
+
+    <link rel="icon" type="image/png"
+        href="{{ Storage::url($siteLinks->get('favicon') ?? 'assets/images/fav-icon.png') }}">
+    <link rel="shortcut icon" href="{{ Storage::url($siteLinks->get('favicon') ?? 'assets/images/fav-icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ Storage::url($siteLinks->get('favicon') ?? 'assets/images/fav-icon.png') }}">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="FashionHub">
-    <meta property="og:title" content="FashionHub - Premium Fashion for Everyone">
-    <meta property="og:description" content="FashionHub brings curated fashion trends, style guides, and premium wardrobe inspiration for modern shoppers.">
+    <meta property="og:title" content="{{ $seoLinks->get('meta_title') ?? 'FashionHub - Premium Fashion for Everyone' }}">
+    <meta property="og:description"
+        content="{{ $seoLinks->get('meta_description') ?? 'FashionHub brings curated fashion trends, style guides, and premium wardrobe inspiration for modern shoppers.' }}">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:image" content="{{ asset('assets/images/logo/logo.png') }}">
+    <meta property="og:image" content="{{ Storage::url($siteLinks->get('og_image') ?? 'assets/images/logo/logo.png') }}">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="FashionHub - Premium Fashion for Everyone">
-    <meta name="twitter:description" content="FashionHub brings curated fashion trends, style guides, and premium wardrobe inspiration for modern shoppers.">
+    <meta name="twitter:description"
+        content="FashionHub brings curated fashion trends, style guides, and premium wardrobe inspiration for modern shoppers.">
     <meta name="twitter:image" content="{{ asset('assets/images/logo/logo.png') }}">
 
     @stack('meta')
@@ -47,10 +57,10 @@
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
-                <i class="fas fa-shopping-bag"></i> FashionHub
+                {{-- <i class="fas fa-shopping-bag"></i> FashionHub --}}
 
-                <!-- <img src="logo/logo.png" width="auto" height="54px" alt="FashionHub Logo"
-                    class="navbar-logo"> -->
+                <img src="{{ Storage::url($siteLinks->get('nav_logo') ?? 'assets/images/logo/logo.png') }}"
+                    width="auto" height="54px" alt="FashionHub Logo" class="navbar-logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -75,7 +85,8 @@
                 </ul>
                 <div class="navbar-icons">
                     <a href="#"><i class="fas fa-search"></i></a>
-                    <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}"><i class="fas fa-user"></i></a>
+                    <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}"><i
+                            class="fas fa-user"></i></a>
                     <a href="{{ route('wishlist') }}" title="WishList" class="position-relative">
                         <i class="fas fa-heart"></i>
                         @php $wishlistCount = count(session('wishlist', [])); @endphp
@@ -107,12 +118,16 @@
     {{ $slot }}
 
     <!-- Cart Offcanvas -->
-    <div class="offcanvas offcanvas-end cart-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
-        <div class="offcanvas-header cart-offcanvas-header" style="background: linear-gradient(135deg, #865749 0%, #6d3f35 100%); border-bottom: none;">
-            <h5 class="offcanvas-title" id="cartOffcanvasLabel" style="color: white; font-weight: 700; font-size: 18px;">
+    <div class="offcanvas offcanvas-end cart-offcanvas" tabindex="-1" id="cartOffcanvas"
+        aria-labelledby="cartOffcanvasLabel">
+        <div class="offcanvas-header cart-offcanvas-header"
+            style="background: linear-gradient(135deg, #865749 0%, #6d3f35 100%); border-bottom: none;">
+            <h5 class="offcanvas-title" id="cartOffcanvasLabel"
+                style="color: white; font-weight: 700; font-size: 18px;">
                 <i class="fas fa-shopping-bag me-2"></i>Your Cart
             </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
         </div>
         <div class="cart-offcanvas-content" data-cart-offcanvas-content>
             @include('components.cart-offcanvas-content', ['cart' => $cart, 'cartCount' => $cartCount])
@@ -124,14 +139,28 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <h5><img src="{{ asset('assets/images/logo.png') }}" width="230" alt="FashionHub Logo"></h5>
+                    <h5><img src="{{ Storage::url($siteLinks->get('footer_logo') ?? 'assets/images/logo/logo.png') }}"
+                            width="230" alt="FashionHub Logo"></h5>
                     <p>Your premier destination for curated fashion collections. Discover timeless elegance and modern
                         trends, handpicked for you.</p>
+
                     <div class="footer-social">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+                        @if ($socialLinks->get('facebook'))
+                            <a href="{{ $socialLinks->get('facebook') }}" aria-label="Facebook" target="_blank"
+                                rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                        @endif
+                        @if ($socialLinks->get('instagram'))
+                            <a href="{{ $socialLinks->get('instagram') }}" aria-label="Instagram" target="_blank"
+                                rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                        @endif
+                        @if ($socialLinks->get('twitter'))
+                            <a href="{{ $socialLinks->get('twitter') }}" aria-label="Twitter" target="_blank"
+                                rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+                        @endif
+                        @if ($socialLinks->get('pinterest'))
+                            <a href="{{ $socialLinks->get('pinterest') }}" aria-label="Pinterest" target="_blank"
+                                rel="noopener noreferrer"><i class="fab fa-pinterest"></i></a>
+                        @endif
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4">
@@ -146,7 +175,8 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h5><i class="fas fa-headset"></i> Support</h5>
                     <ul>
-                        <li><a href="{{ auth()->check() ? route('account.orders') : route('login') }}">Track Order</a></li>
+                        <li><a href="{{ auth()->check() ? route('account.orders') : route('login') }}">Track Order</a>
+                        </li>
                         <li><a href="#">Returns</a></li>
                         <li><a href="#">Shipping Info</a></li>
                         <li><a href="{{ route('faq') }}">FAQ</a></li>
@@ -163,9 +193,9 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h5><i class="fas fa-envelope"></i> Contact</h5>
                     <ul>
-                        <li>123 Fashion St, NY 10001</li>
-                        <li>+1 (555) 123-4567</li>
-                        <li>info@fashionhub.com</li>
+                        <li>{{ $siteLinks->get('address') ?? '123 Fashion St, NY 10001' }}</li>
+                        <li>{{ $siteLinks->get('phone') ?? '+1 (555) 123-4567' }}</li>
+                        <li>{{ $siteLinks->get('site-email') ?? 'info@fashionhub.com' }}</li>
                     </ul>
                 </div>
             </div>
@@ -245,10 +275,21 @@
             min-width: 240px;
         }
 
-        .fh-toast.fh-toast-success { background: linear-gradient(135deg, #865749, #6d3f35); }
-        .fh-toast.fh-toast-error   { background: linear-gradient(135deg, #dc3545, #b02030); }
-        .fh-toast.fh-toast-info    { background: linear-gradient(135deg, #0d6efd, #0a58ca); }
-        .fh-toast.fh-toast-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .fh-toast.fh-toast-success {
+            background: linear-gradient(135deg, #865749, #6d3f35);
+        }
+
+        .fh-toast.fh-toast-error {
+            background: linear-gradient(135deg, #dc3545, #b02030);
+        }
+
+        .fh-toast.fh-toast-info {
+            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+        }
+
+        .fh-toast.fh-toast-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
 
         .fh-flash-stack {
             display: grid;
@@ -315,13 +356,31 @@
             color: #0d6efd;
         }
 
-        .fh-toast-icon { font-size: 16px; flex-shrink: 0; }
-        .fh-toast-msg  { flex: 1; line-height: 1.4; }
-        .fh-toast-fade { opacity: 0; transition: opacity 0.35s ease; }
+        .fh-toast-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .fh-toast-msg {
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        .fh-toast-fade {
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
 
         @keyframes fhToastIn {
-            from { opacity: 0; transform: translateX(30px); }
-            to   { opacity: 1; transform: translateX(0);    }
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
     </style>
 
@@ -335,7 +394,12 @@
                 return;
             }
 
-            const iconMap = { success: '✓', error: '✕', info: 'ℹ', warning: '!' };
+            const iconMap = {
+                success: '✓',
+                error: '✕',
+                info: 'ℹ',
+                warning: '!'
+            };
             const toast = document.createElement('div');
             toast.className = 'fh-toast fh-toast-' + type;
             toast.innerHTML =
@@ -346,7 +410,9 @@
 
             setTimeout(function() {
                 toast.classList.add('fh-toast-fade');
-                setTimeout(function() { toast.remove(); }, 370);
+                setTimeout(function() {
+                    toast.remove();
+                }, 370);
             }, 3000);
         };
 
@@ -417,12 +483,14 @@
                 window.showToast(data.message || 'Product added to cart.', 'success');
 
                 if (data.removed_from_wishlist && data.product_id) {
-                    document.querySelectorAll(`.wishlist-toggle-btn[data-product-id="${data.product_id}"] i`).forEach(function(icon) {
-                        icon.classList.add('far');
-                        icon.classList.remove('fas');
-                    });
+                    document.querySelectorAll(`.wishlist-toggle-btn[data-product-id="${data.product_id}"] i`)
+                        .forEach(function(icon) {
+                            icon.classList.add('far');
+                            icon.classList.remove('fas');
+                        });
 
-                    const wishlistItem = document.querySelector(`.wishlist-item[data-product-id="${data.product_id}"]`);
+                    const wishlistItem = document.querySelector(
+                        `.wishlist-item[data-product-id="${data.product_id}"]`);
 
                     if (wishlistItem) {
                         wishlistItem.style.transition = 'opacity 0.3s';
