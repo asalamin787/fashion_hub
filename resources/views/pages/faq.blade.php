@@ -4,11 +4,19 @@
         <meta name="description" content="{{ $metaDescription }}">
     @endpush
 
-    <section class="py-5" style="background:linear-gradient(135deg,#efe2d7,#f8f4ef);">
-        <div class="container text-center py-4">
-            <span class="badge rounded-pill text-bg-light mb-3">Support</span>
-            <h1 class="display-5 fw-bold">Frequently Asked Questions</h1>
-            <p class="text-muted col-lg-7 mx-auto mb-0">Clear answers about ordering, payments, shipping, returns, and how FashionHub works.</p>
+    @push('css')
+        <link rel="stylesheet" href="{{ asset('assets/css/products.css') }}">
+    @endpush
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Frequently Asked Questions</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">FAQ</li>
+                </ol>
+            </nav>
         </div>
     </section>
 

@@ -184,8 +184,8 @@
                     <ul>
                         <li><a href="{{ auth()->check() ? route('account.orders') : route('login') }}">Track Order</a>
                         </li>
-                        <li><a href="#">Returns</a></li>
-                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="{{ route('returns.policy') }}">Returns</a></li>
+                        <li><a href="{{ route('shipping.info') }}">Shipping Info</a></li>
                         <li><a href="{{ route('faq') }}">FAQ</a></li>
                     </ul>
                 </div>

@@ -49,6 +49,8 @@ Route::get('/privacy-policy', [StaticPageController::class, 'show'])->defaults('
 Route::get('/terms-and-conditions', [StaticPageController::class, 'show'])->defaults('slug', 'terms-and-conditions')->name('terms.of.condition');
 Route::get('/terms-of-condition', [StaticPageController::class, 'show'])->defaults('slug', 'terms-and-conditions');
 Route::get('/cookie-policy', [StaticPageController::class, 'show'])->defaults('slug', 'cookie-policy')->name('cookie.policy');
+Route::get('/returns', [StaticPageController::class, 'show'])->defaults('slug', 'returns-policy')->name('returns.policy');
+Route::get('/shipping-info', [StaticPageController::class, 'show'])->defaults('slug', 'shipping-info')->name('shipping.info');
 Route::get('/faq', [StaticPageController::class, 'faq'])->name('faq');
 Route::get('/pages/{slug}', [StaticPageController::class, 'show'])->name('pages.show');
 

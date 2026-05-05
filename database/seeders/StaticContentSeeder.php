@@ -37,6 +37,22 @@ class StaticContentSeeder extends Seeder
                 'content' => '<h2>Why we use cookies</h2><p>Cookies help keep your cart, preferences, and browsing experience consistent across visits.</p><h2>Types of cookies</h2><p>We may use essential, functional, and analytics cookies to improve performance and convenience.</p><h2>Managing cookies</h2><p>You can control cookies through your browser settings, though some storefront features may be affected.</p>',
                 'status' => true,
             ],
+            [
+                'title' => 'Returns Policy',
+                'slug' => 'returns-policy',
+                'meta_title' => 'Returns Policy | FashionHub',
+                'meta_description' => 'Review the return window, item conditions, and refund workflow for FashionHub orders.',
+                'content' => '<h2>Return window</h2><p>Most items can be returned within 7 days of delivery when unused and in original condition with tags and packaging.</p><h2>Non-returnable items</h2><p>Final sale, intimate wear, and damaged-after-use items are not eligible unless defective on arrival.</p><h2>Refund process</h2><p>After quality checks, approved refunds are issued to the original payment method. Processing time can vary by payment provider.</p>',
+                'status' => true,
+            ],
+            [
+                'title' => 'Shipping Information',
+                'slug' => 'shipping-info',
+                'meta_title' => 'Shipping Information | FashionHub',
+                'meta_description' => 'Learn about shipping timelines, delivery coverage, and order tracking for FashionHub.',
+                'content' => '<h2>Delivery timeline</h2><p>Orders are usually processed within 24 hours. Standard delivery generally takes 2-5 business days depending on location.</p><h2>Shipping coverage</h2><p>We deliver nationwide with selected courier partners. Remote areas may require additional transit time.</p><h2>Tracking updates</h2><p>Once dispatched, you will receive tracking details by email and can monitor order status from your account dashboard.</p>',
+                'status' => true,
+            ],
         ];
 
         foreach ($pages as $pageData) {
