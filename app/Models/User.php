@@ -52,15 +52,15 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        $isActive = array_key_exists('is_active', $this->getAttributes())
-            ? (bool) $this->is_active
-            : ! in_array($this->status, ['inactive', 'banned'], true);
+        // $isActive = array_key_exists('is_active', $this->getAttributes())
+        //     ? (bool) $this->is_active
+        //     : ! in_array($this->status, ['inactive', 'banned'], true);
 
         if ($panel->getId() === 'admin') {
-            return $this->role === 'admin' && $isActive;
+            return $this->role === 'admin';
         }
 
-        return $isActive;
+        // return $isActive;
     }
 
     public function carts(): HasMany
