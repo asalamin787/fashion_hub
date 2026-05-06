@@ -145,10 +145,16 @@
                                 <span>Subtotal</span>
                                 <strong>${{ number_format((float) $order->subtotal, 2) }}</strong>
                             </div>
-                            @if ((float) $order->discount_amount > 0)
+                            @if ((float) $order->coupon_discount_amount > 0)
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span>{{ $order->discount_label ?? 'Discount' }}</span>
-                                    <strong class="text-success">-${{ number_format((float) $order->discount_amount, 2) }}</strong>
+                                    <span>Coupon Discount @if ($order->coupon_code)<small class="text-success">({{ $order->coupon_code }})</small>@endif</span>
+                                    <strong class="text-success">-${{ number_format((float) $order->coupon_discount_amount, 2) }}</strong>
+                                </div>
+                            @endif
+                            @if ((float) $order->first_order_discount_amount > 0)
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>First Order Discount ({{ number_format((float) $order->first_order_discount_rate, 0) }}%)</span>
+                                    <strong class="text-success">-${{ number_format((float) $order->first_order_discount_amount, 2) }}</strong>
                                 </div>
                             @endif
                             @if ((float) $order->shipping_amount > 0)

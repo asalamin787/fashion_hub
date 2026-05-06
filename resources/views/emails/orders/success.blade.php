@@ -298,9 +298,13 @@
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span
                                 style="color:#6F5E4D;">Tax</span> <strong>${{ number_format($order->tax_amount, 2) }}</strong></div>
                         @endif
-                        @if($order->discount_amount > 0)
+                        @if($order->coupon_discount_amount > 0)
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span
-                            style="color:#6F5E4D;">{{ $order->discount_label ?? 'Discount' }}</span> <strong style="color:#c0392b;">-${{ number_format($order->discount_amount, 2) }}</strong></div>
+                            style="color:#6F5E4D;">Coupon Discount @if($order->coupon_code) ({{ $order->coupon_code }}) @endif</span> <strong style="color:#c0392b;">-${{ number_format($order->coupon_discount_amount, 2) }}</strong></div>
+                        @endif
+                        @if($order->first_order_discount_amount > 0)
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span
+                            style="color:#6F5E4D;">First Order Discount ({{ number_format((float) $order->first_order_discount_rate, 0) }}%)</span> <strong style="color:#c0392b;">-${{ number_format($order->first_order_discount_amount, 2) }}</strong></div>
                         @endif
                         <div style="height: 1px; background: #E1D8CD; margin: 8px 0 10px;"></div>
                         <div style="font-size: 1.2rem; font-weight: 800;">Total: <span

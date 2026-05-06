@@ -642,11 +642,19 @@
                             <span class="value">${{ number_format($order->subtotal ?? 0, 2) }}</span>
                         </div>
 
-                        @if ($order->discount_amount > 0)
+                        @if ($order->coupon_discount_amount > 0)
                             <div class="summary-row">
-                                <span>{{ $order->discount_label ?? 'Discount' }}</span>
+                                <span>Coupon Discount @if ($order->coupon_code)<small class="text-success">({{ $order->coupon_code }})</small>@endif</span>
                                 <span
-                                    class="value text-success">-${{ number_format($order->discount_amount, 2) }}</span>
+                                    class="value text-success">-${{ number_format($order->coupon_discount_amount, 2) }}</span>
+                            </div>
+                        @endif
+
+                        @if ($order->first_order_discount_amount > 0)
+                            <div class="summary-row">
+                                <span>First Order Discount ({{ number_format((float) $order->first_order_discount_rate, 0) }}%)</span>
+                                <span
+                                    class="value text-success">-${{ number_format($order->first_order_discount_amount, 2) }}</span>
                             </div>
                         @endif
 

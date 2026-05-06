@@ -198,6 +198,30 @@ class Order extends Model
         return null;
     }
 
+    public function getFirstOrderDiscountAmountAttribute(): float
+    {
+        if (! $this->first_order_discount_applied) {
+            return 0.0;
+        }
+
+        $rate = (float) ($this->first_order_discount_rate ?? 0);
+
+        if ($rate <= 0) {
+            return 0.0;
+        }
+
+        return min(round((float) $this->subtotal * ($rate / 100), 2), (float) $this->discount_amount);
+    }
+
+    public function getCouponDiscountAmountAttribute(): float
+    {
+        if (! filled($this->coupon_code)) {
+            return 0.0;
+        }
+
+        return max(round((float) $this->discount_amount - $this->first_order_discount_amount, 2), 0.0);
+    }
+
     /**
      * @return array<string, string>
      */

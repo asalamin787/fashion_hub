@@ -231,11 +231,15 @@
                             <span>Subtotal</span>
                             <span class="value" data-cart-summary-subtotal>${{ number_format((float) $subtotal, 2) }}</span>
                         </div>
-                        <div class="summary-row" data-cart-summary-discount-row style="{{ (float) $discount > 0 ? '' : 'display: none;' }}">
-                            <span data-cart-summary-discount-label>
-                                {{ $firstOrderDiscount ? 'First Order Discount (15%)' : 'Discount' }}
+                        <div class="summary-row" data-cart-summary-coupon-row style="{{ $coupon ? '' : 'display: none;' }}">
+                            <span data-cart-summary-coupon-label>
+                                Coupon Discount @if ($coupon)<small class="text-success">({{ $coupon['code'] }})</small>@endif
                             </span>
-                            <span class="value" data-cart-summary-discount>-${{ number_format((float) $discount, 2) }}</span>
+                            <span class="value" data-cart-summary-coupon>-${{ number_format((float) ($coupon['discount_amount'] ?? 0), 2) }}</span>
+                        </div>
+                        <div class="summary-row" data-cart-summary-first-order-row style="{{ $firstOrderDiscount ? '' : 'display: none;' }}">
+                            <span>First Order Discount (15%)</span>
+                            <span class="value" data-cart-summary-first-order>-${{ number_format((float) ($firstOrderDiscount['discount_amount'] ?? 0), 2) }}</span>
                         </div>
                         <div class="summary-row" data-cart-summary-tax-row style="{{ (float) $taxAmount > 0 ? '' : 'display: none;' }}">
                             <span data-cart-summary-tax-label>Tax ({{ number_format((float) $taxRate, 2) }}%)</span>
@@ -280,9 +284,11 @@
             }
 
             function updateCouponState(data) {
-                const discountRow = document.querySelector('[data-cart-summary-discount-row]');
-                const discountLabelEl = document.querySelector('[data-cart-summary-discount-label]');
-                const discountEl = document.querySelector('[data-cart-summary-discount]');
+                const couponSummaryRow = document.querySelector('[data-cart-summary-coupon-row]');
+                const couponSummaryLabelEl = document.querySelector('[data-cart-summary-coupon-label]');
+                const couponSummaryEl = document.querySelector('[data-cart-summary-coupon]');
+                const firstOrderSummaryRow = document.querySelector('[data-cart-summary-first-order-row]');
+                const firstOrderSummaryEl = document.querySelector('[data-cart-summary-first-order]');
                 const taxRow = document.querySelector('[data-cart-summary-tax-row]');
                 const taxEl = document.querySelector('[data-cart-summary-tax]');
                 const taxLabelEl = document.querySelector('[data-cart-summary-tax-label]');
@@ -294,20 +300,31 @@
 
                 const coupon = data.applied_coupon ?? null;
                 const firstOrderDiscount = data.first_order_discount ?? null;
-                const discountValue = parseFloat(data.cart_discount ?? 0);
+                const couponDiscountValue = parseFloat(coupon?.discount_amount ?? 0);
+                const firstOrderDiscountValue = parseFloat(firstOrderDiscount?.discount_amount ?? 0);
                 const taxValue = parseFloat(data.cart_tax ?? 0);
                 const taxRate = data.cart_tax_rate ?? '0.00';
 
-                if (discountRow) {
-                    discountRow.style.display = discountValue > 0 ? '' : 'none';
+                if (couponSummaryRow) {
+                    couponSummaryRow.style.display = couponDiscountValue > 0 ? '' : 'none';
                 }
 
-                if (discountEl) {
-                    discountEl.textContent = `-$${(data.cart_discount ?? '0.00')}`;
+                if (couponSummaryEl) {
+                    couponSummaryEl.textContent = `-$${(coupon?.discount_amount_formatted ?? '0.00')}`;
                 }
 
-                if (discountLabelEl) {
-                    discountLabelEl.textContent = firstOrderDiscount ? 'First Order Discount (15%)' : 'Discount';
+                if (couponSummaryLabelEl) {
+                    couponSummaryLabelEl.innerHTML = coupon
+                        ? `Coupon Discount <small class="text-success">(${coupon.code})</small>`
+                        : 'Coupon Discount';
+                }
+
+                if (firstOrderSummaryRow) {
+                    firstOrderSummaryRow.style.display = firstOrderDiscountValue > 0 ? '' : 'none';
+                }
+
+                if (firstOrderSummaryEl) {
+                    firstOrderSummaryEl.textContent = `-$${(firstOrderDiscount?.discount_amount_formatted ?? '0.00')}`;
                 }
 
                 if (taxRow) {

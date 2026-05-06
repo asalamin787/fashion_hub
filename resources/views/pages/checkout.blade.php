@@ -432,19 +432,20 @@
                                 <span class="value">${{ number_format($subtotal, 2) }}</span>
                             </div>
 
-                            @if ($discount > 0)
+                            @if ($coupon)
                                 <div class="summary-row">
                                     <span>
-                                        @if ($firstOrderDiscount)
-                                            First Order Discount (15%)
-                                        @else
-                                            Discount
-                                            @if ($coupon)
-                                                <small class="text-success">({{ $coupon['code'] }})</small>
-                                            @endif
-                                        @endif
+                                        Coupon Discount
+                                        <small class="text-success">({{ $coupon['code'] }})</small>
                                     </span>
-                                    <span class="value text-success">-${{ number_format($discount, 2) }}</span>
+                                    <span class="value text-success">-${{ number_format((float) ($coupon['discount_amount'] ?? 0), 2) }}</span>
+                                </div>
+                            @endif
+
+                            @if ($firstOrderDiscount)
+                                <div class="summary-row">
+                                    <span>First Order Discount (15%)</span>
+                                    <span class="value text-success">-${{ number_format((float) ($firstOrderDiscount['discount_amount'] ?? 0), 2) }}</span>
                                 </div>
                             @endif
 

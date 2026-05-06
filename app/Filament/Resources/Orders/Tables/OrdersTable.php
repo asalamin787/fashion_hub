@@ -80,6 +80,27 @@ class OrdersTable
                     ->color('primary')
                     ->action(self::viewItemsAction()),
 
+                TextColumn::make('coupon_discount_amount')
+                    ->label('Coupon Discount')
+                    ->money('USD')
+                    ->state(fn (Order $record): float => (float) $record->coupon_discount_amount)
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->orderBy('discount_amount', $direction))
+                    ->toggleable()
+                    ->color(fn (Order $record): string => (float) $record->coupon_discount_amount > 0 ? 'success' : 'gray')
+                    ->formatStateUsing(fn (float $state): string => $state > 0 ? '-$'.number_format($state, 2) : '$0.00')
+                    ->tooltip(fn (Order $record): ?string => filled($record->coupon_code) ? 'Coupon: '.$record->coupon_code : null)
+                    ->action(self::viewItemsAction()),
+
+                TextColumn::make('first_order_discount_amount')
+                    ->label('First Order Discount')
+                    ->money('USD')
+                    ->state(fn (Order $record): float => (float) $record->first_order_discount_amount)
+                    ->toggleable()
+                    ->color(fn (Order $record): string => (float) $record->first_order_discount_amount > 0 ? 'success' : 'gray')
+                    ->formatStateUsing(fn (float $state): string => $state > 0 ? '-$'.number_format($state, 2) : '$0.00')
+                    ->tooltip(fn (Order $record): ?string => $record->first_order_discount_applied ? 'Rate: '.number_format((float) $record->first_order_discount_rate, 0).'%' : null)
+                    ->action(self::viewItemsAction()),
+
                 TextColumn::make('first_order_discount_applied')
                     ->label('First Order')
                     ->badge()

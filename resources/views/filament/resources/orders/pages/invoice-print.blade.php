@@ -246,10 +246,16 @@
                         <td class="value" style="border-bottom:1px solid #e5e7eb;">${{ number_format((float) $order->tax_amount, 2) }}</td>
                     </tr>
                 @endif
-                @if((float) $order->discount_amount > 0)
+                @if((float) $order->coupon_discount_amount > 0)
                     <tr>
-                        <td class="label discount" style="border-bottom:1px solid #e5e7eb;">{{ $order->discount_label ?? 'Discount' }}</td>
-                        <td class="value discount" style="border-bottom:1px solid #e5e7eb;">-${{ number_format((float) $order->discount_amount, 2) }}</td>
+                        <td class="label discount" style="border-bottom:1px solid #e5e7eb;">Coupon Discount @if ($order->coupon_code) ({{ $order->coupon_code }}) @endif</td>
+                        <td class="value discount" style="border-bottom:1px solid #e5e7eb;">-${{ number_format((float) $order->coupon_discount_amount, 2) }}</td>
+                    </tr>
+                @endif
+                @if((float) $order->first_order_discount_amount > 0)
+                    <tr>
+                        <td class="label discount" style="border-bottom:1px solid #e5e7eb;">First Order Discount ({{ number_format((float) $order->first_order_discount_rate, 0) }}%)</td>
+                        <td class="value discount" style="border-bottom:1px solid #e5e7eb;">-${{ number_format((float) $order->first_order_discount_amount, 2) }}</td>
                     </tr>
                 @endif
                 <tr class="total-row">

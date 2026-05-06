@@ -95,12 +95,18 @@
 						<td style="padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.86rem; font-weight:500; color:#e2e8f0;">Tax</td>
 						<td style="padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:right; font-size:0.86rem; color:#e2e8f0;">${{ number_format((float) $order->tax_amount, 2) }}</td>
 					</tr>
-					@if ((float) $order->discount_amount > 0)
+					@if ((float) $order->coupon_discount_amount > 0)
 						<tr style="background:transparent;">
 							<td style="padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.86rem; font-weight:500; color:#e2e8f0;">
-								{{ $order->discount_label ?? 'Discount' }}
+								Coupon Discount @if ($order->coupon_code)<span style="color:#86efac;">({{ $order->coupon_code }})</span>@endif
 							</td>
-							<td style="padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:right; font-size:0.86rem; color:#86efac;">-${{ number_format((float) $order->discount_amount, 2) }}</td>
+							<td style="padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:right; font-size:0.86rem; color:#86efac;">-${{ number_format((float) $order->coupon_discount_amount, 2) }}</td>
+						</tr>
+					@endif
+					@if ((float) $order->first_order_discount_amount > 0)
+						<tr style="background:transparent;">
+							<td style="padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.86rem; font-weight:500; color:#e2e8f0;">First Order Discount ({{ number_format((float) $order->first_order_discount_rate, 0) }}%)</td>
+							<td style="padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:right; font-size:0.86rem; color:#86efac;">-${{ number_format((float) $order->first_order_discount_amount, 2) }}</td>
 						</tr>
 					@endif
 					<tr style="background:rgba(255,255,255,0.05);">
