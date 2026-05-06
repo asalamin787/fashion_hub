@@ -388,6 +388,25 @@
     margin-top: auto;
 }
 
+/* Mobile specific adjustments for equal height cards */
+@media (max-width: 767.98px) {
+    .featured-products .product-image,
+    .new-arrivals-section .product-image,
+    .best-sellers-section .product-image {
+        padding-top: 125% !important;
+    }
+
+    .featured-products .product-overlay,
+    .new-arrivals-section .product-overlay,
+    .best-sellers-section .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+}
+
 @media (min-width: 768px) {
     .col-md-5th {
         flex: 0 0 20%;
