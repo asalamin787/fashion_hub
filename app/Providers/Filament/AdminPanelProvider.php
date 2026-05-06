@@ -2,16 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -60,6 +58,41 @@ class AdminPanelProvider extends PanelProvider
             .fi-sidebar-nav-group-label {
                 font-size: 1.1em;
                 letter-spacing: 0.5px;
+            }
+
+            .fi-page-dashboard [data-filament-page-content] {
+                gap: 1rem;
+            }
+
+            .fi-page-dashboard .fi-section {
+                border-radius: 1rem;
+                border: 1px solid rgba(148, 163, 184, 0.25);
+                background: linear-gradient(150deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.96));
+                box-shadow: 0 14px 30px -24px rgba(15, 23, 42, 0.4);
+            }
+
+            .fi-page-dashboard .fi-section .fi-section-header-heading {
+                color: #111827;
+                font-weight: 700;
+            }
+
+            .fi-page-dashboard .fi-input-wrp,
+            .fi-page-dashboard .fi-select-input,
+            .fi-page-dashboard .fi-select-input-wrp,
+            .fi-page-dashboard .fi-input {
+                border-radius: 0.85rem;
+            }
+
+            .fi-page-dashboard .fi-wi-chart,
+            .fi-page-dashboard .fi-ta {
+                border-radius: 1rem;
+                border: 1px solid rgba(148, 163, 184, 0.2);
+                box-shadow: 0 14px 30px -24px rgba(15, 23, 42, 0.35);
+            }
+
+            .fi-page-dashboard .fi-ta-header,
+            .fi-page-dashboard .fi-ta-header-toolbar {
+                background: linear-gradient(90deg, rgba(252, 245, 241, 0.9), rgba(251, 238, 229, 0.9));
             }
 
             /* Orders list: dark segmented tabs similar to requested dashboard style. */
@@ -212,10 +245,7 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-            ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
