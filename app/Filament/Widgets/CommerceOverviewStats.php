@@ -71,16 +71,16 @@ class CommerceOverviewStats extends StatsOverviewWidget
                 ->color('info')
                 ->extraAttributes(['class' => $cardClass]),
 
-            Stat::make('Orders', number_format($totalOrders))
-                ->description(sprintf('%+.1f%% vs previous period', $orderTrend))
-                ->chart($ordersSeries)
-                ->color('warning')
-                ->extraAttributes(['class' => $cardClass]),
+            // Stat::make('Orders', number_format($totalOrders))
+            //     ->description(sprintf('%+.1f%% vs previous period', $orderTrend))
+            //     ->chart($ordersSeries)
+            //     ->color('warning')
+            //     ->extraAttributes(['class' => $cardClass]),
 
-            Stat::make('Paid Orders', number_format($paidOrders))
-                ->description('Successfully paid orders')
-                ->color('primary')
-                ->extraAttributes(['class' => $cardClass]),
+            // Stat::make('Paid Orders', number_format($paidOrders))
+            //     ->description('Successfully paid orders')
+            //     ->color('primary')
+            //     ->extraAttributes(['class' => $cardClass]),
 
             Stat::make('Avg. Order Value', $this->formatCurrency($averageOrderValue))
                 ->description('Revenue / total orders')

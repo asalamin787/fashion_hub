@@ -6,8 +6,16 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Filament\Widgets\CommerceOverviewStats;
+use App\Filament\Widgets\ConversionFunnelStats;
+use App\Filament\Widgets\CouponPerformanceTable;
+use App\Filament\Widgets\CustomerGrowthTrendChart;
+use App\Filament\Widgets\LowStockAlertTable;
+use App\Filament\Widgets\OrderFulfillmentRateChart;
 use App\Filament\Widgets\OrderStatusBreakdownChart;
+use App\Filament\Widgets\PaymentStatusSummary;
+use App\Filament\Widgets\RecentOrdersTable;
 use App\Filament\Widgets\RevenueTrendChart;
+use App\Filament\Widgets\TopCustomersTable;
 use App\Filament\Widgets\TopProductsTable;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -114,9 +122,17 @@ class Dashboard extends BaseDashboard
     {
         return [
             CommerceOverviewStats::class,
+            PaymentStatusSummary::class,
+            ConversionFunnelStats::class,
             RevenueTrendChart::class,
             OrderStatusBreakdownChart::class,
+            // OrderFulfillmentRateChart::class,
+            // CustomerGrowthTrendChart::class,
+            RecentOrdersTable::class,
             TopProductsTable::class,
+            TopCustomersTable::class,
+            LowStockAlertTable::class,
+            CouponPerformanceTable::class,
         ];
     }
 }
