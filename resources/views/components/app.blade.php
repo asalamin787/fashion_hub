@@ -62,10 +62,12 @@
                 <img src="{{ Storage::url($siteLinks->get('nav_logo') ?? 'assets/images/logo/logo.png') }}"
                     width="auto" height="54px" alt="FashionHub Logo" class="navbar-logo">
             </a>
-            {{-- <button class="navbar-toggler d-none d-md-flex" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button> --}}
+
+            <!-- Mobile Search Icon -->
+            <a href="#" data-search-toggle title="Search" class="d-flex d-md-none mobile-nav-search-btn" aria-label="Search">
+                <i class="fas fa-search"></i>
+            </a>
+
             <div class="collapse navbar-collapse d-none d-md-flex" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
@@ -416,17 +418,41 @@
             }
 
             .navbar .container {
-                justify-content: center;
+                justify-content: flex-start;
+                position: relative;
             }
 
             .navbar-brand {
-                margin: 0 auto;
+                margin: 0;
                 padding: 0;
             }
 
             .navbar-brand .navbar-logo {
                 height: 44px;
                 width: auto;
+            }
+
+            .mobile-nav-search-btn {
+                position: absolute;
+                right: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 38px;
+                height: 38px;
+                align-items: center;
+                justify-content: center;
+                background: rgba(134, 87, 73, 0.1);
+                color: #865749;
+                border-radius: 10px;
+                font-size: 16px;
+                text-decoration: none;
+                transition: background 0.2s ease;
+            }
+
+            .mobile-nav-search-btn:hover,
+            .mobile-nav-search-btn:active {
+                background: rgba(134, 87, 73, 0.2);
+                color: #6d3f35;
             }
 
             .mobile-bottom-nav {
