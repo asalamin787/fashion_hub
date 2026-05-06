@@ -668,6 +668,67 @@
         });
     </script>
 
+    <script>
+        document.addEventListener('submit', async function(event) {
+            const form = event.target.closest('.ajax-remove-from-cart-form');
+
+            if (!form) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonHtml = submitButton ? submitButton.innerHTML : null;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: new URLSearchParams({
+                        _method: 'DELETE',
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Unable to remove cart item.');
+                }
+
+                document.querySelectorAll('.cart-badge, .mobile-nav-badge').forEach(function(element) {
+                    element.textContent = data.cart_count ?? 0;
+                });
+
+                const offcanvasContent = document.querySelector('[data-cart-offcanvas-content]');
+
+                if (offcanvasContent && data.cart_offcanvas_html) {
+                    offcanvasContent.innerHTML = data.cart_offcanvas_html;
+                }
+
+                window.showToast(data.message || 'Item removed from cart.', 'success');
+            } catch (error) {
+                console.error('Cart remove failed:', error);
+                window.showToast(error.message || 'Unable to remove cart item.', 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonHtml;
+                }
+            }
+        });
+    </script>
+
     @stack('js')
 </body>
 
