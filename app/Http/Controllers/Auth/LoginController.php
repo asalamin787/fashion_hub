@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -38,8 +41,24 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
+    /**
+     * Override default intended redirect behavior and always use role/email destination.
+     */
+    protected function authenticated(Request $request, mixed $user): RedirectResponse
+    {
+        $request->session()->forget('url.intended');
+
+        return redirect()->to($this->redirectTo());
+    }
+
     protected function redirectTo(): string
     {
-        return session()->pull('url.intended', route('account.dashboard'));
+        $user = Auth::user();
+
+        if ($user?->role === 'admin') {
+            return '/admin';
+        }
+
+        return route('account.dashboard');
     }
 }
