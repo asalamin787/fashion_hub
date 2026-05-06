@@ -405,6 +405,36 @@
         right: 0;
         bottom: 0;
     }
+
+    /* Ensure consistent product info height on mobile */
+    .featured-products .product-title,
+    .new-arrivals-section .product-title,
+    .best-sellers-section .product-title {
+        height: 48px;
+        margin-bottom: 8px;
+    }
+
+    .featured-products .product-rating,
+    .new-arrivals-section .product-rating,
+    .best-sellers-section .product-rating {
+        height: 20px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+    }
+
+    .featured-products .product-price,
+    .new-arrivals-section .product-price,
+    .best-sellers-section .product-price {
+        margin-top: auto;
+        padding-top: 4px;
+    }
+
+    .featured-products .product-info,
+    .new-arrivals-section .product-info,
+    .best-sellers-section .product-info {
+        padding: 12px;
+    }
 }
 
 @media (min-width: 768px) {
