@@ -11,9 +11,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -25,6 +25,19 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ProductsTable
 {
+    private static function viewProductAction(): Action
+    {
+        return Action::make('viewProduct')
+            ->label('View details')
+            ->icon(Heroicon::Eye)
+            ->color('gray')
+            ->modalHeading(fn (Product $record): string => $record->name)
+            ->modalContent(fn (Product $record) => view('filament.products.components.product-details', ['product' => $record]))
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Close')
+            ->modalWidth(Width::FiveExtraLarge);
+    }
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -152,7 +165,7 @@ class ProductsTable
             ->emptyStateDescription('Create your first product and manage simple or multi-variation inventory from one JSON-powered record.')
             ->recordActions([
                 ActionGroup::make([
-                    ViewAction::make(),
+                    self::viewProductAction(),
                     EditAction::make(),
                     // Action::make('addToBag')
                     //     ->label('Add to bag')
