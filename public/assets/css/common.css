@@ -666,6 +666,25 @@ a {
     .footer {
         margin-bottom: 0;
     }
+
+    .product-overlay {
+        flex-wrap: nowrap;
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .product-overlay .ajax-add-to-cart-form {
+        display: inline-flex;
+        margin: 0;
+    }
+
+    .product-action-btn {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        min-height: 34px;
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 576px) {

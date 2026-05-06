@@ -455,6 +455,25 @@
         gap: 15px;
     }
 
+    .products-grid .product-overlay {
+        flex-wrap: nowrap;
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .products-grid .product-overlay .ajax-add-to-cart-form {
+        display: inline-flex;
+        margin: 0;
+    }
+
+    .products-grid .product-action-btn {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        min-height: 34px;
+        font-size: 0.8rem;
+    }
+
     .shop-empty-state {
         padding: 36px 18px;
     }

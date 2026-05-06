@@ -301,7 +301,7 @@
                                 <input type="hidden" name="product_variant_id" id="cartVariantId"
                                     value="{{ $product->default_variant['sku'] ?? '' }}">
                                 <input type="hidden" name="quantity" id="cartQuantity" value="1">
-                                <button class="btn btn-primary btn-add-cart" type="submit">
+                                <button class="btn btn-primary btn-add-cart w-100" type="submit">
                                     <i class="fas fa-shopping-cart"></i> Add to Cart
                                 </button>
                             </form>
@@ -311,6 +311,7 @@
                                 aria-label="Add to wishlist">
                                 <i
                                     class="{{ in_array($product->id, session('wishlist', [])) ? 'fas' : 'far' }} fa-heart"></i>
+                                    <span class="d-md-none">Add to Wishlist</span>
                             </button>
                         </div>
 
@@ -631,7 +632,7 @@
                                     $relatedPriceDisplay = '$' . number_format($effectiveRelated, 2);
                                 }
                             @endphp
-                            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
                                 <div class="product-card">
                                     <div class="product-image">
                                         <img src="{{ $related->featured_image_url }}" alt="{{ $related->name }}">
