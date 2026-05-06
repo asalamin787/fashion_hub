@@ -1033,6 +1033,10 @@
                         setTimeout(() => {
                             const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
                             modalInstance.hide();
+
+                            if (payload.auto_logged_in === true) {
+                                window.location.reload();
+                            }
                         }, 1500);
                     } catch (error) {
                         errorEl.textContent = error.message || 'Unable to subscribe right now.';

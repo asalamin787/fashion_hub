@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -12,7 +13,7 @@ class NewsletterSubscriptionService
     public function __construct(private readonly FirstOrderDiscountService $firstOrderDiscountService) {}
 
     /**
-     * @return array{user: User, was_already_subscribed: bool, welcome_email_should_send: bool, eligible_for_first_order_discount: bool}
+     * @return array{user: User, was_already_subscribed: bool, welcome_email_should_send: bool, eligible_for_first_order_discount: bool, auto_logged_in: bool}
      */
     public function subscribe(string $email): array
     {
@@ -67,8 +68,17 @@ class NewsletterSubscriptionService
             ];
         });
 
+        $autoLoggedIn = false;
+
+        if (! Auth::check() && (bool) $result['user']->is_active) {
+            Auth::login($result['user'], true);
+            $autoLoggedIn = true;
+        }
+
         session(['newsletter_subscriber_email' => $result['user']->email]);
 
-        return $result;
+        return array_merge($result, [
+            'auto_logged_in' => $autoLoggedIn,
+        ]);
     }
 }
