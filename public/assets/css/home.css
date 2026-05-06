@@ -354,11 +354,18 @@
     display: flex;
 }
 
+.featured-products .row,
+#newArrivalsCarouselMobile .row,
+#bestSellersCarouselMobile .row {
+    align-items: stretch;
+}
+
 .featured-products .product-card,
 .new-arrivals-section .product-card,
 .best-sellers-section .product-card {
     width: 100%;
     height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -368,24 +375,32 @@
 .best-sellers-section .product-info {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
     flex: 1;
 }
 
 .featured-products .product-title,
 .new-arrivals-section .product-title,
 .best-sellers-section .product-title {
-    min-height: 48px;
+    min-height: calc(2 * 1.35em);
+    max-height: calc(2 * 1.35em);
     line-height: 1.35;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    overflow-wrap: anywhere;
 }
 
 .featured-products .product-price,
 .new-arrivals-section .product-price,
 .best-sellers-section .product-price {
     margin-top: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
 }
 
 /* Mobile specific adjustments for equal height cards */
@@ -406,35 +421,6 @@
         bottom: 0;
     }
 
-    /* Ensure consistent product info height on mobile */
-    .featured-products .product-title,
-    .new-arrivals-section .product-title,
-    .best-sellers-section .product-title {
-        height: 48px;
-        margin-bottom: 8px;
-    }
-
-    .featured-products .product-rating,
-    .new-arrivals-section .product-rating,
-    .best-sellers-section .product-rating {
-        height: 20px;
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-    }
-
-    .featured-products .product-price,
-    .new-arrivals-section .product-price,
-    .best-sellers-section .product-price {
-        margin-top: auto;
-        padding-top: 4px;
-    }
-
-    .featured-products .product-info,
-    .new-arrivals-section .product-info,
-    .best-sellers-section .product-info {
-        padding: 12px;
-    }
 }
 
 @media (min-width: 768px) {
@@ -1206,17 +1192,35 @@
         height: 220px;
     }
 
-    .featured-products .product-title,
-    .new-arrivals-section .product-title,
-    .best-sellers-section .product-title {
-        min-height: 42px;
-        font-size: 0.95rem;
-    }
-
     .featured-products .product-info,
     .new-arrivals-section .product-info,
     .best-sellers-section .product-info {
-        padding: 14px;
+        padding: 12px;
+        gap: 6px;
+    }
+
+    .featured-products .product-title,
+    .new-arrivals-section .product-title,
+    .best-sellers-section .product-title {
+        font-size: 0.95rem;
+        min-height: calc(2 * 1.35em);
+        max-height: calc(2 * 1.35em);
+    }
+
+    .featured-products .product-rating,
+    .new-arrivals-section .product-rating,
+    .best-sellers-section .product-rating {
+        min-height: 20px;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .featured-products .product-price,
+    .new-arrivals-section .product-price,
+    .best-sellers-section .product-price {
+        min-height: 28px;
+        margin-top: auto;
     }
 }
 
