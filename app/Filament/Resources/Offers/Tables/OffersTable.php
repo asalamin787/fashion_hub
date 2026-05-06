@@ -25,24 +25,25 @@ class OffersTable
     {
         return $table
             ->columns([
-                ImageColumn::make('image_url')
+                ImageColumn::make('image')
                     ->label('Image')
                     ->square()
                     ->imageSize(60)
+                    ->disk('public')
                     ->defaultImageUrl('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600'),
                 TextColumn::make('title')
                     ->searchable()
-                    ->sortable()
-                    ->description(fn (Offer $record): string => $record->code ?? 'No coupon code'),
-                TextColumn::make('type')
-                    ->badge()
-                    ->sortable()
-                    ->color(fn (string $state): string => $state === 'percentage' ? 'info' : 'success')
-                    ->formatStateUsing(fn (string $state): string => $state === 'percentage' ? 'Percentage' : 'Fixed'),
-                TextColumn::make('formatted_value')
-                    ->label('Value')
-                    ->badge()
-                    ->color('warning'),
+                    ->sortable(),
+                // ->description(fn (Offer $record): string => $record->code ?? 'No coupon code'),
+                // TextColumn::make('type')
+                //     ->badge()
+                //     ->sortable()
+                //     ->color(fn (string $state): string => $state === 'percentage' ? 'info' : 'success')
+                //     ->formatStateUsing(fn (string $state): string => $state === 'percentage' ? 'Percentage' : 'Fixed'),
+                // TextColumn::make('formatted_value')
+                //     ->label('Value')
+                //     ->badge()
+                //     ->color('warning'),
                 TextColumn::make('products_count')
                     ->label('Products')
                     ->counts('products')

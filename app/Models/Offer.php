@@ -89,6 +89,8 @@ class Offer extends Model
             return $image;
         }
 
-        return asset('storage/'.ltrim($image, '/'));
+        $publicStorageBaseUrl = rtrim((string) config('filesystems.disks.public.url', '/storage'), '/');
+
+        return $publicStorageBaseUrl.'/'.ltrim($image, '/');
     }
 }
