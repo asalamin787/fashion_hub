@@ -6,6 +6,7 @@ use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Services\CartService;
+use App\Services\FirstOrderDiscountService;
 use App\Services\OrderNotificationService;
 use App\Services\StripePaymentService;
 use Illuminate\Http\JsonResponse;
@@ -21,6 +22,7 @@ class PaymentController extends Controller
         private readonly CartService $cartService,
         private readonly OrderNotificationService $orderNotificationService,
         private readonly StripePaymentService $stripePaymentService,
+        private readonly FirstOrderDiscountService $firstOrderDiscountService,
     ) {}
 
     public function show(Request $request, string $orderNumber): View|RedirectResponse
@@ -135,6 +137,7 @@ class PaymentController extends Controller
 
         $this->rememberOrderForGuest($order);
         $this->cartService->removeCoupon();
+        $this->firstOrderDiscountService->consumeForOrder($order->loadMissing('user'));
         $this->orderNotificationService->sendOrderSuccessEmail($order);
         $this->orderNotificationService->sendPaymentSuccessEmail($order);
 

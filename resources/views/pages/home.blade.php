@@ -913,11 +913,14 @@
                         <h3 class="newsletter-modal-title">Get 15% Off Your First Order!</h3>
                         <p class="newsletter-modal-text">Subscribe to our newsletter and receive exclusive deals,
                             fashion tips, and early access to new collections.</p>
-                        <form class="newsletter-modal-form">
-                            <input type="email" class="form-control" placeholder="Enter your email address"
+                        <form class="newsletter-modal-form" id="newsletterModalForm" action="{{ route('newsletter.subscribe') }}" method="POST">
+                            @csrf
+                            <input type="email" class="form-control" name="email" id="newsletterModalEmail" placeholder="Enter your email address"
                                 required>
                             <button type="submit" class="btn btn-primary w-100">Subscribe Now</button>
                         </form>
+                        <p class="newsletter-modal-success text-success mt-3 mb-0" id="newsletterModalSuccess" style="display:none;"></p>
+                        <p class="newsletter-modal-error text-danger mt-3 mb-0" id="newsletterModalError" style="display:none;"></p>
                         <p class="newsletter-modal-privacy">We respect your privacy. Unsubscribe at any time.</p>
                     </div>
                 </div>
@@ -928,15 +931,125 @@
     @push('js')
         <!-- Newsletter Popup Script -->
         <script>
+            function getCookieValue(name) {
+                const cookieString = document.cookie
+                    .split('; ')
+                    .find((row) => row.startsWith(`${name}=`));
+
+                if (!cookieString) {
+                    return null;
+                }
+
+                return decodeURIComponent(cookieString.split('=').slice(1).join('='));
+            }
+
+            function getCsrfToken(form = null) {
+                const formToken = form?.querySelector('input[name="_token"]')?.value;
+
+                if (formToken) {
+                    return formToken;
+                }
+
+                return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+            }
+
             // Show newsletter popup after 5 seconds
             setTimeout(function() {
-                var newsletterModal = new bootstrap.Modal(document.getElementById('newsletterModal'));
+                const modalEl = document.getElementById('newsletterModal');
+                var newsletterModal = new bootstrap.Modal(modalEl);
                 newsletterModal.show();
+
+                modalEl.addEventListener('shown.bs.modal', function () {
+                    const emailInput = document.getElementById('newsletterModalEmail');
+
+                    if (emailInput) {
+                        emailInput.focus();
+                    }
+                }, { once: true });
             }, 5000);
+
+            (function () {
+                const form = document.getElementById('newsletterModalForm');
+                const successEl = document.getElementById('newsletterModalSuccess');
+                const errorEl = document.getElementById('newsletterModalError');
+                const modalElement = document.getElementById('newsletterModal');
+
+                if (!form || !modalElement) {
+                    return;
+                }
+
+                form.addEventListener('submit', async function (event) {
+                    event.preventDefault();
+
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    const emailInput = form.querySelector('input[name="email"]');
+                    const formData = new FormData(form);
+                    const csrfToken = getCsrfToken(form);
+                    const xsrfToken = getCookieValue('XSRF-TOKEN');
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.textContent = 'Subscribing...';
+                    }
+
+                    successEl.style.display = 'none';
+                    errorEl.style.display = 'none';
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'X-XSRF-TOKEN': xsrfToken ?? '',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                            body: formData,
+                        });
+
+                        if (response.status === 419) {
+                            throw new Error('Session expired. Please refresh and try again.');
+                        }
+
+                        const payload = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(payload.message || 'Subscription failed.');
+                        }
+
+                        if (payload.eligible_for_first_order_discount === false) {
+                            errorEl.textContent = payload.message || 'Subscribed, but first-order discount is not available for this email.';
+                            errorEl.style.display = 'block';
+                        } else {
+                            successEl.textContent = payload.message || 'Subscribed successfully.';
+                            successEl.style.display = 'block';
+                        }
+
+                        if (emailInput) {
+                            emailInput.value = '';
+                        }
+
+                        setTimeout(() => {
+                            const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+                            modalInstance.hide();
+                        }, 1500);
+                    } catch (error) {
+                        errorEl.textContent = error.message || 'Unable to subscribe right now.';
+                        errorEl.style.display = 'block';
+                    } finally {
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.textContent = 'Subscribe Now';
+                        }
+                    }
+                });
+            })();
 
             // Wishlist toggle
             (function () {
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const csrfToken = getCsrfToken();
+                const xsrfToken = getCookieValue('XSRF-TOKEN');
 
                 document.querySelectorAll('.wishlist-toggle-btn').forEach(btn => {
                     btn.addEventListener('click', async function () {
@@ -944,11 +1057,19 @@
                         try {
                             const res = await fetch(this.dataset.toggleUrl, {
                                 method: 'POST',
+                                credentials: 'same-origin',
                                 headers: {
                                     'X-CSRF-TOKEN': csrfToken,
+                                    'X-XSRF-TOKEN': xsrfToken ?? '',
+                                    'X-Requested-With': 'XMLHttpRequest',
                                     'Accept': 'application/json',
                                 },
                             });
+
+                            if (res.status === 419) {
+                                throw new Error('Session expired. Please refresh and try again.');
+                            }
+
                             const data = await res.json();
 
                             icon.classList.toggle('fas', data.in_wishlist);

@@ -80,6 +80,12 @@ class OrdersTable
                     ->color('primary')
                     ->action(self::viewItemsAction()),
 
+                TextColumn::make('first_order_discount_applied')
+                    ->label('First Order')
+                    ->badge()
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Applied' : 'No')
+                    ->color(fn (bool $state): string => $state ? 'success' : 'gray'),
+
                 TextColumn::make('payment_status')
                     ->label('Payment Status')
                     ->badge()

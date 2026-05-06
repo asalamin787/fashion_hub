@@ -50,9 +50,11 @@
 
         $statusColor = $statusMap[$order->order_status->value] ?? '#6b7280';
         $paymentColor = $paymentMap[$order->payment_status->value] ?? '#6b7280';
+        $originalPrice = (float) $order->subtotal + (float) $order->shipping_amount + (float) $order->tax_amount;
 
         $methodLabel = match ($order->payment_method) {
             \App\Enums\PaymentMethod::CreditCard => 'Credit Card',
+            \App\Enums\PaymentMethod::GooglePay => 'Google Pay',
             \App\Enums\PaymentMethod::Paypal => 'PayPal',
             \App\Enums\PaymentMethod::CashOnDelivery => 'Cash on Delivery',
         };
@@ -175,6 +177,10 @@
                 <td style="width: 38%; vertical-align: top;">
                     <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb54;">
                         <tr>
+                            <td style="padding: 8px 10px; color: #94a3b8; border-bottom: 1px solid #e5e7eb54;">Original Price</td>
+                            <td style="padding: 8px 10px; color: #e2e8f0; border-bottom: 1px solid #e5e7eb54; text-align: right;">${{ number_format($originalPrice, 2) }}</td>
+                        </tr>
+                        <tr>
                             <td style="padding: 8px 10px; color: #94a3b8; border-bottom: 1px solid #e5e7eb54;">Subtotal</td>
                             <td style="padding: 8px 10px; color: #e2e8f0; border-bottom: 1px solid #e5e7eb54; text-align: right;">${{ number_format((float) $order->subtotal, 2) }}</td>
                         </tr>
@@ -192,12 +198,12 @@
                         @endif
                         @if((float) $order->discount_amount > 0)
                             <tr>
-                                <td style="padding: 8px 10px; color: #16a34a; border-bottom: 1px solid #e5e7eb54;">Discount {{ $order->coupon_code ? '(' . $order->coupon_code . ')' : '' }}</td>
+                                <td style="padding: 8px 10px; color: #16a34a; border-bottom: 1px solid #e5e7eb54;">{{ $order->discount_label ?? 'Discount' }}</td>
                                 <td style="padding: 8px 10px; color: #16a34a; border-bottom: 1px solid #e5e7eb54; text-align: right;">-${{ number_format((float) $order->discount_amount, 2) }}</td>
                             </tr>
                         @endif
                         <tr>
-                            <td style="padding: 10px; color: #e2e8f0; font-size: 13px; font-weight: 700;">TOTAL AMOUNT</td>
+                            <td style="padding: 10px; color: #e2e8f0; font-size: 13px; font-weight: 700;">FINAL PAID AMOUNT</td>
                             <td style="padding: 10px; color: #e2e8f0; font-size: 13px; font-weight: 700; text-align: right;">${{ number_format((float) $order->total_amount, 2) }} {{ $order->currency }}</td>
                         </tr>
                     </table>

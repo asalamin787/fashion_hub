@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\InvoicePrintController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductReviewController;
@@ -25,6 +26,7 @@ Route::get('/blog-details/{blogPost:slug?}', [PageController::class, 'blogDetail
 Route::post('/blog-details/{blogPost:slug}/comments', [PageController::class, 'storeBlogComment'])->middleware('throttle:10,1')->name('blog.comments.store');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'storeContact'])->middleware('throttle:5,1')->name('contact.store');
+Route::post('/newsletter/subscribe', [NewsletterSubscriptionController::class, 'store'])->middleware('throttle:10,1')->name('newsletter.subscribe');
 
 Route::get('/privacy-policy', [StaticPageController::class, 'show'])->defaults('slug', 'privacy-policy')->name('privacy.policy');
 Route::get('/terms-and-conditions', [StaticPageController::class, 'show'])->defaults('slug', 'terms-and-conditions')->name('terms.of.condition');

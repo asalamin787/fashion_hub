@@ -60,6 +60,8 @@ class Order extends Model
         'tax_amount',
         'discount_amount',
         'coupon_code',
+        'first_order_discount_applied',
+        'first_order_discount_rate',
         'total_amount',
         'order_status',
         'placed_at',
@@ -86,6 +88,7 @@ class Order extends Model
         'shipping_amount' => '0.00',
         'tax_amount' => '0.00',
         'discount_amount' => '0.00',
+        'first_order_discount_applied' => false,
         'currency' => 'USD',
     ];
 
@@ -105,6 +108,8 @@ class Order extends Model
             'shipping_amount' => 'decimal:2',
             'tax_amount' => 'decimal:2',
             'discount_amount' => 'decimal:2',
+            'first_order_discount_applied' => 'boolean',
+            'first_order_discount_rate' => 'decimal:2',
             'total_amount' => 'decimal:2',
             'exchange_rate' => 'decimal:6',
             'placed_at' => 'datetime',
@@ -173,6 +178,24 @@ class Order extends Model
     public function getCustomerNameAttribute(): string
     {
         return trim($this->customer_first_name.' '.$this->customer_last_name);
+    }
+
+    public function getHasFirstOrderDiscountAttribute(): bool
+    {
+        return (bool) $this->first_order_discount_applied;
+    }
+
+    public function getDiscountLabelAttribute(): ?string
+    {
+        if ((bool) $this->first_order_discount_applied) {
+            return 'First Order Discount';
+        }
+
+        if (filled($this->coupon_code)) {
+            return 'Coupon ('.$this->coupon_code.')';
+        }
+
+        return null;
     }
 
     /**

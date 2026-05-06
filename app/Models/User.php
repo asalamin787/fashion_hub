@@ -27,6 +27,9 @@ use Illuminate\Notifications\Notifiable;
     'date_of_birth',
     'avatar',
     'is_active',
+    'is_subscribed',
+    'subscribed_at',
+    'first_order_discount_available',
     'last_login_at',
 ])]
 #[Hidden(['password', 'remember_token'])]
@@ -46,6 +49,9 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'date_of_birth' => 'date',
             'is_active' => 'boolean',
+            'is_subscribed' => 'boolean',
+            'subscribed_at' => 'datetime',
+            'first_order_discount_available' => 'boolean',
             'password' => 'hashed',
         ];
     }

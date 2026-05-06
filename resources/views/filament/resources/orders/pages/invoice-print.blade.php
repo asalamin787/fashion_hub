@@ -104,8 +104,10 @@
     ];
     $statusColor  = $statusMap[$order->order_status->value]  ?? '#6b7280';
     $paymentColor = $paymentMap[$order->payment_status->value] ?? '#6b7280';
+    $originalPrice = (float) $order->subtotal + (float) $order->shipping_amount + (float) $order->tax_amount;
     $methodLabel  = match ($order->payment_method) {
         \App\Enums\PaymentMethod::CreditCard    => 'Credit Card',
+        \App\Enums\PaymentMethod::GooglePay     => 'Google Pay',
         \App\Enums\PaymentMethod::Paypal        => 'PayPal',
         \App\Enums\PaymentMethod::CashOnDelivery => 'Cash on Delivery',
     };
@@ -225,6 +227,10 @@
         <td style="width:42%; vertical-align:top;">
             <table class="totals-table">
                 <tr>
+                    <td class="label" style="border-bottom:1px solid #e5e7eb;">Original Price</td>
+                    <td class="value" style="border-bottom:1px solid #e5e7eb;">${{ number_format($originalPrice, 2) }}</td>
+                </tr>
+                <tr>
                     <td class="label" style="border-bottom:1px solid #e5e7eb;">Subtotal</td>
                     <td class="value" style="border-bottom:1px solid #e5e7eb;">${{ number_format((float) $order->subtotal, 2) }}</td>
                 </tr>
@@ -242,12 +248,12 @@
                 @endif
                 @if((float) $order->discount_amount > 0)
                     <tr>
-                        <td class="label discount" style="border-bottom:1px solid #e5e7eb;">Discount{{ $order->coupon_code ? ' (' . $order->coupon_code . ')' : '' }}</td>
+                        <td class="label discount" style="border-bottom:1px solid #e5e7eb;">{{ $order->discount_label ?? 'Discount' }}</td>
                         <td class="value discount" style="border-bottom:1px solid #e5e7eb;">-${{ number_format((float) $order->discount_amount, 2) }}</td>
                     </tr>
                 @endif
                 <tr class="total-row">
-                    <td>TOTAL AMOUNT</td>
+                    <td>FINAL PAID AMOUNT</td>
                     <td style="text-align:right;">${{ number_format((float) $order->total_amount, 2) }} {{ $order->currency }}</td>
                 </tr>
             </table>

@@ -27,6 +27,10 @@
                         </div>
                     </div>
 
+                    @if ($order->first_order_discount_applied)
+                        <div class="alert alert-success mb-4">You saved 15% on your first order 🎉</div>
+                    @endif
+
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body p-4">
                             <h2 class="h5 mb-4">Order Items</h2>
@@ -62,7 +66,7 @@
                             <div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h2 class="h5 mb-3">Billing Address</h2><p class="mb-1">{{ $order->customer_name }}</p><p class="mb-1">{{ $order->street_address }}{{ $order->apartment ? ', '.$order->apartment : '' }}</p><p class="mb-1">{{ $order->city }}, {{ $order->state }} {{ $order->zip_code }}</p><p class="mb-1">{{ $order->country }}</p><p class="text-muted mb-0">{{ $order->customer_email }} | {{ $order->customer_phone }}</p></div></div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h2 class="h5 mb-3">Order Summary</h2><div class="d-flex justify-content-between mb-2"><span class="text-muted">Subtotal</span><strong>${{ number_format((float) $order->subtotal, 2) }}</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Shipping</span><strong>${{ number_format((float) $order->shipping_amount, 2) }}</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Tax</span><strong>${{ number_format((float) $order->tax_amount, 2) }}</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Discount</span><strong>- ${{ number_format((float) $order->discount_amount, 2) }}</strong></div><hr><div class="d-flex justify-content-between"><span class="fw-semibold">Total</span><strong>${{ number_format((float) $order->total_amount, 2) }}</strong></div></div></div>
+                            <div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h2 class="h5 mb-3">Order Summary</h2><div class="d-flex justify-content-between mb-2"><span class="text-muted">Subtotal</span><strong>${{ number_format((float) $order->subtotal, 2) }}</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Shipping</span><strong>${{ number_format((float) $order->shipping_amount, 2) }}</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Tax</span><strong>${{ number_format((float) $order->tax_amount, 2) }}</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">{{ $order->discount_label ?? 'Discount' }}</span><strong>- ${{ number_format((float) $order->discount_amount, 2) }}</strong></div><hr><div class="d-flex justify-content-between"><span class="fw-semibold">Total</span><strong>${{ number_format((float) $order->total_amount, 2) }}</strong></div></div></div>
                         </div>
                     </div>
                 </div>

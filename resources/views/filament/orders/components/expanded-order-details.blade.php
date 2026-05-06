@@ -76,6 +76,9 @@
 	{{-- ===== ORDER SUMMARY ===== --}}
 	<section style="display:flex; flex-direction:column; gap:10px;">
 		<span style="font-size:1rem; font-weight:700; color:#f1f5f9; letter-spacing:-0.01em; padding:0 2px;">Order Summary</span>
+		@if ($order->first_order_discount_applied)
+			<span style="margin:0 2px; display:inline-flex; width:max-content; padding:4px 10px; border-radius:999px; background:rgba(16,185,129,0.12); color:#6ee7b7; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">First Order Discount Applied</span>
+		@endif
 
 		<div style="border-radius:8px; border:1px solid rgba(255,255,255,0.10); overflow:hidden;">
 			<table style="width:100%; border-collapse:collapse; font-size:0.875rem;">
@@ -95,10 +98,7 @@
 					@if ((float) $order->discount_amount > 0)
 						<tr style="background:transparent;">
 							<td style="padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.86rem; font-weight:500; color:#e2e8f0;">
-								Discount
-								@if (filled($order->coupon_code))
-									<span style="font-size:0.78rem; color:#94a3b8;">({{ $order->coupon_code }})</span>
-								@endif
+								{{ $order->discount_label ?? 'Discount' }}
 							</td>
 							<td style="padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:right; font-size:0.86rem; color:#86efac;">-${{ number_format((float) $order->discount_amount, 2) }}</td>
 						</tr>

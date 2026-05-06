@@ -435,9 +435,13 @@
                             @if ($discount > 0)
                                 <div class="summary-row">
                                     <span>
-                                        Discount
-                                        @if ($coupon)
-                                            <small class="text-success">({{ $coupon['code'] }})</small>
+                                        @if ($firstOrderDiscount)
+                                            First Order Discount (15%)
+                                        @else
+                                            Discount
+                                            @if ($coupon)
+                                                <small class="text-success">({{ $coupon['code'] }})</small>
+                                            @endif
                                         @endif
                                     </span>
                                     <span class="value text-success">-${{ number_format($discount, 2) }}</span>

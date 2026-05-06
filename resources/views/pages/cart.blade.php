@@ -35,6 +35,12 @@
                 </div>
             @endif
 
+            @if ($firstOrderDiscount)
+                <div class="alert alert-success mb-4">
+                    🎉 15% First Order Discount Applied
+                </div>
+            @endif
+
             <div class="row">
                 <div class="col-lg-8">
                     <div class="cart-table-wrapper">
@@ -226,7 +232,9 @@
                             <span class="value" data-cart-summary-subtotal>${{ number_format((float) $subtotal, 2) }}</span>
                         </div>
                         <div class="summary-row" data-cart-summary-discount-row style="{{ (float) $discount > 0 ? '' : 'display: none;' }}">
-                            <span>Discount</span>
+                            <span data-cart-summary-discount-label>
+                                {{ $firstOrderDiscount ? 'First Order Discount (15%)' : 'Discount' }}
+                            </span>
                             <span class="value" data-cart-summary-discount>-${{ number_format((float) $discount, 2) }}</span>
                         </div>
                         <div class="summary-row" data-cart-summary-tax-row style="{{ (float) $taxAmount > 0 ? '' : 'display: none;' }}">
@@ -273,6 +281,7 @@
 
             function updateCouponState(data) {
                 const discountRow = document.querySelector('[data-cart-summary-discount-row]');
+                const discountLabelEl = document.querySelector('[data-cart-summary-discount-label]');
                 const discountEl = document.querySelector('[data-cart-summary-discount]');
                 const taxRow = document.querySelector('[data-cart-summary-tax-row]');
                 const taxEl = document.querySelector('[data-cart-summary-tax]');
@@ -284,6 +293,7 @@
                 const couponInput = applyForm?.querySelector('input[name="coupon_code"]');
 
                 const coupon = data.applied_coupon ?? null;
+                const firstOrderDiscount = data.first_order_discount ?? null;
                 const discountValue = parseFloat(data.cart_discount ?? 0);
                 const taxValue = parseFloat(data.cart_tax ?? 0);
                 const taxRate = data.cart_tax_rate ?? '0.00';
@@ -294,6 +304,10 @@
 
                 if (discountEl) {
                     discountEl.textContent = `-$${(data.cart_discount ?? '0.00')}`;
+                }
+
+                if (discountLabelEl) {
+                    discountLabelEl.textContent = firstOrderDiscount ? 'First Order Discount (15%)' : 'Discount';
                 }
 
                 if (taxRow) {

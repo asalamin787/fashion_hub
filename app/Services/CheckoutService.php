@@ -11,12 +11,16 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderStatusHistory;
 use App\Models\Payment;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
-    public function __construct(private readonly CartService $cartService) {}
+    public function __construct(
+        private readonly CartService $cartService,
+        private readonly FirstOrderDiscountService $firstOrderDiscountService,
+    ) {}
 
     /**
      * Place an order inside a database transaction.
@@ -42,6 +46,10 @@ class CheckoutService
             $shippingAmount = (float) setting('site.shipping_cost', 0);
             $grandTotal = round($totals['total'] + $shippingAmount, 2);
             $currency = strtoupper((string) config('services.stripe.currency', 'usd'));
+            $firstOrderDiscount = $totals['first_order_discount'];
+
+            $resolvedUser = $this->resolveCustomerUser($data['email']);
+            $resolvedUserId = $resolvedUser?->id;
 
             $paymentMethod = PaymentMethod::from($data['payment_method']);
             $shippingSame = (bool) ($data['shipping_same_as_billing'] ?? true);
@@ -50,7 +58,7 @@ class CheckoutService
                 : PaymentStatus::Pending;
 
             $order = Order::create([
-                'user_id' => Auth::id(),
+                'user_id' => $resolvedUserId,
                 'cart_id' => $cart->id,
                 // Billing
                 'customer_first_name' => $data['first_name'],
@@ -86,6 +94,8 @@ class CheckoutService
                 'tax_amount' => $totals['tax'],
                 'discount_amount' => $totals['discount'],
                 'coupon_code' => $totals['coupon']['code'] ?? null,
+                'first_order_discount_applied' => (bool) $firstOrderDiscount,
+                'first_order_discount_rate' => (float) ($firstOrderDiscount['rate'] ?? 0),
                 'total_amount' => $grandTotal,
                 // Meta
                 'currency' => $currency,
@@ -152,13 +162,28 @@ class CheckoutService
 
             // Clear cart immediately only for non-card flows (e.g., COD).
             // For card payments we keep cart until payment succeeds.
-            if ($paymentMethod !== PaymentMethod::CreditCard) {
+            if (! in_array($paymentMethod, [PaymentMethod::CreditCard, PaymentMethod::GooglePay], true)) {
                 $cart->update(['status' => 'converted']);
                 $cart->items()->delete();
                 $this->cartService->removeCoupon();
             }
 
+            if ($order->first_order_discount_applied) {
+                $this->firstOrderDiscountService->consumeForOrder($order->load('user'));
+            }
+
             return $order;
         });
+    }
+
+    private function resolveCustomerUser(string $checkoutEmail): ?User
+    {
+        if (Auth::check() && Auth::user() instanceof User) {
+            return Auth::user();
+        }
+
+        return User::query()
+            ->whereRaw('LOWER(email) = ?', [mb_strtolower(trim($checkoutEmail))])
+            ->first();
     }
 }

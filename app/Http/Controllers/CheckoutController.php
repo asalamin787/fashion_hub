@@ -40,7 +40,7 @@ class CheckoutController extends Controller
         $prefill = [
             'first_name' => $nameParts[0] ?? '',
             'last_name' => $nameParts[1] ?? '',
-            'email' => $user?->email ?? '',
+            'email' => $user?->email ?? (string) session('newsletter_subscriber_email', ''),
             'phone' => $user?->phone ?? '',
             'street_address' => $user?->address ?? '',
             'city' => $user?->city ?? '',
@@ -52,6 +52,7 @@ class CheckoutController extends Controller
             'cartItems' => $cart->items,
             'subtotal' => $totals['subtotal'],
             'discount' => $totals['discount'],
+            'firstOrderDiscount' => $totals['first_order_discount'],
             'taxAmount' => $totals['tax'],
             'taxRate' => $totals['tax_rate'],
             'shippingAmount' => $shippingAmount,

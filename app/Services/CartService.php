@@ -14,6 +14,8 @@ class CartService
 {
     private const COUPON_SESSION_KEY = 'cart_coupon_id';
 
+    public function __construct(private readonly FirstOrderDiscountService $firstOrderDiscountService) {}
+
     /**
      * Retrieve the current active cart, creating one if it does not exist.
      *
@@ -179,6 +181,12 @@ class CartService
      * @return array{
      *     subtotal: float,
      *     discount: float,
+     *     first_order_discount: array{
+     *         label: string,
+     *         rate: float,
+     *         discount_amount: float,
+     *         discount_amount_formatted: string
+     *     }|null,
      *     tax: float,
      *     tax_rate: float,
      *     total: float,
@@ -199,14 +207,28 @@ class CartService
     {
         $subtotal = $this->calculateSubtotalAmount();
         $coupon = $this->getAppliedCouponData();
-        $discount = (float) ($coupon['discount_amount'] ?? 0);
+
+        $eligibleUser = $this->firstOrderDiscountService->resolveEligibleUser();
+        $firstOrderDiscount = $this->firstOrderDiscountService->calculateDiscount($subtotal, $eligibleUser);
+
+        $couponDiscount = (float) ($coupon['discount_amount'] ?? 0);
+        $firstOrderDiscountAmount = (float) $firstOrderDiscount['amount'];
+        $discount = min($couponDiscount + $firstOrderDiscountAmount, $subtotal);
         $taxRate = $this->getTaxRatePercentage();
         $taxableSubtotal = max($subtotal - $discount, 0);
         $tax = $this->calculateTaxAmount($taxableSubtotal, $taxRate);
 
+        $firstOrderDiscountData = $firstOrderDiscount['is_eligible'] ? [
+            'label' => 'First Order Discount',
+            'rate' => (float) $firstOrderDiscount['rate'],
+            'discount_amount' => $firstOrderDiscountAmount,
+            'discount_amount_formatted' => number_format($firstOrderDiscountAmount, 2, '.', ''),
+        ] : null;
+
         return [
             'subtotal' => $subtotal,
             'discount' => $discount,
+            'first_order_discount' => $firstOrderDiscountData,
             'tax' => $tax,
             'tax_rate' => $taxRate,
             'total' => $taxableSubtotal + $tax,

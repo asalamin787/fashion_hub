@@ -358,7 +358,7 @@
                         @endif
                         @if($order->discount_amount > 0)
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="color: #6F5E4D;">Discount @if($order->coupon_code)({{ $order->coupon_code }})@endif</span>
+                            <span style="color: #6F5E4D;">{{ $order->discount_label ?? 'Discount' }}</span>
                             <strong style="color: #c0392b;">-${{ number_format($order->discount_amount, 2) }}</strong>
                         </div>
                         @endif

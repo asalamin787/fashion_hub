@@ -37,6 +37,9 @@ class UserFactory extends Factory
             'date_of_birth' => fake()->optional()->date(),
             'avatar' => null,
             'is_active' => true,
+            'is_subscribed' => false,
+            'subscribed_at' => null,
+            'first_order_discount_available' => false,
             'remember_token' => Str::random(10),
         ];
     }

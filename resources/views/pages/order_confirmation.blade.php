@@ -32,6 +32,10 @@
                 <p class="mb-0">We sent confirmation to {{ $order->customer_email }}.</p>
             </div>
 
+            @if ($order->first_order_discount_applied)
+                <div class="alert alert-success mb-4" role="alert">You saved 15% on your first order 🎉</div>
+            @endif
+
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="row g-3">
@@ -143,10 +147,7 @@
                             </div>
                             @if ((float) $order->discount_amount > 0)
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span>Discount @if ($order->coupon_code)
-                                            ({{ $order->coupon_code }})
-                                        @endif
-                                    </span>
+                                    <span>{{ $order->discount_label ?? 'Discount' }}</span>
                                     <strong class="text-success">-${{ number_format((float) $order->discount_amount, 2) }}</strong>
                                 </div>
                             @endif
