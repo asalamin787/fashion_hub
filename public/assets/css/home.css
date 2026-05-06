@@ -1197,12 +1197,15 @@
     .best-sellers-section .product-info {
         padding: 12px;
         gap: 6px;
+        min-height: 120px;
     }
 
     .featured-products .product-title,
     .new-arrivals-section .product-title,
     .best-sellers-section .product-title {
         font-size: 0.95rem;
+        line-height: 1.35em;
+        height: 2.7em;
         min-height: calc(2 * 1.35em);
         max-height: calc(2 * 1.35em);
     }
@@ -1221,6 +1224,31 @@
     .best-sellers-section .product-price {
         min-height: 28px;
         margin-top: auto;
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .featured-products .product-price-old,
+    .new-arrivals-section .product-price-old,
+    .best-sellers-section .product-price-old {
+        white-space: nowrap;
+        font-size: 0.85rem;
+        margin-left: 6px;
+    }
+
+    .featured-products .col-6,
+    .new-arrivals-section .col-6,
+    .best-sellers-section .col-6 {
+        display: flex;
+        align-items: stretch;
+    }
+
+    .featured-products .product-card,
+    .new-arrivals-section .product-card,
+    .best-sellers-section .product-card {
+        min-height: 330px;
     }
 }
 
