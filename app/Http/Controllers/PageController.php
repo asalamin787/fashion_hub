@@ -18,6 +18,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -848,5 +849,87 @@ class PageController extends Controller
     public function termsOfCondition()
     {
         return view('pages.terms_of_condition');
+    }
+
+    public function searchProducts()
+    {
+        $query = request()->query('q', '');
+
+        if (strlen($query) < 2) {
+            return response()->json([
+                'success' => true,
+                'results' => [
+                    'exact_matches' => [],
+                    'related_products' => [],
+                    'popular_products' => [],
+                ],
+            ]);
+        }
+
+        $searchTokens = array_filter(array_map('trim', explode(' ', $query)));
+        $baseQuery = Product::query()
+            ->where('status', 'active')
+            ->with(['category', 'brand']);
+
+        // Exact matches (exact name match)
+        $exactMatches = (clone $baseQuery)
+            ->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($query).'%'])
+            ->limit(8)
+            ->get();
+
+        // Related products (category or brand match)
+        $relatedIds = $exactMatches->pluck('id')->toArray();
+        $relatedProducts = (clone $baseQuery)
+            ->whereNotIn('id', $relatedIds)
+            ->where(function (Builder $q) use ($searchTokens, $query): void {
+                foreach ($searchTokens as $token) {
+                    $q->orWhereRaw('LOWER(description) LIKE ?', ['%'.strtolower($token).'%'])
+                        ->orWhereRaw('LOWER(short_description) LIKE ?', ['%'.strtolower($token).'%']);
+                }
+                $q->orWhereHas('category', function (Builder $q) use ($query): void {
+                    $q->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($query).'%']);
+                });
+                $q->orWhereHas('brand', function (Builder $q) use ($query): void {
+                    $q->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($query).'%']);
+                });
+            })
+            ->limit(8)
+            ->get();
+
+        // Popular/trending products
+        $allMatchIds = array_merge($relatedIds, $relatedProducts->pluck('id')->toArray());
+        $popularProducts = (clone $baseQuery)
+            ->whereNotIn('id', $allMatchIds)
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
+        $formatProduct = static function (Product $product): array {
+            $displayPrice = $product->sale_price ?? $product->base_price ?? 0;
+            $imageUrl = 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400';
+
+            if ($product->featured_image) {
+                $imageUrl = Storage::url('public/'.$product->featured_image);
+            }
+
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'price' => number_format($displayPrice, 2),
+                'image' => $imageUrl,
+                'category' => $product->category?->name,
+                'brand' => $product->brand?->name,
+            ];
+        };
+
+        return response()->json([
+            'success' => true,
+            'results' => [
+                'exact_matches' => $exactMatches->map($formatProduct)->values(),
+                'related_products' => $relatedProducts->map($formatProduct)->values(),
+                'popular_products' => $popularProducts->map($formatProduct)->values(),
+            ],
+        ]);
     }
 }

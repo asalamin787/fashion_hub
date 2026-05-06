@@ -74,7 +74,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('shop*') ? 'active' : '' }}"
-                            href="{{ route('shop') }}">Shop</a>
+                            href="{{ route('shop') }}">Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}"
@@ -90,7 +90,7 @@
                     </li>
                 </ul>
                 <div class="navbar-icons">
-                    <a href="#"><i class="fas fa-search"></i></a>
+                    <a href="#" data-search-toggle title="Search"><i class="fas fa-search"></i></a>
                     <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}"><i
                             class="fas fa-user"></i></a>
                     <a href="{{ route('wishlist') }}" title="WishList" class="position-relative">
@@ -264,6 +264,9 @@
         </div>
         </div>
     </nav>
+
+    <!-- Search Modal -->
+    @include('components.search-modal')
 
     <!-- Toast Notifications -->
     <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
