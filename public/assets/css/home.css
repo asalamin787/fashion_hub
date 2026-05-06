@@ -346,8 +346,11 @@
 
 /* Keep home product cards visually aligned like shop cards */
 .featured-products .col-6,
+.featured-products .col-md-5th,
 .new-arrivals-section .col-6,
-.best-sellers-section .col-6 {
+.new-arrivals-section .col-md-5th,
+.best-sellers-section .col-6,
+.best-sellers-section .col-md-5th {
     display: flex;
 }
 
